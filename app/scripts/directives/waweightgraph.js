@@ -32,23 +32,24 @@ angular.module('webappApp')
             return d3.format('i')(d) + 'kg';
           });
 
-        var v = [];
-        for(var idx in scope.data) {
-          var r = scope.data[idx];
-          v.push({ x: r.date, y: r.weight });
-        }
-
-        var values = [
-          { values: v, key: 'weight' },
-        ];
-
         var svg = d3.select(element[0]).append("svg")
             .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .datum(values).call(chart);
+            .attr("height", height + margin.top + margin.bottom);
 
-        //Update the chart when window resizes.
+        // Update the chart when window resizes.
         nv.utils.windowResize(function() { chart.update() });
+
+        // Update data
+        var updateData = function() {
+          var v = [];
+          for(var idx in scope.data) {
+            var r = scope.data[idx];
+            v.push({ x: r.date, y: r.weight });
+          }
+          svg.datum([{ values: v, key: 'weight' }]).call(chart);
+        };
+
+        scope.$watch('data', updateData);
       }
     };
   });
