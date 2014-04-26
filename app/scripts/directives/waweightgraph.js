@@ -17,7 +17,7 @@ angular.module('webappApp')
       },
       link: function postLink(scope, element, attrs) {
         var chart = nv.models.lineChart()
-          .margin({ left: 100, right: 100 })
+          .margin({ left: 15 + 40 })
           .useInteractiveGuideline(true)
           .transitionDuration(350)
           .showXAxis(true)
@@ -25,13 +25,15 @@ angular.module('webappApp')
 
         chart.xAxis
           .axisLabel('Date')
+          .showMaxMin(false)
           .tickFormat(function(d) {
             return d3.time.format('%e %b %Y')(new Date(d));
           });
 
         chart.yAxis
           .axisLabel('Weight / kg')
-          .tickFormat(d3.format('.1f'));
+          .axisLabelDistance(40)
+          .tickFormat(d3.format('.0f'));
 
         var svg = d3.select(element[0]).append("svg")
 
