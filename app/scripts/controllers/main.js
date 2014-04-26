@@ -16,22 +16,26 @@ angular.module('webappApp')
     $scope.weights = [];
 
     d3.tsv('data/mockdata.tsv')
-      .row(function(d) { return {
-        date: d3.time.format('%d/%m/%Y').parse(d.date),
-        weight: +d.weight
-      } })
-      .get(function(err, data) { $scope.$apply(function() {
-        $scope.weights = data;
+      .row(function(d) {
+        return {
+          date: d3.time.format('%d/%m/%Y').parse(d.date),
+          weight: +d.weight
+        };
+      })
+      .get(function(err, data) {
+        $scope.$apply(function() {
+          $scope.weights = data;
 
-        // HACK
-        $scope.targetDate = new Date($scope.weights[0].date.getTime() + 100*DAYS)
-      }); });
+          // HACK
+          $scope.targetDate = new Date($scope.weights[0].date.getTime() + 100*DAYS);
+        });
+      });
 
     $scope.$watch('weights', function() {
       $scope.goal = [];
 
       // Update cached start and current weights
-      if(!$scope.weights || $scope.weights.length == 0) {
+      if(!$scope.weights || $scope.weights.length === 0) {
         return;
       }
 
@@ -40,10 +44,10 @@ angular.module('webappApp')
       $scope.progress = 1 -
         ($scope.currentWeight-$scope.targetWeight) / ($scope.startWeight-$scope.targetWeight);
 
-      var startDate = $scope.weights[0].date.getTime()
-        , targetDate = $scope.targetDate.getTime()
-        , startLogWeight = Math.log($scope.startWeight)
-        , targetLogWeight = Math.log($scope.targetWeight);
+      var startDate = $scope.weights[0].date.getTime(),
+        targetDate = $scope.targetDate.getTime(),
+        startLogWeight = Math.log($scope.startWeight),
+        targetLogWeight = Math.log($scope.targetWeight);
 
       // Update goal
       for(var t = startDate; t <= targetDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
