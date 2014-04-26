@@ -15,7 +15,7 @@ angular.module('webappApp')
     $scope.targetDate = new Date();
     $scope.weights = [];
 
-    d3.tsv('mockdata.tsv')
+    d3.tsv('data/mockdata.tsv')
       .row(function(d) { return {
         date: d3.time.format('%d/%m/%Y').parse(d.date),
         weight: +d.weight
