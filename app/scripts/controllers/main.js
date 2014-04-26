@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('MainCtrl', function ($scope, $rootScope, Token) {
+  .controller('MainCtrl', function ($scope, $rootScope, Token, $http) {
     // Google login via OAuth
     $scope.accessToken = Token.get();
 
@@ -37,6 +37,20 @@ angular.module('webappApp')
       $scope.accessToken = null;
       Token.clear();
     };
+
+    $scope.$watch('accessToken', function() {
+      if(!$scope.accessToken) { return; }
+
+      // get user info
+      $http.get('https://www.googleapis.com/plus/v1/people/me', {
+          headers: {
+            'Authorization': 'Bearer ' + $scope.accessToken,
+          },
+        })
+        .success(function(data) {
+          console.log(data);
+        });
+    });
 
     var DAYS = 1000*60*60*24;
 
