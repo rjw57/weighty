@@ -17,17 +17,13 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
 .weight-badge-danger { background-color: $brand-danger; }
 .weight-badge-success { background-color: $brand-success; }
 
-.weight-progress {
-    @extend .progress;
-}
-
-.weight-progress .progress-bar {
-    font-size: ceil(($font-size-large * 0.8));
-}
-
 .weight-progress-container {
     @include button-size($padding-large-vertical, $padding-large-horizontal,
       $font-size-large, $line-height-large, $border-radius-large);
+
+    .progress-bar {
+        @extend .progress-bar-warning;
+    }
 }
 
 .browsehappy {
