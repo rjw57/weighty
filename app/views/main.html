@@ -7,28 +7,26 @@
   <h3 class="text-muted">webapp</h3>
 </div>
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-3 col-xs-4">
-      <div class="weight-badge weight-badge-danger">
-        {{ startWeight | number : 0 }}<small> kg</small>
-      </div>
+<div class="row">
+  <div class="col-sm-3 col-xs-4">
+    <div class="weight-badge weight-badge-danger">
+      {{ startWeight | number : 0 }}<small> kg</small>
     </div>
+  </div>
 
-    <div class="weight-progress-container col-sm-6 col-xs-4">
-      <div class="hidden-xs">
-        <wa-progress-bar min="0" max="100" value="{{ 100 * progress }}" />
-      </div>
-      <div class="visible-xs" style="text-align: center">
-        <div><span class="glyphicon glyphicon-arrow-right"></span></div>
-        <div>{{ 100 * progress | number : 0 }}%</div>
-      </div>
+  <div class="weight-progress-container col-sm-6 col-xs-4">
+    <div class="hidden-xs">
+      <wa-progress-bar min="0" max="100" value="{{ 100 * progress }}" />
     </div>
+    <div class="visible-xs" style="text-align: center">
+      <div><span class="glyphicon glyphicon-arrow-right"></span></div>
+      <div>{{ 100 * progress | number : 0 }}%</div>
+    </div>
+  </div>
 
-    <div class="col-sm-3 col-xs-4">
-      <div class="weight-badge weight-badge-success">
-        {{ targetWeight | number : 0 }}<small> kg</small>
-      </div>
+  <div class="col-sm-3 col-xs-4">
+    <div class="weight-badge weight-badge-success">
+      {{ targetWeight | number : 0 }}<small> kg</small>
     </div>
   </div>
 </div>
