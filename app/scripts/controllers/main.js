@@ -37,6 +37,8 @@ angular.module('webappApp')
 
       $scope.startWeight = $scope.weights[0].weight;
       $scope.currentWeight = $scope.weights[$scope.weights.length-1].weight;
+      $scope.progress = 1 -
+        ($scope.currentWeight-$scope.targetWeight) / ($scope.startWeight-$scope.targetWeight);
 
       var startDate = $scope.weights[0].date.getTime()
         , targetDate = $scope.targetDate.getTime()
