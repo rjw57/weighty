@@ -311,7 +311,8 @@ module.exports = function (grunt) {
             'images/{,*/}*.{webp}',
             'data/{,*/}*',
             'fonts/*',
-            'bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/*.*'
+            'bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/*.*',
+            'bower_components/angular-oauth/src/oauth2callback.html'
           ]
         }, {
           expand: true,
