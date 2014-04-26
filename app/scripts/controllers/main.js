@@ -5,11 +5,10 @@ angular.module('webappApp')
     // Google login via OAuth
     $scope.accessToken = Token.get();
 
-    $scope.authenticate = function() {
+    $scope.login = function() {
       /* global alert */
       /* jshint camelcase: false */
-      var extraParams = $scope.askApproval ? { approval_prompt: 'force' } : {};
-      Token.getTokenByPopup(extraParams)
+      Token.getTokenByPopup()
         .then(function(params) {
           // Success getting token from popup.
 
@@ -34,7 +33,7 @@ angular.module('webappApp')
     };
 
     // unauthenticating is a *lot* easier :)
-    $scope.unauthenticate = function() {
+    $scope.logout = function() {
       $scope.accessToken = null;
       Token.clear();
     };
