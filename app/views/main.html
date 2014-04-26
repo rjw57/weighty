@@ -14,6 +14,28 @@
   By: {{ targetDate | date : 'short' }}
 </div>
 
+<div class="container-fluid">
+  <div class="row">
+    <div class="weight-badge weight-badge-danger col-xs-2">
+      190<small>kg</small>
+    </div>
+
+    <div class="col-xs-8 weight-progress-container">
+      <div class="weight-progress">
+        <div class="progress-bar progress-bar-warning"
+             role="progressbar" aria-valuenow="60" aria-valuemin="0"
+             aria-valuemax="200" style="width: 60%">
+          <span class="sr-only">60%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="weight-badge weight-badge-success col-xs-2">
+      80<small>kg</small>
+    </div>
+  </div>
+</div>
+
 <wa-weight-graph records="weightRecords">
 </wa-weight-graph>
 
