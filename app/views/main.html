@@ -13,7 +13,8 @@
       {{ startWeight | number : 1 }}<small> kg</small>
     </div>
     <div class="col-xs-8 weight-progress-container">
-      <wa-progress-bar />
+      <wa-progress-bar min="0" max="100"
+        value="{{ 100 - 100 * (currentWeight - targetWeight) / (startWeight - targetWeight) }}"/>
     </div>
 
     <div class="weight-badge weight-badge-success col-xs-2">

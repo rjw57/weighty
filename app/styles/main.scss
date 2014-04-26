@@ -20,21 +20,13 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
 .weight-progress-container {
     @include button-size($padding-large-vertical, $padding-large-horizontal,
       $font-size-large, $line-height-large, $border-radius-large);
-
     .progress-bar {
-        @extend .progress-bar-warning;
+        background-color: lighten($brand-primary, 20%);
     }
 }
 
 .weight-graph svg {
-    height: (9/16) * $container-sm;
-}
-
-// Large screens
-@media (min-width: $screen-lg-min) {
-    .weight-graph svg {
-        height: (9/16) * $container-lg;
-    }
+    height: (9/16) * 700px;
 }
 
 .browsehappy {

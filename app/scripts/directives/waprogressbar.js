@@ -5,10 +5,8 @@ angular.module('webappApp')
     return {
       restrict: 'E',
       templateUrl: 'templates/waprogressbar.html',
+      scope: { min: '@', max: '@', value: '@' },
       link: function postLink(scope, element, attrs) {
-        scope.min = 0;
-        scope.max = 100;
-        scope.value = 50;
       },
     };
   });
