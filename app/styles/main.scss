@@ -26,6 +26,17 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
     }
 }
 
+.weight-graph svg {
+    height: (9/16) * $container-sm;
+}
+
+// Large screens
+@media (min-width: $screen-lg-min) {
+    .weight-graph svg {
+        height: (9/16) * $container-lg;
+    }
+}
+
 .browsehappy {
     margin: 0.2em 0;
     background: #ccc;

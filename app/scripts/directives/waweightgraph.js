@@ -6,11 +6,14 @@ angular.module('webappApp')
         width = 700 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
+    var weightColor = '#428bca', goalColor = '#5cb85c';
+
     return {
-      template: '<div></div>',
+      template: '',
       restrict: 'E',
       scope: {
-        data: '=records',
+        weights: '=weights',
+        goal: '=goal',
       },
       link: function postLink(scope, element, attrs) {
         var chart = nv.models.lineChart()
@@ -23,33 +26,38 @@ angular.module('webappApp')
         chart.xAxis
           .axisLabel('Date')
           .tickFormat(function(d) {
-            return d3.time.format('%x')(new Date(d));
+            return d3.time.format('%e %b %Y')(new Date(d));
           });
 
         chart.yAxis
-          .axisLabel('Weight [kg]')
-          .tickFormat(function(d) {
-            return d3.format('i')(d) + 'kg';
-          });
+          .axisLabel('Weight / kg')
+          .tickFormat(d3.format('.1f'));
 
         var svg = d3.select(element[0]).append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
 
         // Update the chart when window resizes.
         nv.utils.windowResize(function() { chart.update() });
 
-        // Update data
+        // Update weights
         var updateData = function() {
-          var v = [];
-          for(var idx in scope.data) {
-            var r = scope.data[idx];
-            v.push({ x: r.date, y: r.weight });
+          var w = [], g = [], r, idx;
+          for(var idx in scope.weights) {
+            r = scope.weights[idx];
+            w.push({ x: r.date, y: r.weight });
           }
-          svg.datum([{ values: v, key: 'weight' }]).call(chart);
+          for(var idx in scope.goal) {
+            r = scope.goal[idx];
+            g.push({ x: r.date, y: r.weight });
+          }
+
+          svg.datum([
+            { values: g, key: 'goal', color: goalColor },
+            { values: w, key: 'weight', color: weightColor },
+          ]).call(chart);
         };
 
-        scope.$watch('data', updateData);
+        scope.$watch('weights', updateData);
+        scope.$watch('goal', updateData);
       }
     };
   });

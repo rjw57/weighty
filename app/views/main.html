@@ -7,30 +7,24 @@
   <h3 class="text-muted">webapp</h3>
 </div>
 
-<div>
-  Target weight: {{ targetWeight | weight }}
-  Latest weight: {{ weightRecords[weightRecords.length-1].weight | weight }}
-  On: {{ weightRecords[weightRecords.length-1].date | date : 'short' }}
-  By: {{ targetDate | date : 'short' }}
-</div>
-
 <div class="container-fluid">
   <div class="row">
     <div class="weight-badge weight-badge-danger col-xs-2">
-      190<small>kg</small>
+      {{ startWeight | number : 1 }}<small> kg</small>
     </div>
     <div class="col-xs-8 weight-progress-container">
       <wa-progress-bar />
     </div>
 
     <div class="weight-badge weight-badge-success col-xs-2">
-      80<small>kg</small>
+      {{ targetWeight | number : 1 }}<small> kg</small>
     </div>
   </div>
 </div>
 
-<wa-weight-graph records="weightRecords">
-</wa-weight-graph>
+<div class="weight-graph">
+  <wa-weight-graph weights="weights" goal="goal" />
+</div>
 
 <div class="footer">
   <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
