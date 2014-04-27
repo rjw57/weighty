@@ -63,8 +63,8 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 .img-nav-profile {
     width: 30px;// ceil((1.5 * $line-height-computed));
     display: inline;
-    margin-bottom: floor((-0.5 * (30 - $line-height-computed)));
-    margin-top: ceil((-0.5 * (30 - $line-height-computed)));
+    margin-bottom: floor((-0.5 * (30 - $font-size-base)));
+    margin-top: ceil((-0.5 * (30 - $font-size-base)));
     position: relative; top: -1px; // HACK
 }
 
