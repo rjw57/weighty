@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
@@ -16,23 +16,12 @@
 
     <div class="collapse navbar-collapse" id="navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <!-- if we have profile info, a profile dropdown -->
-        <li ng:if="me" class="dropdown hidden-xs">
-          <a href="" class="dropdown-toggle" data-toggle="dropdown">
-            <img class="img-nav-profile img-responsive img-circle" ng:src="{{ me.image.url }}" alt="">
-            &nbsp;{{ me.displayName }} <b class="caret"></b>
-            <ul class="dropdown-menu">
-              <li><a href="" ng:click="logout()">Log out</a></li>
-            </ul>
-          </a>
-        </li>
-
         <li ng:if="!accessToken"><a href="#/login">Login</a></li>
 
         <li ng:if="accessToken"><a href="#/">My Datasets</a></li>
 
         <!-- if we can't get profile info, a logout link -->
-        <li ng:if="accessToken && !me" class="hidden-xs">
+        <li ng:if="accessToken" class="hidden-xs">
           <a href="" ng:click="logout()">Log out</a>
         </li>
 
@@ -41,6 +30,12 @@
           <a href="" ng:click="logout()">Log out</a>
         </li>
       </ul>
+
+      <!-- Currently logged in user -->
+      <p class="navbar-text navbar-right hidden-xs" ng:if="me">
+        {{ me.displayName }}&nbsp;
+        <img class="img-nav-profile img-responsive img-circle" ng:src="{{ me.image.url }}" alt="">
+      </p>
     </div>
   </div>
 </nav>
