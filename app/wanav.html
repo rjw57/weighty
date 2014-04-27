@@ -1,7 +1,7 @@
 <nav class="navbar navbar-default" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <div class="navbar-brand">weighty</div>
+      <a href="" class="navbar-brand">weighty</a>
     </div>
     <!-- A logout button if we're not yet in a position to render a fancy
          person menu -->
@@ -13,7 +13,7 @@
       <li class="dropdown">
         <a href="" class="dropdown-toggle" data-toggle="dropdown">
           <span class="nav-profile-name">{{ me.displayName }}</span>
-          <img class="img-nav-profile img-responsive img-circle" src="{{ me.image.url }}" alt="">
+          <img class="img-nav-profile img-responsive img-circle" ng:src="{{ me.image.url }}" alt="">
           <b class="caret"></b>
         </a>
         <ul class="dropdown-menu">
