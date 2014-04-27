@@ -18,11 +18,6 @@ angular
         redirectTo: '/'
       });
 
-    // Set HTML5 mode if we can
-    if(window.history && window.history.pushState) {
-      $locationProvider.html5Mode(true);
-    }
-
     // HACK to get base URL of web app. I'm sure there should be
     // some better way to do this.
     var baseUrl = document.URL.split('#')[0];
