@@ -29,9 +29,6 @@
           <div class="navbar-brand">webapp</div>
         </div>
         <form class="navbar-form navbar-right">
-          <button ng:if="!accessToken" class="btn btn-default" ng:click="login()">
-            Login to Google Drive
-          </button>
           <button ng:if="accessToken" class="btn btn-default" ng:click="logout()">Logout</button>
         </form>
       </div>
@@ -91,6 +88,7 @@
         <script src="scripts/directives/waweightgraph.js"></script>
         <script src="scripts/directives/waprogressbar.js"></script>
         <script src="scripts/services/googleapi.js"></script>
+        <script src="scripts/controllers/login.js"></script>
         <!-- endbuild -->
 </body>
 </html>
