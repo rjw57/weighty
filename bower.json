@@ -12,10 +12,17 @@
     "angular-sanitize": "~1.2.15",
     "angular-route": "~1.2.15",
     "nvd3": "~1.1.15-beta",
-    "angular-oauth": "*"
+    "angular-oauth": "*",
+    "mobile-angular-ui": "~1.1.0-beta.11"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.15",
     "angular-scenario": "~1.2.15"
+  },
+  "overrides": {
+    "mobile-angular-ui": {
+      "_comment": "The main entry for mobile-angular-ui points to the wrong location",
+      "main": "dist/js/mobile-angular-ui.min.js"
+    }
   }
 }
