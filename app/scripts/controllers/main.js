@@ -3,10 +3,11 @@
 angular.module('webappApp')
   .controller('MainCtrl', function ($scope, $location, $routeParams, GoogleApi) {
     // useful constants
-    var WORKSHEETS_FEED = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
+    var WORKSHEETS_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
     var SSHEETS_FEED_BASE = 'https://spreadsheets.google.com/feeds/spreadsheets/';
     var LIST_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#listfeed';
     var VIEW_LINK = 'alternate';
+    var GSX_SCHEMA = 'http://schemas.google.com/spreadsheets/2006/extended';
     //var CELL_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#cellfeed';
 
     // We need a sheet id to continue
@@ -39,11 +40,11 @@ angular.module('webappApp')
 
     // We have a new sheet...
     $scope.$watch('spreadsheetLinks', function() {
-      if(!$scope.spreadsheetLinks || !$scope.spreadsheetLinks[WORKSHEETS_FEED]) { return; }
+      if(!$scope.spreadsheetLinks || !$scope.spreadsheetLinks[WORKSHEETS_FEED_SCHEMA]) { return; }
 
       $scope.spreadsheetViewLink = $scope.spreadsheetLinks[VIEW_LINK];
 
-      GoogleApi.get($scope.spreadsheetLinks[WORKSHEETS_FEED], { responseType: 'document' })
+      GoogleApi.get($scope.spreadsheetLinks[WORKSHEETS_FEED_SCHEMA], { responseType: 'document' })
         .success(function(data) {
           $scope.worksheets = [];
 
@@ -71,9 +72,12 @@ angular.module('webappApp')
           angular.forEach(angular.element(data).find('entry'), function(entry) {
             var timestamp, weight, date;
 
-            entry = angular.element(entry);
-            timestamp = +entry.find('timestamp').text();
-            weight = +entry.find('weight').text();
+            // Data are stored in text properties of nodes. Note use of '+' as a
+            // cast-to-number equivalent.
+            timestamp = +angular.element(
+              entry.getElementsByTagNameNS(GSX_SCHEMA, 'timestamp')).text();
+            weight = +angular.element(
+              entry.getElementsByTagNameNS(GSX_SCHEMA, 'weight')).text();
             date = new Date(timestamp);
 
             $scope.weights.push({ date: date, weight: weight });
