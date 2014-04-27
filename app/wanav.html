@@ -1,6 +1,12 @@
 <nav class="navbar navbar-default" role="navigation">
   <div class="container">
     <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
       <a href="#" class="navbar-brand">weighty</a>
       <p ng:if="me" class="visible-xs pull-right navbar-text nav-xs-profile">
         {{ me.displayName }}
@@ -8,7 +14,9 @@
       </p>
     </div>
 
-    <ul class="nav navbar-nav navbar-right">
+    <ul class="nav navbar-nav navbar-right collapse navbar-collapse" id="navbar-collapse-1">
+      <li ng:if="!accessToken"><a href="#/login">Login</a></li>
+
       <li ng:if="accessToken"><a href="#/">My Datasets</a></li>
 
       <!-- one of a profile link or, if we can't get profile info, a logout link -->
