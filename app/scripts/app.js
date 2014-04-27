@@ -27,7 +27,7 @@ angular
 
     TokenProvider.extendConfig({
       clientId: '266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com',
-      redirectUri: baseUrl + '/bower_components/angular-oauth/src/oauth2callback.html',
+      redirectUri: baseUrl + '/oauth2callback.html',
       scopes: [
         'https://www.googleapis.com/auth/plus.me', // access basic user info
         'https://www.googleapis.com/auth/drive.file', // create and access files we create
