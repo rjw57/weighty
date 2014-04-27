@@ -23,16 +23,8 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <nav class="navbar navbar-default" role="navigation" ng-controller="NavCtrl">
-      <div class="container">
-        <div class="navbar-header">
-          <div class="navbar-brand">webapp</div>
-        </div>
-        <form ng:if="accessToken" class="navbar-form navbar-right">
-          <button class="btn btn-default" ng:click="logout()">Logout</button>
-        </form>
-      </div>
-    </nav>
+    <!-- Global navbar -->
+    <wa:nav></wa:nav>
 
     <!-- Add your site or application content here -->
     <div class="container" ng-view=""></div>
@@ -87,6 +79,7 @@
         <script src="scripts/filters/weight.js"></script>
         <script src="scripts/directives/waweightgraph.js"></script>
         <script src="scripts/directives/waprogressbar.js"></script>
+        <script src="scripts/directives/wanav.js"></script>
         <script src="scripts/services/googleapi.js"></script>
         <script src="scripts/controllers/login.js"></script>
         <!-- endbuild -->

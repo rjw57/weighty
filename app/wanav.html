@@ -1,0 +1,10 @@
+<nav class="navbar navbar-default" role="navigation" ng-controller="NavCtrl">
+  <div class="container">
+    <div class="navbar-header">
+      <div class="navbar-brand">webapp</div>
+    </div>
+    <form ng:if="accessToken" class="navbar-form navbar-right">
+      <button class="btn btn-default" ng:click="logout()">Logout</button>
+    </form>
+  </div>
+</nav>
