@@ -25,7 +25,9 @@
       "main": [
         "dist/js/mobile-angular-ui.min.js",
         "dist/js/mobile-angular-ui-scrollable-iscroll.min.js",
-        "dist/js/mobile-angular-ui-touch-ng.min.js"
+        "dist/js/mobile-angular-ui-touch-ng.min.js",
+        "dist/css/mobile-angular-ui-base.min.css",
+        "dist/css/mobile-angular-ui-desktop.min.css"
       ]
     },
     "bootstrap-sass-official": {
