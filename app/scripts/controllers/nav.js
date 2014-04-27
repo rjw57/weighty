@@ -2,9 +2,6 @@
 
 angular.module('webappApp')
   .controller('NavCtrl', function ($scope, GoogleApi) {
-    $scope.login = GoogleApi.login;
-    $scope.logout = GoogleApi.logout;
-
     $scope.me = null;
 
     $scope.$watch('accessToken', function() {

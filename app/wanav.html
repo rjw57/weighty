@@ -20,15 +20,7 @@
 
         <li ng:if="accessToken"><a href="#/">My Datasets</a></li>
 
-        <!-- if we can't get profile info, a logout link -->
-        <li ng:if="accessToken" class="hidden-xs">
-          <a href="" ng:click="logout()">Log out</a>
-        </li>
-
-        <!-- on small screens the  profile stuff is hidden and we just have a logout link -->
-        <li ng:if="accessToken" class="visible-xs">
-          <a href="" ng:click="logout()">Log out</a>
-        </li>
+        <li ng:if="accessToken"><a href="#/logout">Log out</a></li>
       </ul>
 
       <!-- Currently logged in user -->
