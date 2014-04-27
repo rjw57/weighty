@@ -1,52 +1,15 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('MainCtrl', function ($scope, $rootScope, Token, $http) {
-    // Google login via OAuth
-    $scope.accessToken = Token.get();
-
-    $scope.login = function() {
-      /* global alert */
-      /* jshint camelcase: false */
-      Token.getTokenByPopup()
-        .then(function(params) {
-          // Success getting token from popup.
-
-          // Verify the token before setting it, to avoid the confused deputy problem.
-          Token.verifyAsync(params.access_token).
-            then(function() {
-              $rootScope.$apply(function() {
-                $scope.accessToken = params.access_token;
-                $scope.expiresIn = params.expires_in;
-                Token.set(params.access_token);
-              });
-            }, function() {
-              // FIXME: add diagnostics box
-              alert('Failed to verify token.');
-            });
-
-        }, function() {
-          // FIXME: add diagnostics box
-          // Failure getting token from popup.
-          alert('Failed to get token from popup.');
-        });
-    };
-
-    // unauthenticating is a *lot* easier :)
-    $scope.logout = function() {
-      $scope.accessToken = null;
-      Token.clear();
-    };
+  .controller('MainCtrl', function ($scope, $rootScope, $http, GoogleApi) {
+    $scope.login = GoogleApi.login;
+    $scope.logout = GoogleApi.logout;
 
     $scope.$watch('accessToken', function() {
       if(!$scope.accessToken) { return; }
 
       // get user info
-      $http.get('https://www.googleapis.com/plus/v1/people/me', {
-          headers: {
-            'Authorization': 'Bearer ' + $scope.accessToken,
-          },
-        })
+      GoogleApi.get('https://www.googleapis.com/plus/v1/people/me')
         .success(function(data) {
           console.log(data);
         });
