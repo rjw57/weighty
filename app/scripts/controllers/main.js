@@ -12,7 +12,6 @@ angular.module('webappApp')
     // We need a sheet id to continue
     if(!$routeParams.sheetId) {
       $location.path('/');
-      $location.replace();
       return;
     }
 
@@ -20,7 +19,6 @@ angular.module('webappApp')
       // We require the user to be logged in for this view
       if(!$scope.accessToken) {
         $location.path('/login');
-        $location.replace();
         return;
       }
 

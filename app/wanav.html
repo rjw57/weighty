@@ -16,9 +16,13 @@
 
     <div class="collapse navbar-collapse" id="navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li ng:if="!accessToken"><a href="#/login">Login</a></li>
+        <li ng:if="!accessToken" ng:class="{ active: active == 'login' }">
+          <a href="#/login">Login</a>
+        </li>
 
-        <li ng:if="accessToken"><a href="#/">My Datasets</a></li>
+        <li ng:if="accessToken" ng:class="{ active: active == 'datasets' }">
+          <a href="#/datasets">My Datasets</a>
+        <li>
 
         <li ng:if="accessToken"><a href="#/logout">Log out</a></li>
       </ul>

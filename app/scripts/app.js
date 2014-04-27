@@ -11,8 +11,12 @@ angular
   .config(function ($routeProvider, $locationProvider, TokenProvider) {
     $routeProvider
       .when('/', {
+        redirectTo: '/datasets'
+      })
+      .when('/datasets', {
         templateUrl: 'views/datasetlist.html',
-        controller: 'DatasetListCtrl'
+        controller: 'DatasetListCtrl',
+        active: 'datasets'
       })
       .when('/dataset/:sheetId', {
         templateUrl: 'views/main.html',
@@ -20,7 +24,8 @@ angular
       })
       .when('/login', {
         templateUrl: 'views/login.html',
-        controller: 'LoginCtrl'
+        controller: 'LoginCtrl',
+        active: 'login'
       })
       .when('/logout', {
         templateUrl: 'views/logout.html',

@@ -8,7 +8,6 @@ angular.module('webappApp')
     $scope.$watch('accessToken', function() {
       if(!$scope.accessToken) {
         $location.path('/login');
-        $location.replace();
         return;
       }
 
