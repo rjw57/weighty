@@ -1,26 +1,26 @@
 <form class="row">
-  <div class="col-sm-10">
-    <input type="text" class="form-control input-lg" placeholder="Dataset name&hellip;" ng:model="datasetName"></input>
+  <div class="col-sm-10 col-xs-8">
+    <input type="text" class="form-control input-lg" placeholder="Dataset name" ng:model="datasetName"></input>
   </div>
-  <div class="col-sm-2">
-    <button type="submit" class="form-control input-lg btn btn-primary btn-lg" ng:click="create()">Create</button>
+  <div class="col-sm-2 col-xs-4">
+    <button type="submit" class="form-control input-lg btn btn-primary btn-lg" ng:click="create()">
+      <span class="hidden-xs">Create</span>
+      <span class="visible-xs glyphicon glyphicon-plus"></span>
+    </button>
     </button>
   </div>
 </form>
 
 <div ng:if="items && items.length > 0">
-  <table class="table table-striped table-responsive">
-    <thead>
-      <th>Dataset</th>
-      <th>Created</th>
-      <th>Updated</th>
-    </thead>
+  <hr>
+  <table class="table table-striped table-bordered">
+    <thead></thead>
     <tbody>
       <tr ng:repeat="item in items">
         <td><a ng:href="#dataset/{{ item.id }}">{{ item.title }}</a></td>
-        <td>{{ item.createdDate | date : 'mediumDate' }}</td>
-        <td>{{ item.modifiedDate | date : 'mediumDate' }}</td>
       <tr>
-    </tbody
+    </tbody>
+    <tfoot></tfoot>
   </table>
 </div>
+
