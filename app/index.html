@@ -17,6 +17,10 @@
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+
+    <!-- must be *after* main since main pulls in bootstrap -->
+    <link rel="stylesheet" href="bower_components/mobile-angular-ui/dist/css/mobile-angular-ui-base.css" />
+    <link rel="stylesheet" href="bower_components/mobile-angular-ui/dist/css/mobile-angular-ui-desktop.css" />
     <!-- endbuild -->
   </head>
   <body ng-app="webappApp">
