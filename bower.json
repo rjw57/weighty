@@ -20,6 +20,12 @@
     "angular-scenario": "~1.2.15"
   },
   "overrides": {
+    "angular-oauth": {
+      "main": [
+        "src/js/googleOauth.js",
+        "src/js/angularOauth.js"
+      ]
+    },
     "mobile-angular-ui": {
       "_comment": "The main entry for mobile-angular-ui points to the wrong location",
       "main": [
