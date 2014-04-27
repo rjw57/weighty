@@ -1,10 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('MainCtrl', function ($scope, $location, $http, GoogleApi) {
-    $scope.login = GoogleApi.login;
-    $scope.logout = GoogleApi.logout;
-
+  .controller('MainCtrl', function ($scope, $location) {
     $scope.$watch('accessToken', function() {
       // We require the user to be logged in for this view
       if(!$scope.accessToken) {
@@ -12,12 +9,6 @@ angular.module('webappApp')
         $location.replace();
         return;
       }
-
-      // get user info
-      GoogleApi.get('https://www.googleapis.com/plus/v1/people/me')
-        .success(function(data) {
-          console.log(data);
-        });
     });
 
     var DAYS = 1000*60*60*24;

@@ -34,6 +34,16 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     padding: 0.2em 0;
 }
 
+.img-nav-profile {
+    width: ceil(($font-size-base * $line-height-base));
+    vertical-align: -4px;
+    display: inline;
+}
+
+.nav-profile-name {
+    padding-right: 0.5ex;
+}
+
 /* Space out content a bit */
 body {
     padding-bottom: 20px;
