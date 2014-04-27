@@ -11,6 +11,10 @@ angular
   .config(function ($routeProvider, $locationProvider, TokenProvider) {
     $routeProvider
       .when('/', {
+        templateUrl: 'views/datasetlist.html',
+        controller: 'DatasetListCtrl'
+      })
+      .when('/main', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
@@ -19,7 +23,7 @@ angular
         controller: 'LoginCtrl'
       })
       .otherwise({
-        redirectTo: '/'
+        templateUrl: '404.html',
       });
 
     // HACK to get base URL of web app. I'm sure there should be

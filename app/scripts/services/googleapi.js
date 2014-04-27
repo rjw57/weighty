@@ -41,12 +41,25 @@ angular.module('webappApp')
     };
 
     // Make a request, authenticated if possible
-    GoogleApi.prototype.get = function(url) {
-      var headers = { };
+    GoogleApi.prototype.http = function(config) {
+      // copy config
+      var fullConfig = angular.extend({ headers: {} }, config);
+
+      // set headers
       if($rootScope.accessToken) {
-        headers['Authorization'] = 'Bearer ' + $rootScope.accessToken; // jshint ignore:line
+        fullConfig.headers['Authorization'] = // jshint ignore:line
+          'Bearer ' + $rootScope.accessToken;
       }
-      return $http.get(url, { headers: headers });
+
+      return $http(fullConfig);
+    };
+
+    // Convenience wrappers
+    GoogleApi.prototype.get = function(url, config) {
+      return this.http(angular.extend({ method: 'GET', url: url }, config));
+    };
+    GoogleApi.prototype.post = function(url, data, config) {
+      return this.http(angular.extend({ method: 'POST', url: url, data: data }, config));
     };
 
     return new GoogleApi();

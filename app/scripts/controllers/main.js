@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('MainCtrl', function ($scope, $location) {
+  .controller('MainCtrl', function ($scope, $location, GoogleApi) {
     $scope.$watch('accessToken', function() {
       // We require the user to be logged in for this view
       if(!$scope.accessToken) {
@@ -9,6 +9,11 @@ angular.module('webappApp')
         $location.replace();
         return;
       }
+
+      GoogleApi.get('https://www.googleapis.com/drive/v2/files')
+        .success(function(data) {
+          console.log(data);
+        });
     });
 
     var DAYS = 1000*60*60*24;
