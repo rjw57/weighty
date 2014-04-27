@@ -22,7 +22,28 @@
   "overrides": {
     "mobile-angular-ui": {
       "_comment": "The main entry for mobile-angular-ui points to the wrong location",
-      "main": "dist/js/mobile-angular-ui.min.js"
+      "main": [
+        "dist/js/mobile-angular-ui.min.js",
+        "dist/js/mobile-angular-ui-scrollable-iscroll.min.js",
+        "dist/js/mobile-angular-ui-touch-ng.min.js"
+      ]
+    },
+    "bootstrap-sass-official": {
+      "_comment": "mobile-angular-ui provides bootstrap. Cherry pick what we need",
+      "main": null
+    },
+    "bootstrap": {
+      "_comment": "mobile-angular-ui provides bootstrap. Cherry pick what we need",
+      "main": null
+    },
+    "overthrow": {
+      "_comment": "overflow sensibly does not include build atrefacts in the source tree",
+      "main": [
+        "src/overthrow-detect.js",
+        "src/overthrow-init.js",
+        "src/overthrow-polyfill.js",
+        "src/overthrow-toss.js"
+      ]
     }
   }
 }

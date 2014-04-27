@@ -3,12 +3,17 @@
 $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
 
 // bower:scss
-@import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
 // endbower
+
+// include only the parts of bootstrap sass we need to avoid trampling on
+// mobile-angular-ui's styles too much
+@import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap/_mixins.scss";
+@import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap/_variables.scss";
+@import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap/_utilities.scss";
 
 @import url(http://fonts.googleapis.com/css?family=Nunito);
 
-.navbar-brand {
+.navbar-brand, .app-name {
     font-family: 'Nunito', $font-family-base;
 }
 
@@ -42,10 +47,6 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     .weight-progress-label {
         padding-top: $padding-large-vertical;
         padding-bottom: $padding-large-vertical;
-
-        .weight-progress-arrow {
-            @extend .text-muted;
-        }
     }
 }
 
@@ -72,41 +73,4 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 
 .nav-profile-name {
     //padding-right: 0.5ex;
-}
-
-/* Space out content a bit */
-body {
-    padding-bottom: 20px;
-}
-
-/* Everything but the jumbotron gets side spacing for mobile first views */
-.header,
-.marketing,
-.footer {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-/* Custom page footer */
-.footer {
-    padding-top: 19px;
-    color: #777;
-    border-top: 1px solid #e5e5e5;
-}
-
-.container-narrow > hr {
-    margin: 30px 0;
-}
-
-/* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
-    .container {
-        max-width: 730px;
-    }
-
-    /* Remove the padding we set earlier */
-    .footer {
-        padding-left: 0;
-        padding-right: 0;
-    }
 }

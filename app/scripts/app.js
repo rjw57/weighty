@@ -6,7 +6,10 @@ angular
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    'googleOauth'
+    'googleOauth',
+    'mobile-angular-ui',
+    'mobile-angular-ui.scrollable',
+    'mobile-angular-ui.touch'
   ])
   .config(function ($routeProvider, $locationProvider, TokenProvider) {
     $routeProvider

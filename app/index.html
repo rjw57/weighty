@@ -12,7 +12,6 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/nvd3/src/nv.d3.css" />
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -28,11 +27,51 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <!-- App navidation sidebar -->
-    <wa:sidebar></wa:sidebar>
+    <!-- Sidebars -->
 
-    <!-- Main app content -->
-    <div class="app" ng-view="">
+    <div class="sidebar sidebar-left" toggleable parent-active-class="sidebar-left-in" id="mainSidebar">
+      <h1 class="app-name">weightly</h1>
+
+      <div class="scrollable">
+        <div class="scrollable-content">
+          <div class="list-group" toggle="off" bubble target="mainSidebar">
+            <a ng:if="!accessToken" class="list-group-item" href="#/login">
+              Login <i class="fa fa-chevron-right pull-right"></i>
+            </a>
+            <a ng:if="accessToken" class="list-group-item" href="#/datasets">
+              My datasets <i class="fa fa-chevron-right pull-right"></i>
+            </a>
+            <a ng:if="accessToken" class="list-group-item" href="#/logout">
+              Logout <i class="fa fa-chevron-right pull-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app">
+      <!-- Navbars -->
+      <div class="navbar navbar-app navbar-absolute-top">
+        <div class="navbar-brand navbar-brand-center" yield-to="title">
+            <span>weightly</span>
+        </div>
+
+        <div class="btn-group pull-left">
+          <div ng-click="toggle('mainSidebar')" class="btn btn-navbar sidebar-toggle">
+            <i class="fa fa-bars"></i> Menu
+          </div>
+        </div>
+
+        <div class="btn-group pull-right" yield-to="navbarAction">
+          <div class="btn btn-navbar">
+            <i class="fa fa-plus"></i> New
+          </div>
+        </div>
+      </div>
+
+      <div class="app-body">
+        <ng:view class="app-content"></ng:view>
+      </div>
     </div>
 
     <!--[if lt IE 9]>
@@ -44,30 +83,22 @@
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/affix.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/alert.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/button.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/carousel.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/collapse.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/dropdown.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/tab.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/transition.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/scrollspy.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/modal.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/tooltip.js"></script>
-    <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/popover.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/d3/d3.js"></script>
     <script src="bower_components/nvd3/nv.d3.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/fastclick/lib/fastclick.js"></script>
-    <script src="bower_components/overthrow/dist/overthrow.js"></script>
+    <script src="bower_components/overthrow/src/overthrow-detect.js"></script>
+    <script src="bower_components/overthrow/src/overthrow-init.js"></script>
+    <script src="bower_components/overthrow/src/overthrow-polyfill.js"></script>
+    <script src="bower_components/overthrow/src/overthrow-toss.js"></script>
     <script src="bower_components/angular-toggle-switch/angular-toggle-switch.min.js"></script>
     <script src="bower_components/mobile-angular-ui/dist/js/mobile-angular-ui.min.js"></script>
+    <script src="bower_components/mobile-angular-ui/dist/js/mobile-angular-ui-scrollable-iscroll.min.js"></script>
+    <script src="bower_components/mobile-angular-ui/dist/js/mobile-angular-ui-touch-ng.min.js"></script>
     <!-- endbower -->
     <script src="bower_components/angular-oauth/src/js/googleOauth.js"></script>
     <script src="bower_components/angular-oauth/src/js/angularOauth.js"></script>
