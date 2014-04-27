@@ -315,6 +315,11 @@ module.exports = function (grunt) {
           ]
         }, {
           expand: true,
+          cwd: '<%= yeoman.app %>/bower_components/mobile-angular-ui/dist/fonts/',
+          dest: '<%= yeoman.dist %>/fonts',
+          src: ['*.{woff,ttf,svg}']
+        }, {
+          expand: true,
           cwd: '.tmp/images',
           dest: '<%= yeoman.dist %>/images',
           src: ['generated/*']
