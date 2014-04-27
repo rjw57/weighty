@@ -1,7 +1,20 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('MainCtrl', function ($scope, $location, GoogleApi) {
+  .controller('MainCtrl', function ($scope, $location, $routeParams, GoogleApi) {
+    // useful constants
+    var WORKSHEETS_FEED = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
+    var SSHEETS_FEED_BASE = 'https://spreadsheets.google.com/feeds/spreadsheets/';
+    var LIST_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#listfeed';
+    //var CELL_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#cellfeed';
+
+    // We need a sheet id to continue
+    if(!$routeParams.sheetId) {
+      $location.path('/');
+      $location.replace();
+      return;
+    }
+
     $scope.$watch('accessToken', function() {
       // We require the user to be logged in for this view
       if(!$scope.accessToken) {
@@ -10,9 +23,65 @@ angular.module('webappApp')
         return;
       }
 
-      GoogleApi.get('https://www.googleapis.com/drive/v2/files')
+      // Kick off a request to the spreadsheet API.
+      GoogleApi.get(SSHEETS_FEED_BASE + $routeParams.sheetId, {
+          responseType: 'document',
+        })
         .success(function(data) {
-          console.log(data);
+          // Look work worksheet link tag
+          $scope.worksheetsFeedUrl = null;
+          angular.forEach(angular.element(data).find('link'), function(link) {
+            link = angular.element(link);
+            if(link.attr('rel') !== WORKSHEETS_FEED) { return; }
+            $scope.worksheetsFeedUrl = link.attr('href');
+          });
+
+          if(!$scope.worksheetsFeedUrl) {
+            // FIXME: error reporting
+            alert('no worksheets');
+          }
+        });
+    });
+
+    // We have a new feed of worksheets...
+    $scope.$watch('worksheetsFeedUrl', function() {
+      if(!$scope.worksheetsFeedUrl) { return; }
+
+      GoogleApi.get($scope.worksheetsFeedUrl, { responseType: 'document' })
+        .success(function(data) {
+          $scope.worksheets = [];
+
+          // Store links for each worksheet
+          angular.forEach(angular.element(data).find('entry'), function(entry) {
+            var wsLinks = {};
+            entry = angular.element(entry);
+            angular.forEach(entry.find('link'), function(link) {
+              link = angular.element(link);
+              wsLinks[link.attr('rel')] = link.attr('href');
+            });
+            $scope.worksheets.push({ links: wsLinks });
+          });
+        });
+    });
+
+    // We have some new worksheet links...
+    $scope.$watch('worksheets', function() {
+      if(!$scope.worksheets || $scope.worksheets.length === 0) { return; }
+
+      // Data is stored in the first worksheet
+      GoogleApi.get($scope.worksheets[0].links[LIST_FEED_SCHEMA], { responseType: 'document' })
+        .success(function(data) {
+          $scope.weights = [];
+          angular.forEach(angular.element(data).find('entry'), function(entry) {
+            var timestamp, weight, date;
+
+            entry = angular.element(entry);
+            timestamp = +entry.find('timestamp').text();
+            weight = +entry.find('weight').text();
+            date = new Date(timestamp);
+
+            $scope.weights.push({ date: date, weight: weight });
+          });
         });
     });
 
@@ -29,22 +98,6 @@ angular.module('webappApp')
     $scope.targetDate = new Date();
     $scope.weights = [];
 
-    d3.tsv('data/mockdata.tsv')
-      .row(function(d) {
-        return {
-          date: d3.time.format('%d/%m/%Y').parse(d.date),
-          weight: +d.weight
-        };
-      })
-      .get(function(err, data) {
-        $scope.$apply(function() {
-          $scope.weights = data;
-
-          // HACK
-          $scope.targetDate = new Date($scope.weights[0].date.getTime() + 100*DAYS);
-        });
-      });
-
     $scope.$watch('weights', function() {
       $scope.goal = [];
 
@@ -52,6 +105,9 @@ angular.module('webappApp')
       if(!$scope.weights || $scope.weights.length === 0) {
         return;
       }
+
+      // HACK
+      $scope.targetDate = new Date($scope.weights[0].date.getTime() + 100*DAYS);
 
       $scope.startWeight = $scope.weights[0].weight;
       $scope.currentWeight = $scope.weights[$scope.weights.length-1].weight;

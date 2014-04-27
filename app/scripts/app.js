@@ -14,7 +14,7 @@ angular
         templateUrl: 'views/datasetlist.html',
         controller: 'DatasetListCtrl'
       })
-      .when('/main', {
+      .when('/dataset/:sheetId', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
@@ -39,6 +39,7 @@ angular
       scopes: [
         'https://www.googleapis.com/auth/plus.me', // access basic user info
         'https://www.googleapis.com/auth/drive.file', // create and access files we create
+        'https://spreadsheets.google.com/feeds', // spreadsheets API
       ],
     });
   });

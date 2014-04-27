@@ -17,6 +17,8 @@ angular.module('webappApp')
     });
 
     $scope.refreshList = function() {
+      if(!$scope.accessToken) { return; }
+
       // Only look for weightly sheets
       GoogleApi.get('https://www.googleapis.com/drive/v2/files', {
           params: {
@@ -25,8 +27,6 @@ angular.module('webappApp')
         }).success(function(data) {
           $scope.items = [];
           angular.forEach(data.items, function(item) {
-            console.log(item);
-
             $scope.items.push({
               title: item.title,
               id: item.id,

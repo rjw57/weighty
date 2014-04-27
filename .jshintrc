@@ -21,6 +21,7 @@
   "globals": {
     "angular": false,
     "d3": false,
-    "nv": false
+    "nv": false,
+    "alert": false
   }
 }

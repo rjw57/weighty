@@ -17,7 +17,7 @@
     </thead>
     <tbody>
       <tr ng:repeat="item in items">
-        <td>{{ item.title }}</td>
+        <td><a ng:href="#dataset/{{ item.id }}">{{ item.title }}</a></td>
         <td>{{ item.createdDate | date : 'mediumDate' }}</td>
         <td>{{ item.modifiedDate | date : 'mediumDate' }}</td>
       <tr>
