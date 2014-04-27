@@ -18,8 +18,28 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 .weight-badge-success { background-color: $brand-success; }
 
 .weight-progress-container {
-    .progress-bar {
-        background-color: lighten($brand-primary, 20%);
+    .weight-progress-bar {
+        padding-top: $padding-large-vertical;
+        padding-bottom: $padding-large-vertical;
+
+        .progress {
+            border-radius: $border-radius-large;
+            background-color: lighten($brand-primary, 25%);
+            height: 43px - 2 * $padding-large-vertical; // FIXME should really be computed
+        }
+
+        .progress-bar {
+            background-color: $brand-primary;
+        }
+    }
+
+    .weight-progress-label {
+        padding-top: $padding-large-vertical;
+        padding-bottom: $padding-large-vertical;
+
+        .weight-progress-arrow {
+            @extend .text-muted;
+        }
     }
 }
 

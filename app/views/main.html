@@ -7,12 +7,11 @@
     </div>
 
     <div class="weight-progress-container col-sm-6 col-xs-4">
-      <div class="hidden-xs">
+      <div class="hidden-xs weight-progress-bar">
         <wa-progress-bar min="0" max="100" value="{{ 100 * progress }}" />
       </div>
-      <div class="visible-xs" style="text-align: center">
-        <div><span class="glyphicon glyphicon-arrow-right"></span></div>
-        <div>{{ 100 * progress | number : 0 }}%</div>
+      <div class="visible-xs weight-progress-label" style="text-align: center">
+        <span class="weight-progress-percentage">{{ 100 * progress | number : 0 }}% to</span>
       </div>
     </div>
 
