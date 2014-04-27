@@ -6,6 +6,7 @@ angular.module('webappApp')
     var WORKSHEETS_FEED = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
     var SSHEETS_FEED_BASE = 'https://spreadsheets.google.com/feeds/spreadsheets/';
     var LIST_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#listfeed';
+    var VIEW_LINK = 'alternate';
     //var CELL_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#cellfeed';
 
     // We need a sheet id to continue
@@ -28,26 +29,23 @@ angular.module('webappApp')
           responseType: 'document',
         })
         .success(function(data) {
-          // Look work worksheet link tag
-          $scope.worksheetsFeedUrl = null;
-          angular.forEach(angular.element(data).find('link'), function(link) {
+          // Extract spreasheet links
+          $scope.spreadsheetLinks = {};
+          data = angular.element(data);
+          angular.forEach(data.find('link'), function(link) {
             link = angular.element(link);
-            if(link.attr('rel') !== WORKSHEETS_FEED) { return; }
-            $scope.worksheetsFeedUrl = link.attr('href');
+            $scope.spreadsheetLinks[link.attr('rel')] = link.attr('href');
           });
-
-          if(!$scope.worksheetsFeedUrl) {
-            // FIXME: error reporting
-            alert('no worksheets');
-          }
         });
     });
 
-    // We have a new feed of worksheets...
-    $scope.$watch('worksheetsFeedUrl', function() {
-      if(!$scope.worksheetsFeedUrl) { return; }
+    // We have a new sheet...
+    $scope.$watch('spreadsheetLinks', function() {
+      if(!$scope.spreadsheetLinks || !$scope.spreadsheetLinks[WORKSHEETS_FEED]) { return; }
 
-      GoogleApi.get($scope.worksheetsFeedUrl, { responseType: 'document' })
+      $scope.spreadsheetViewLink = $scope.spreadsheetLinks[VIEW_LINK];
+
+      GoogleApi.get($scope.spreadsheetLinks[WORKSHEETS_FEED], { responseType: 'document' })
         .success(function(data) {
           $scope.worksheets = [];
 

@@ -23,8 +23,13 @@
     </div>
   </div>
 
-  <div class="weight-graph">
-    <wa-weight-graph weights="weights" goal="goal" />
+  <div>
+    <wa:weight-graph class="weight-graph" weights="weights" goal="goal"></wa:weight-graph>
+    <div ng:if="spreadsheetViewLink" class="text-right">
+      <small><a ng:href="{{ spreadsheetViewLink }}" target="_blank">
+          <span class="text-muted">view in Google Drive</span>
+      </a></small>
+    </div>
   </div>
 
   <div class="footer">
