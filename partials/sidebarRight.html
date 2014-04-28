@@ -1,5 +1,11 @@
 <div class="scrollable">
-  <div class="scrollable-content" ng:controller="DatasetListCtrl">
+  <div class="scrollable-content" ng:hide="isSignedIn">
+    <div class="section container text-centered text-muted">
+      Sign in to manage your datasets.
+    </div>
+  </div>
+
+  <div class="scrollable-content" ng:controller="DatasetListCtrl" ng:show="isSignedIn">
     <div class="list-group" toggle="off" bubble target="rightSidebar">
 
     <a class="list-group-item media" ng:href="#/dataset/{{ item.id }}"
