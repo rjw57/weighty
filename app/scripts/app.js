@@ -13,19 +13,20 @@ angular
   ])
   .config(function ($routeProvider, $locationProvider, TokenProvider) {
     $routeProvider
+      .when('/', {
+        templateUrl: 'views/root.html',
+      })
       // Show a given dataset keyed by id
       .when('/dataset/:sheetId', {
         templateUrl: 'views/dataset.html',
         controller: 'DatasetCtrl'
-      })
-      .when('/', {
-        redirectTo: '/datasets'
       })
       .when('/datasets', {
         templateUrl: 'views/datasetlist.html',
         controller: 'DatasetListCtrl',
         active: 'datasets'
       })
+      /*
       .when('/login', {
         templateUrl: 'views/login.html',
         controller: 'LoginCtrl',
@@ -35,8 +36,9 @@ angular
         templateUrl: 'views/logout.html',
         controller: 'LogoutCtrl'
       })
+      */
       .otherwise({
-        templateUrl: '404.html',
+        redirectTo: '/',
       });
 
     // HACK to get base URL of web app. I'm sure there should be
