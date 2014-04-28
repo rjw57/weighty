@@ -60,7 +60,11 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 }
 
 .weight-graph svg {
-    height: (9/16) * 700px;
+    width: 0.9*100vw;
+    height: 0.9*75vw; /* 100/75 = 1.333 */
+    max-height: 0.9*100vh;
+    max-width: 0.9*133.33vh; /* 4/3 = 1.333 */
+    margin: auto;
 }
 
 .browsehappy {
