@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('MainCtrl', function ($scope, $location, $routeParams, GoogleApi) {
+  .controller('DatasetCtrl', function ($scope, $location, $routeParams, GoogleApi) {
     // useful constants
     var WORKSHEETS_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
     var SSHEETS_FEED_BASE = 'https://spreadsheets.google.com/feeds/spreadsheets/';

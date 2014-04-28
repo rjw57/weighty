@@ -13,6 +13,11 @@ angular
   ])
   .config(function ($routeProvider, $locationProvider, TokenProvider) {
     $routeProvider
+      // Show a given dataset keyed by id
+      .when('/dataset/:sheetId', {
+        templateUrl: 'views/dataset.html',
+        controller: 'DatasetCtrl'
+      })
       .when('/', {
         redirectTo: '/datasets'
       })
@@ -20,10 +25,6 @@ angular
         templateUrl: 'views/datasetlist.html',
         controller: 'DatasetListCtrl',
         active: 'datasets'
-      })
-      .when('/dataset/:sheetId', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
       })
       .when('/login', {
         templateUrl: 'views/login.html',
