@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="webappApp" ng:controller="NavCtrl">
+  <body ng-app="webappApp" ng:controller="GoogleAccountCtrl">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -56,8 +56,14 @@
         </div>
 
         <div ng:if="me" class="btn-group pull-right">
-          <a href="#/logout" class="btn btn-navbar">
+          <a ng:click="doLogout()" class="btn btn-navbar">
             <i class="fa fa-sign-out"></i> Sign out
+          </a>
+        </div>
+
+        <div ng:if="!me" class="btn-group pull-right">
+          <a ng:click="doLogin()" class="btn btn-navbar">
+            <i class="fa fa-sign-in"></i> Sign in
           </a>
         </div>
       </div>
@@ -110,6 +116,7 @@
         <script src="scripts/controllers/datasetlist.js"></script>
         <script src="scripts/controllers/logout.js"></script>
         <script src="scripts/directives/wasidebar.js"></script>
+        <script src="scripts/controllers/googleaccount.js"></script>
         <!-- endbuild -->
 </body>
 </html>
