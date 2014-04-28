@@ -55,13 +55,13 @@
           {{ me.displayName }}
         </div>
 
-        <div ng:if="me" class="btn-group pull-right">
+        <div ng:if="isSignedIn" class="btn-group pull-right">
           <a ng:click="doLogout()" class="btn btn-navbar">
             <i class="fa fa-sign-out"></i> Sign out
           </a>
         </div>
 
-        <div ng:if="!me" class="btn-group pull-right">
+        <div ng:if="!isSignedIn" class="btn-group pull-right">
           <a ng:click="doLogin()" class="btn btn-navbar">
             <i class="fa fa-sign-in"></i> Sign in
           </a>
