@@ -13,6 +13,11 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 
 @import url(http://fonts.googleapis.com/css?family=Nunito);
 
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .navbar-brand, .app-name {
     font-family: 'Nunito', $font-family-base;
 }

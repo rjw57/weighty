@@ -30,8 +30,8 @@
       "_comment": "The main entry for mobile-angular-ui points to the wrong location",
       "main": [
         "dist/js/mobile-angular-ui.min.js",
-        "dist/js/mobile-angular-ui-scrollable-iscroll.min.js",
         "dist/js/mobile-angular-ui-touch-ng.min.js",
+        "dist/js/mobile-angular-ui-scrollable-overthrow.min.js",
         "dist/css/mobile-angular-ui-base.min.css",
         "dist/css/mobile-angular-ui-desktop.min.css"
       ]

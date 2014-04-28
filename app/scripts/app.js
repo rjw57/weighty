@@ -8,8 +8,8 @@ angular
     'ngRoute',
     'googleOauth',
     'mobile-angular-ui',
-    'mobile-angular-ui.scrollable',
-    'mobile-angular-ui.touch'
+    'mobile-angular-ui.touch',
+    'mobile-angular-ui.scrollable'
   ])
   .config(function ($routeProvider, $locationProvider, TokenProvider) {
     $routeProvider
