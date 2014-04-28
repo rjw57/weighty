@@ -11,14 +11,14 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 @import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap/_variables.scss";
 @import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap/_utilities.scss";
 
-@import url(http://fonts.googleapis.com/css?family=Nunito);
+@import url(//fonts.googleapis.com/css?family=Nunito);
 
 .overthrow-enabled .overthrow {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-.navbar-brand, .app-name {
+.app-name {
     font-family: 'Nunito', $font-family-base;
 }
 
@@ -72,6 +72,7 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     margin-bottom: floor((-0.5 * (30 - $font-size-base)));
     margin-top: ceil((-0.5 * (30 - $font-size-base)));
     position: relative; top: -1px; // HACK
+    margin-right: 0.5ex;
 }
 
 .nav-xs-profile { padding-right: $padding-base-horizontal; } // HACK
