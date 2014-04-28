@@ -14,7 +14,6 @@ angular.module('webappApp')
     // which is fulfilled if the token verification succeeds otherwise
     // it fails.
     var verifyToken = function(token) {
-      /* jshint camelcase: false */
       var deferred = $q.defer();
 
       console.log('Asked to verify:', token);
@@ -37,6 +36,7 @@ angular.module('webappApp')
     // Verify token, update accessToken, etc appropriately and then broadcast
     // googleApiStateChanged on the rootScope.
     GoogleApi.prototype._verifyTokenAsync = function(token) {
+      /* jshint camelcase: false */
       var self = this;
 
       verifyToken(token)
@@ -60,13 +60,13 @@ angular.module('webappApp')
     };
 
     GoogleApi.prototype.login = function() {
+      /* jshint camelcase: false */
       var self = this;
       var deferred = $q.defer();
 
       Token.getTokenByPopup()
         .then(function(params) {
           // Success getting token from popup.
-
           // Verify the token before setting it, to avoid the confused deputy problem.
           self._verifyTokenAsync(params.access_token);
         }, function(err) {
@@ -107,7 +107,7 @@ angular.module('webappApp')
           'Bearer ' + self.accessToken;
       }
 
-      return $http(fullConfig)
+      return $http(fullConfig);
     };
 
     // Convenience wrappers

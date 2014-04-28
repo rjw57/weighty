@@ -12,8 +12,8 @@ angular.module('webappApp')
     };
 
     $scope.$on('googleApiStateChanged', updateTokens);
-    $scope.doLogin = function() { GoogleApi.login(); }
-    $scope.doLogout = function() { GoogleApi.logout(); }
+    $scope.doLogin = function() { GoogleApi.login(); };
+    $scope.doLogout = function() { GoogleApi.logout(); };
 
     $scope.$watch('isSignedIn', function() {
       if(!$scope.isSignedIn) {

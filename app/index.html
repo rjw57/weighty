@@ -50,18 +50,18 @@
       </div>
 
       <div class="navbar navbar-app navbar-absolute-bottom">
-        <div ng:if="me" class="navbar-brand navbar-brand-left">
+        <div class="navbar-brand navbar-brand-left" ng:show="me">
           <img class="img-nav-profile img-responsive img-circle" ng:src="{{ me.image.url }}" alt="">
           {{ me.displayName }}
         </div>
 
-        <div ng:if="isSignedIn" class="btn-group pull-right">
+        <div class="btn-group pull-right" ng:show="isSignedIn">
           <a ng:click="doLogout()" class="btn btn-navbar">
             <i class="fa fa-sign-out"></i> Sign out
           </a>
         </div>
 
-        <div ng:if="!isSignedIn" class="btn-group pull-right">
+        <div class="btn-group pull-right" ng:hide="isSignedIn">
           <a ng:click="doLogin()" class="btn btn-navbar">
             <i class="fa fa-sign-in"></i> Sign in
           </a>

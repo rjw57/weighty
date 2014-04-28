@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetCtrl', function ($scope, $location, $routeParams, GoogleApi) {
+  .controller('DatasetCtrl', function ($scope, $routeParams, GoogleApi) {
     // useful constants
+    var DAYS = 1000*60*60*24;
     var WORKSHEETS_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
     var SSHEETS_FEED_BASE = 'https://spreadsheets.google.com/feeds/spreadsheets/';
     var LIST_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#listfeed';
@@ -10,31 +11,46 @@ angular.module('webappApp')
     var GSX_SCHEMA = 'http://schemas.google.com/spreadsheets/2006/extended';
     //var CELL_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#cellfeed';
 
+    $scope.loaded = false;
+    $scope.loading = false;
+
     // We need a sheet id to continue
     if(!$routeParams.sheetId) {
-      $location.path('/');
       return;
     }
 
-    $scope.$watch('accessToken', function() {
-      // We require the user to be logged in for this view
-      if(!$scope.accessToken) {
-        $location.path('/login');
-        return;
-      }
+    $scope.$watch('isSignedIn', function() {
+      // MOCK weight data
+      $scope.name = '';
+      $scope.targetWeight = 100;
+      $scope.targetDate = new Date();
+      $scope.weights = [];
+      $scope.loaded = false;
+      $scope.loading = false;
+
+      // We require the user to be logged in to go further
+      if(!$scope.isSignedIn) { return; }
+      $scope.loading = true;
 
       // Kick off a request to the spreadsheet API.
       GoogleApi.get(SSHEETS_FEED_BASE + $routeParams.sheetId, {
           responseType: 'document',
         })
         .success(function(data) {
+          data = angular.element(data);
+
+          // Extract spreasheet name
+          $scope.name = data.find('title').text();
+
           // Extract spreasheet links
           $scope.spreadsheetLinks = {};
-          data = angular.element(data);
           angular.forEach(data.find('link'), function(link) {
             link = angular.element(link);
             $scope.spreadsheetLinks[link.attr('rel')] = link.attr('href');
           });
+        })
+        .error(function() {
+          $scope.loading = false;
         });
     });
 
@@ -58,6 +74,9 @@ angular.module('webappApp')
             });
             $scope.worksheets.push({ links: wsLinks });
           });
+        })
+        .error(function() {
+          $scope.loading = false;
         });
     });
 
@@ -81,22 +100,15 @@ angular.module('webappApp')
             date = new Date(timestamp);
 
             $scope.weights.push({ date: date, weight: weight });
+
+            $scope.loaded = true;
+            $scope.loading = false;
           });
+        })
+        .error(function() {
+          $scope.loading = false;
         });
     });
-
-    var DAYS = 1000*60*60*24;
-
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-
-    // MOCK weight data
-    $scope.targetWeight = 100;
-    $scope.targetDate = new Date();
-    $scope.weights = [];
 
     $scope.$watch('weights', function() {
       $scope.goal = [];

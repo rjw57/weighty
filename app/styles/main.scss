@@ -22,6 +22,10 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     font-family: 'Nunito', $font-family-base;
 }
 
+.loading-indicator {
+    padding: 3*$padding-large-vertical 0;
+}
+
 .weight-badge {
     @include button-size($padding-large-vertical, $padding-large-horizontal,
       $font-size-large, $line-height-large, $border-radius-large);

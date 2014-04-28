@@ -5,17 +5,14 @@ angular.module('webappApp')
     $scope.items = [];
 
     // Redirect to login if not logged in
-    $scope.$watch('accessToken', function() {
-      if(!$scope.accessToken) {
-        $location.path('/login');
-        return;
-      }
-
+    $scope.$watch('isSignedIn', function() {
       // Refresh the list of spreadsheets
       $scope.refreshList();
     });
 
     $scope.refreshList = function() {
+      $scope.items = [];
+
       if(!$scope.accessToken) { return; }
 
       // Only look for weightly sheets
