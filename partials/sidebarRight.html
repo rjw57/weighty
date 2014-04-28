@@ -1,0 +1,17 @@
+<div class="scrollable">
+  <div class="scrollable-content" ng:controller="DatasetListCtrl">
+    <div class="list-group" toggle="off" bubble target="rightSidebar">
+
+    <a class="list-group-item media" ng:href="#/dataset/{{ item.id }}"
+        ng-repeat="item in items | orderBy : '-modifiedDate'">
+      <div class="media-body">
+          <h5 class="media-heading">{{ item.title }}</h5>
+          <small>
+            <span class="text-muted">{{ item.modifiedDate | date : 'mediumDate' }}</span>
+          </small>
+      </div>
+    </a>
+
+    </div>
+  </div>
+</div>
