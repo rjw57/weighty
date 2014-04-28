@@ -48,9 +48,15 @@
       </div>
 
       <div class="navbar navbar-app navbar-absolute-bottom">
-        <div ng:if="me" class="navbar-brand navbar-brand-center">
+        <div ng:if="me" class="navbar-brand navbar-brand-left">
           <img class="img-nav-profile img-responsive img-circle" ng:src="{{ me.image.url }}" alt="">
           {{ me.displayName }}
+        </div>
+
+        <div ng:if="me" class="btn-group pull-right">
+          <a href="#/logout" class="btn btn-navbar">
+            <i class="fa fa-sign-out"></i> Sign out
+          </a>
         </div>
       </div>
 
