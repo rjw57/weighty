@@ -6,7 +6,7 @@
   </div>
 
   <div class="scrollable-content" ng:controller="DatasetListCtrl" ng:show="isSignedIn">
-    <div class="list-group" toggle="off" bubble target="rightSidebar">
+    <div class="list-group" toggle="off" bubble target="datasetSidebar">
 
     <a class="list-group-item media" ng:href="#/dataset/{{ item.id }}"
         ng-repeat="item in items | orderBy : '-modifiedDate'">
