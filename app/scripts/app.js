@@ -10,7 +10,7 @@ angular
     'mobile-angular-ui',
     'mobile-angular-ui.touch',
     'mobile-angular-ui.scrollable',
-    'dinoboff.gapi'
+    'gapi.client'
   ])
   .config(function ($routeProvider, $locationProvider, TokenProvider) {
     $routeProvider

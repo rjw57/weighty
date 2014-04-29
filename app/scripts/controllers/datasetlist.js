@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetListCtrl', function ($scope, $location, GoogleApi) {
+  .controller('DatasetListCtrl', function ($scope, $location, $window) {
     $scope.items = [];
 
     // Redirect to login if not logged in
@@ -13,14 +13,15 @@ angular.module('webappApp')
     $scope.refreshList = function() {
       $scope.items = [];
 
-      if(!$scope.accessToken) { return; }
-
       // Only look for weightly sheets
-      GoogleApi.get('https://www.googleapis.com/drive/v2/files', {
-          params: {
-            q: 'not trashed and properties has { key = \'isWeightySheet\' and value=\'true\' and visibility=\'PUBLIC\'}',
-          },
-        }).success(function(data) {
+      $window.gapi.client.request({
+        path: 'drive/v2/files',
+        params: {
+          q: 'not trashed and properties has { key = \'isWeightySheet\' and value=\'true\' and visibility=\'PUBLIC\'}',
+        },
+        callback: function(data) {
+          console.log(data);
+          if(data.kind !== 'drive#fileList') { return; }
           $scope.items = [];
           angular.forEach(data.items, function(item) {
             $scope.items.push({
@@ -30,26 +31,29 @@ angular.module('webappApp')
               modifiedDate: Date.parse(item.modifiedDate),
             });
           });
-        });
+        },
+      });
     };
 
     $scope.create = function() {
-      // Must be logged in
-      if(!$scope.accessToken) { return; }
-
       // Must have entered a name
       if(!$scope.datasetName || $scope.datasetName === '') { return; }
 
       // Try to create the new spreadsheet
-      GoogleApi.post('https://www.googleapis.com/drive/v2/files', {
-        'mimeType': 'application/vnd.google-apps.spreadsheet',
-        'title': $scope.datasetName,
-        'properties': [
-          { key: 'isWeightySheet', value: true, visibility: 'PUBLIC' },
-        ],
-      })
-      .success(function() {
-        $scope.refreshList();
+      $window.gapi.client.request({
+        path: 'drive/v2/files',
+        method: 'POST',
+        params: {
+          'mimeType': 'application/vnd.google-apps.spreadsheet',
+          'title': $scope.datasetName,
+          'properties': [
+            { key: 'isWeightySheet', value: true, visibility: 'PUBLIC' },
+          ],
+        },
+        callback: function(data) {
+          console.log(data);
+          $scope.refreshList();
+        }
       });
 
       // Reset name
