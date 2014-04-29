@@ -9,7 +9,8 @@ angular
     'googleOauth',
     'mobile-angular-ui',
     'mobile-angular-ui.touch',
-    'mobile-angular-ui.scrollable'
+    'mobile-angular-ui.scrollable',
+    'dinoboff.gapi'
   ])
   .config(function ($routeProvider, $locationProvider, TokenProvider) {
     $routeProvider
