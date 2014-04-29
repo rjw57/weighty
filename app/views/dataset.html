@@ -3,7 +3,7 @@
 </div>
 
 <div content-for="navbarAction">
-  <div class="btn btn-navbar">
+  <div class="btn btn-navbar" toggle target="addMeasurementOverlay">
     <i class="fa fa-plus"></i> Add
   </div>
 </div>
@@ -15,6 +15,17 @@
       <p class="lead text-center"><strong>Sign in to see this dataset.</strong></p>
     </div>
   </div>
+</div>
+
+<div overlay="addMeasurementOverlay">
+  <h4 class="overlay-title">My Overlay</h4>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem, ex eaque possimus ipsa ab quasi quos corporis consequatur laudantium? Ab assumenda delectus quo velit voluptates doloribus. Earum odit facilis qui.
+  </p>
+  <p toggle="off" bubble target="addMeasurementOverlay">
+    <span class="btn btn-primary">Ok</span>
+    <span class="btn btn-default">Cancel</span>
+  </p>
 </div>
 
 <div class="scrollable" ng:show="isSignedIn">
