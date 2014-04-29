@@ -34,11 +34,14 @@ angular.module('webappApp')
       });
     };
 
-    $scope.create = function() {
-      // Must have entered a name
-      if(!$scope.datasetName || $scope.datasetName === '') { return; }
+    $scope.submitNewDataset = function() {
+      $scope.create($scope.newDataset.name);
+      $scope.newDataset.name = null;
+    };
 
-      var newName = $scope.datasetName;
+    $scope.create = function(newName) {
+      // Must have entered a name
+      if(!newName || newName === '') { return; }
 
       // Try to create the new spreadsheet. Must be done through the raw request API.
       $window.gapi.client.request({
@@ -57,8 +60,5 @@ angular.module('webappApp')
           $scope.$apply(function() { $scope.refreshList(); });
         }
       });
-
-      // Reset name
-      $scope.datasetName = '';
     };
   });
