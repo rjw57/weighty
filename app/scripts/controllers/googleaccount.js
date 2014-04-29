@@ -44,9 +44,7 @@ angular.module('webappApp')
     };
 
     // Try an immediate-mode login when the authorization system is ready
-    gapi.ready(function() {
-      $scope.doLogin({ immediate: true });
-    });
+    $scope.doLogin({ immediate: true });
 
     $scope.$watch('isSignedIn', function() {
       if(!$scope.isSignedIn) {
