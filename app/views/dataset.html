@@ -18,14 +18,17 @@
 </div>
 
 <div overlay="addMeasurementOverlay">
-  <h4 class="overlay-title">My Overlay</h4>
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem, ex eaque possimus ipsa ab quasi quos corporis consequatur laudantium? Ab assumenda delectus quo velit voluptates doloribus. Earum odit facilis qui.
-  </p>
-  <p toggle="off" bubble target="addMeasurementOverlay">
-    <span class="btn btn-primary">Ok</span>
-    <span class="btn btn-default">Cancel</span>
-  </p>
+  <h4 class="overlay-title">Add a new weight measurement</h4>
+  <div class="container">
+    <form class="form" name="addMeasurementForm">
+      <input type="number" class="form-control" name="weight" placeholder="kilos"
+        ng:model="measurement.weight" required/>
+      <button toggle="off" bubble
+        target="addMeasurementOverlay" ng:disabled="addMeasurementForm.$invalid"
+        type="submit" class="form-control btn btn-primary">Add</buton>
+      </div>
+    </form>
+  </div>
 </div>
 
 <div class="scrollable" ng:show="isSignedIn">
@@ -37,8 +40,7 @@
           <strong>Loading&hellip;</strong>
         </p>
       </div>
-      <div ng:show="loaded">
-        <h3>{{ name }}</h3><hr/>
+      <div ng:show="loaded" title="{{name}}" bs:panel>
         <div class="row">
           <div class="col-sm-3 col-xs-4">
             <div class="weight-badge weight-badge-danger">
