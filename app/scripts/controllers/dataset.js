@@ -1,16 +1,9 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetCtrl', function ($scope, $routeParams, $http, $document) {
+  .controller('DatasetCtrl', function ($scope, $routeParams, $http, $document, $q, gapi) {
     // useful constants
     var DAYS = 1000*60*60*24;
-    var WORKSHEETS_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
-    var SSHEETS_FEED_BASE = 'https://spreadsheets.google.com/feeds/spreadsheets/';
-    var LIST_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#listfeed';
-    var POST_SCHEMA = 'http://schemas.google.com/g/2005#post';
-    var VIEW_LINK = 'alternate';
-    var GSX_SCHEMA = 'http://schemas.google.com/spreadsheets/2006/extended';
-    //var CELL_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#cellfeed';
 
     $scope.loaded = false;
     $scope.loading = false;
@@ -20,123 +13,130 @@ angular.module('webappApp')
       return;
     }
 
-    var authHeaders = {};
-    $scope.$watch('accessToken', function() {
-      // jshint camelcase: false
+    var verifyViaDriveApi = function(id) {
+      // Use the drive Api to verify that the tableId matches a file with the
+      // right properties. Return a promise which is fulfilled by a verification
+      // and is passed the id.
+      var deferred = $q.defer();
+      console.log('verifying against drive API');
 
-      if(!$scope.accessToken) {
-        authHeaders = {};
-        return;
-      }
+      gapi.load('drive', 'v2').then(function(drive) {
+        drive.files.get({ fileId: id }).then(function(file) {
+          var isValid = false;
 
-      authHeaders = {
-        'Authorization': $scope.accessToken.token_type + ' ' + $scope.accessToken.access_token,
-      };
+          // check the properties
+          angular.forEach(file.properties, function(property) {
+            if(property.key !== 'weightyVersion' || property.value !== '2') { return; }
+            isValid = true;
+          });
 
-      // MOCK weight data
-      $scope.name = '';
-      $scope.targetWeight = 100;
-      $scope.targetDate = new Date();
-      $scope.weights = [];
-      $scope.loaded = false;
-      $scope.loading = false;
+          if(isValid) {
+            // success!
+            deferred.resolve(file);
+            return;
+          }
 
-      // We require the user to be logged in to go further
+          // failure :(
+          console.log('Drive file did not have expected property');
+          deferred.reject(file.properties);
+        }, function(err) {
+          console.log('Error verifying table via drive Api:', err);
+          deferred.reject(err);
+        });
+      });
+
+      return deferred.promise;
+    };
+
+    var verifyViaFusionTablesApi = function(id) {
+      // Perform an initial "get" of the table to verify the tableId which has
+      // been pulled straight from the URL. If we succeed in getting the table,
+      // check that there is are "Timestamp" and "Weight" columns.
+      var deferred = $q.defer();
+      console.log('verifying againset fusiontables API');
+
+      gapi.load('fusiontables', 'v1').then(function(fusiontables) {
+        fusiontables.table.get({ tableId: id }).then(function(table) {
+          var hasWeight = false, hasTimestamp = false;
+          angular.forEach(table.columns, function(column) {
+            if(column.name === 'Weight' && column.type === 'NUMBER') {
+              hasWeight = true;
+            } else if(column.name === 'Timestamp' && column.type === 'NUMBER') {
+              hasTimestamp = true;
+            }
+          });
+
+          if(hasWeight && hasTimestamp) {
+            deferred.resolve(table);
+          } else {
+            console.log('Error verifying table via fusiontables API; incorrect columns');
+            deferred.reject(table.columns);
+          }
+        }, function(err) {
+          console.log('Error verifying table via fusiontables Api:', err);
+          deferred.reject(err);
+        });
+      });
+
+      return deferred.promise;
+    };
+
+    // Wait for login before verifying
+    $scope.$watch('isSignedIn', function() {
+      $scope.datasetId = null;
+
       if(!$scope.isSignedIn) { return; }
-      $scope.loading = true;
 
-      // Kick off a request to the spreadsheet API.
-      $http.get(SSHEETS_FEED_BASE + $routeParams.sheetId, {
-          responseType: 'document',
-          headers: authHeaders,
-        })
-        .success(function(data) {
-          data = angular.element(data);
+      // We need both drive and fusiontable verification to pass
+      var id = $routeParams.sheetId;
+      $q.all({
+        drive: verifyViaDriveApi(id),
+        fusiontables: verifyViaFusionTablesApi(id)
+      }).then(function(ids) {
+        if(!ids.drive || !ids.fusiontables || ids.drive.id !== ids.fusiontables.tableId) {
+          console.log('dataset id failed verification');
+          return;
+        }
 
-          // Extract spreasheet name
-          $scope.name = data.find('title').text();
-
-          // Extract spreasheet links
-          $scope.spreadsheetLinks = {};
-          angular.forEach(data.find('link'), function(link) {
-            link = angular.element(link);
-            $scope.spreadsheetLinks[link.attr('rel')] = link.attr('href');
-          });
-        })
-        .error(function() {
-          $scope.loading = false;
-        });
+        console.log('dataset id is verified');
+        $scope.datasetId = ids.drive.id;
+        $scope.name = ids.drive.title;
+      }, function(err) {
+        console.log('dataset id failed verification:', err);
+      });
     });
 
-    // We have a new sheet...
-    $scope.$watch('spreadsheetLinks', function() {
-      if(!$scope.spreadsheetLinks || !$scope.spreadsheetLinks[WORKSHEETS_FEED_SCHEMA]) { return; }
-
-      $scope.spreadsheetViewLink = $scope.spreadsheetLinks[VIEW_LINK];
-
-      $http.get($scope.spreadsheetLinks[WORKSHEETS_FEED_SCHEMA], {
-        responseType: 'document',
-        headers: authHeaders,
-      })
-        .success(function(data) {
-          $scope.worksheets = [];
-
-          // Store links for each worksheet
-          angular.forEach(angular.element(data).find('entry'), function(entry) {
-            var wsLinks = {};
-            entry = angular.element(entry);
-            angular.forEach(entry.find('link'), function(link) {
-              link = angular.element(link);
-              wsLinks[link.attr('rel')] = link.attr('href');
-            });
-            $scope.worksheets.push({ links: wsLinks });
-          });
-        })
-        .error(function() {
-          $scope.loading = false;
-        });
+    $scope.$watch('datasetId', function() {
+      $scope.refresh();
     });
 
-    // We have some new worksheet links...
-    $scope.$watch('worksheets', function() {
-      $scope.listFeedLinks = {};
+    $scope.refresh = function() {
+      console.log('Refreshing dataset', $scope.datasetId);
 
-      if(!$scope.worksheets || $scope.worksheets.length === 0) { return; }
+      if(!$scope.datasetId) { return; }
 
-      // Data is stored in the first worksheet
-      $http.get($scope.worksheets[0].links[LIST_FEED_SCHEMA], {
-        responseType: 'document',
-        headers: authHeaders,
-      })
-        .success(function(data) {
-          $scope.listFeedLinks = {};
-          angular.forEach(angular.element(data).find('link'), function(link) {
-            link = angular.element(link);
-            $scope.listFeedLinks[link.attr('rel')] = link.attr('href');
-          });
-
+      gapi.load('fusiontables', 'v1').then(function(fusiontables) {
+        // We directly paste the datasetId into the SQL statement here which is
+        // a somewhat dangerous procedure. Hence the rather elaborate verification of
+        // the id we got from the URL.
+        fusiontables.query.sqlGet({
+          sql: 'SELECT Timestamp, Weight FROM ' + $scope.datasetId + ' ORDER BY Timestamp',
+        }).then(function(resp) {
+          // And finally we can update the records
           $scope.weights = [];
-          angular.forEach(angular.element(data).find('entry'), function(entry) {
-            var timestamp, weight, date;
-
-            // Data are stored in text properties of nodes. Note use of '+' as a
-            // cast-to-number equivalent.
-            timestamp = +angular.element(
-              entry.getElementsByTagNameNS(GSX_SCHEMA, 'timestamp')).text();
-            weight = +angular.element(
-              entry.getElementsByTagNameNS(GSX_SCHEMA, 'weight')).text();
-            date = new Date(timestamp);
-
-            $scope.weights.push({ date: date, weight: weight });
-
-            $scope.loaded = true;
-            $scope.loading = false;
+          angular.forEach(resp.rows, function(row) {
+            $scope.weights.push({
+              timestamp: row[0],
+              weight: row[1],
+              date: new Date(row[0]),
+            });
           });
-        })
-        .error(function() {
-          $scope.loading = false;
+          $scope.loaded = true;
+        }, function(err) {
+          console.log('Dataset fetch failed:', err);
         });
-    });
+      });
+    };
 
     $scope.$watch('weights', function() {
       $scope.goal = [];
@@ -148,6 +148,7 @@ angular.module('webappApp')
 
       // HACK
       $scope.targetDate = new Date($scope.weights[0].date.getTime() + 100*DAYS);
+      $scope.targetWeight = 100;
 
       $scope.startWeight = $scope.weights[0].weight;
       $scope.currentWeight = $scope.weights[$scope.weights.length-1].weight;
@@ -168,39 +169,4 @@ angular.module('webappApp')
         });
       }
     });
-
-    var createListEntry = function(obj) {
-      var entry, field;
-
-      entry = $document[0].implementation
-        .createDocument('http://www.w3.org/2005/Atom', 'entry');
-      angular.forEach(obj, function(v, k) {
-        field = $document[0].createElementNS(
-            'http://schemas.google.com/spreadsheets/2006/extended', 'gsx:' + k);
-        field.textContent = '' + v;
-        entry.documentElement.appendChild(field);
-      });
-
-      return new XMLSerializer().serializeToString(entry);
-    };
-
-    $scope.submitNewMeasurement = function(newMeasurement) {
-      if(!$scope.listFeedLinks || !$scope.listFeedLinks[POST_SCHEMA]) { return; }
-
-      console.log('new measurement', newMeasurement);
-
-      var body = createListEntry({
-        weight: newMeasurement.weight,
-        timestamp: Date.now(),
-      });
-
-      $http.post($scope.listFeedLinks[POST_SCHEMA], body, {
-        responseType: 'document',
-        headers: angular.extend(authHeaders, {
-          'Content-Type': 'application/atom+xml;charset=UTF-8',
-        }),
-      }).success(function() {
-        console.log('success... refresh');
-      });
-    };
   });

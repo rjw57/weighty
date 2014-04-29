@@ -52,7 +52,7 @@ angular.module('webappApp')
               {
                 columnId: 0,
                 name: 'Timestamp',
-                type: 'DATETIME',
+                type: 'NUMBER',
               },
               {
                 columnId: 1,
