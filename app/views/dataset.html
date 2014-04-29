@@ -23,7 +23,7 @@
     <form class="form" name="addMeasurementForm">
       <input type="number" class="form-control" name="weight" placeholder="kilos"
         ng:model="measurement.weight" required/>
-      <button toggle="off" bubble
+      <button toggle="off" bubble ng:click="submitNewMeasurement(measurement)"
         target="addMeasurementOverlay" ng:disabled="addMeasurementForm.$invalid"
         type="submit" class="form-control btn btn-primary">Add</buton>
       </div>

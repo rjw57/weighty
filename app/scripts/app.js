@@ -6,13 +6,12 @@ angular
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    'googleOauth',
     'mobile-angular-ui',
     'mobile-angular-ui.touch',
     'mobile-angular-ui.scrollable',
     'gapi.client'
   ])
-  .config(function ($routeProvider, $locationProvider, TokenProvider) {
+  .config(function ($routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/root.html',
@@ -48,14 +47,4 @@ angular
     if(baseUrl[baseUrl.length-1] === '/') {
       baseUrl = baseUrl.substr(0, baseUrl.length-1);
     }
-
-    TokenProvider.extendConfig({
-      clientId: '266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com',
-      redirectUri: baseUrl + '/oauth2callback.html',
-      scopes: [
-        'https://www.googleapis.com/auth/plus.me', // access basic user info
-        'https://www.googleapis.com/auth/drive.file', // create and access files we create
-        'https://spreadsheets.google.com/feeds', // spreadsheets API
-      ],
-    });
   });

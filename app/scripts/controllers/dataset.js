@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetCtrl', function ($scope, $routeParams, $http) {
+  .controller('DatasetCtrl', function ($scope, $routeParams, $http, $document) {
     // useful constants
     var DAYS = 1000*60*60*24;
     var WORKSHEETS_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
     var SSHEETS_FEED_BASE = 'https://spreadsheets.google.com/feeds/spreadsheets/';
     var LIST_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#listfeed';
+    var POST_SCHEMA = 'http://schemas.google.com/g/2005#post';
     var VIEW_LINK = 'alternate';
     var GSX_SCHEMA = 'http://schemas.google.com/spreadsheets/2006/extended';
     //var CELL_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#cellfeed';
@@ -98,6 +99,8 @@ angular.module('webappApp')
 
     // We have some new worksheet links...
     $scope.$watch('worksheets', function() {
+      $scope.listFeedLinks = {};
+
       if(!$scope.worksheets || $scope.worksheets.length === 0) { return; }
 
       // Data is stored in the first worksheet
@@ -106,6 +109,12 @@ angular.module('webappApp')
         headers: authHeaders,
       })
         .success(function(data) {
+          $scope.listFeedLinks = {};
+          angular.forEach(angular.element(data).find('link'), function(link) {
+            link = angular.element(link);
+            $scope.listFeedLinks[link.attr('rel')] = link.attr('href');
+          });
+
           $scope.weights = [];
           angular.forEach(angular.element(data).find('entry'), function(entry) {
             var timestamp, weight, date;
@@ -159,4 +168,39 @@ angular.module('webappApp')
         });
       }
     });
+
+    var createListEntry = function(obj) {
+      var entry, field;
+
+      entry = $document[0].implementation
+        .createDocument('http://www.w3.org/2005/Atom', 'entry');
+      angular.forEach(obj, function(v, k) {
+        field = $document[0].createElementNS(
+            'http://schemas.google.com/spreadsheets/2006/extended', 'gsx:' + k);
+        field.textContent = '' + v;
+        entry.documentElement.appendChild(field);
+      });
+
+      return new XMLSerializer().serializeToString(entry);
+    };
+
+    $scope.submitNewMeasurement = function(newMeasurement) {
+      if(!$scope.listFeedLinks || !$scope.listFeedLinks[POST_SCHEMA]) { return; }
+
+      console.log('new measurement', newMeasurement);
+
+      var body = createListEntry({
+        weight: newMeasurement.weight,
+        timestamp: Date.now(),
+      });
+
+      $http.post($scope.listFeedLinks[POST_SCHEMA], body, {
+        responseType: 'document',
+        headers: angular.extend(authHeaders, {
+          'Content-Type': 'application/atom+xml;charset=UTF-8',
+        }),
+      }).success(function() {
+        console.log('success... refresh');
+      });
+    };
   });
