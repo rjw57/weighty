@@ -15,9 +15,10 @@ angular.module('webappApp')
 
       // Only look for weighty sheets
       console.log('Searching for weighty files...');
+
       gapi.load('drive', 'v2').then(function(drive) {
         drive.files.list({
-          q: 'not trashed and properties has { key = \'isWeightySheet\' and value=\'true\' and visibility=\'PUBLIC\'}',
+          q: 'not trashed and properties has { key = \'weightyVersion\' and value=\'2\' and visibility=\'PUBLIC\'}',
         }).then(function(data) {
           if(data.kind !== 'drive#fileList') { return; }
           console.log('dataset list', data);
@@ -43,22 +44,66 @@ angular.module('webappApp')
       // Must have entered a name
       if(!newName || newName === '') { return; }
 
-      // Try to create the new spreadsheet. Must be done through the raw request API.
-      $window.gapi.client.request({
-        path: 'drive/v2/files',
-        method: 'POST',
-        body: {
-          'mimeType': 'application/vnd.google-apps.spreadsheet',
-          'title': newName,
-          'properties': [
-            { key: 'isWeightySheet', value: true, visibility: 'PUBLIC' },
-          ],
-        },
-        callback: function(response) {
+      gapi.load('fusiontables', 'v1').then(function(fusiontables) {
+        fusiontables.table.insert({
+          resource: {
+            name: newName,
+            columns: [
+              {
+                columnId: 0,
+                name: 'Timestamp',
+                type: 'DATETIME',
+              },
+              {
+                columnId: 1,
+                name: 'Weight',
+                type: 'NUMBER',
+              },
+            ],
+            isExportable: true,
+            description: 'weighty record',
+          },
+        }).then(function(resp) {
+          console.log('New dataset created', resp);
+          console.log('Setting properties...');
+          gapi.load('drive', 'v2').then(function(drive) {
+            drive.files.update({
+              fileId: resp.tableId,
+              resource: {
+                properties: [
+                  { key: 'weightyVersion', value: 2, visibility: 'PUBLIC' },
+                ],
+              },
+            }).then(function(resp) {
+              console.log('Set properties on new dataset', resp);
+              $scope.refreshList();
+            }, function(err) {
+              console.log('Error setting properties on new dataset', err);
+            });
+          });
+        }, function(err) {
+          console.log('Error creating table', err);
+        });
+      });
+
+      // Try to create the new fusiontable.
+      /*
+      gapi.load('drive', 'v2').then(function(drive) {
+        drive.files.insert({
+          resource: {
+            'mimeType': 'application/vnd.google-apps.fusiontable',
+            'title': newName,
+            'properties': [
+            ],
+          },
+        }).then(function(response) {
           if(!response.kind || response.kind !== 'drive#file') { return; }
           console.log('dataset "' + newName + '" created...');
-          $scope.$apply(function() { $scope.refreshList(); });
-        }
+          $scope.refreshList();
+        }, function(err) {
+          console.log('error creating new dataset:', err);
+        });
       });
+      */
     };
   });

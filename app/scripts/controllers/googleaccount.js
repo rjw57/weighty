@@ -19,6 +19,8 @@ angular.module('webappApp')
         'https://www.googleapis.com/auth/plus.me', // access basic user info
         'https://www.googleapis.com/auth/drive.file', // create and access files we create
         'https://spreadsheets.google.com/feeds', // spreadsheets API
+        'https://www.googleapis.com/auth/drive', // create and access *all* files in drive
+        'https://www.googleapis.com/auth/fusiontables', // fusiontables
         //'https://docs.google.com/feeds/', // spreadsheets API (modify)
         //'https://docs.googleusercontent.com/', // spreadsheets API (modify)
       ],
