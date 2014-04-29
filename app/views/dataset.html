@@ -1,5 +1,11 @@
 <div content-for="title">
-  {{ name || 'Dataset' }}
+  Dataset
+</div>
+
+<div content-for="navbarAction">
+  <div class="btn btn-navbar">
+    <i class="fa fa-plus"></i> Add
+  </div>
 </div>
 
 <div class="scrollable" ng:hide="isSignedIn">
@@ -21,6 +27,7 @@
         </p>
       </div>
       <div ng:show="loaded">
+        <h3>{{ name }}</h3><hr/>
         <div class="row">
           <div class="col-sm-3 col-xs-4">
             <div class="weight-badge weight-badge-danger">
