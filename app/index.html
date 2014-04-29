@@ -75,7 +75,8 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <script src="//apis.google.com/js/client.js"></script>
+    <!-- make sure that auth and client are available in gapi -->
+    <script src="//apis.google.com/js/api:client,auth.js"></script>
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->

@@ -11,7 +11,7 @@ angular
     'mobile-angular-ui.scrollable',
     'gapi.client'
   ])
-  .config(function ($routeProvider, $locationProvider) {
+  .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/root.html',

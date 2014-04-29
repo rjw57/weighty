@@ -1,6 +1,10 @@
 'use strict';
 
 angular.module('webappApp')
+  .run(function(gapi) {
+    // Signal to gapi that everything is ready
+    gapi.ready();
+  })
   .controller('GoogleAccountCtrl', function ($scope, $window, gapi) {
     // jshint camelcase: false
 
@@ -22,7 +26,6 @@ angular.module('webappApp')
 
     $scope.doLogin = function(options) {
       options = angular.extend(options || {}, authParams);
-      console.log('Authorising with parameters:', options);
       gapi.auth.authorize(options)
         .then(function(params) {
           // success
@@ -32,6 +35,7 @@ angular.module('webappApp')
           $scope.isSignedIn = true;
         }, function() {
           // For some reason auth failed
+          console.log('Obtaining authorisation failed');
           $scope.accessToken = null;
           $scope.accessTokenExpiry = null;
           $scope.isSignedIn = false;
@@ -45,26 +49,31 @@ angular.module('webappApp')
       $window.gapi.auth.setToken(null);
     };
 
-    // Try an immediate-mode login when the authorization system is ready
-    $scope.doLogin({ immediate: true });
+    // Attempt an immediate mode login when the gapi provider is ready
+    gapi.ready(function() {
+      console.log('Perfoming initial immediate-mode login attempt');
+      $scope.doLogin({ immediate: true });
+    });
 
-    $scope.$watch('isSignedIn', function() {
-      if(!$scope.isSignedIn) {
-        $scope.me = null;
-        return;
-      }
+    // Ask for the Google Plus API
+    gapi.load('plus', 'v1').then(function(plus) {
+      // Watch the isSignedIn field to retrieve user info when appropriate
+      $scope.$watch('isSignedIn', function() {
+        console.log('Signed in state changed:', $scope.isSignedIn);
 
-      // get user info when we're signed in
-      console.log('requesting...');
-      $window.gapi.client.request({
-        path: 'plus/v1/people/me',
-        callback: function(jsonResp) {
-          console.log(jsonResp);
-          if(jsonResp.kind !== 'plus#person') { return; }
-          $scope.$apply(function() {
-            $scope.me = jsonResp;
-          });
-        },
+        // If not signed in, clear user data and exit
+        if(!$scope.isSignedIn) { $scope.me = null; return; }
+
+        // Otherwise try to get "me"
+        console.log('Asking for "me"');
+        plus.people.get({ userId: 'me' }).then(function(resp) {
+          console.log('Response from asking for "me"', resp);
+          if(!resp.kind || resp.kind !== 'plus#person') {
+            $scope.me = null;
+          } else {
+            $scope.me = resp;
+          }
+        });
       });
     });
   });

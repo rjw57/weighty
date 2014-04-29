@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetListCtrl', function ($scope, $location, $window) {
+  .controller('DatasetListCtrl', function ($scope, $location, $window, gapi) {
     $scope.items = [];
 
     // Redirect to login if not logged in
@@ -13,27 +13,24 @@ angular.module('webappApp')
     $scope.refreshList = function() {
       $scope.items = [];
 
-      // Only look for weightly sheets
-      $window.gapi.client.request({
-        path: 'drive/v2/files',
-        params: {
+      // Only look for weighty sheets
+      console.log('Searching for weighty files...');
+      gapi.load('drive', 'v2').then(function(drive) {
+        drive.files.list({
           q: 'not trashed and properties has { key = \'isWeightySheet\' and value=\'true\' and visibility=\'PUBLIC\'}',
-        },
-        callback: function(data) {
+        }).then(function(data) {
           if(data.kind !== 'drive#fileList') { return; }
           console.log('dataset list', data);
-          $scope.$apply(function() {
-            $scope.items = [];
-            angular.forEach(data.items, function(item) {
-              $scope.items.push({
-                title: item.title,
-                id: item.id,
-                createdDate: Date.parse(item.createdDate),
-                modifiedDate: Date.parse(item.modifiedDate),
-              });
+          $scope.items = [];
+          angular.forEach(data.items, function(item) {
+            $scope.items.push({
+              title: item.title,
+              id: item.id,
+              createdDate: Date.parse(item.createdDate),
+              modifiedDate: Date.parse(item.modifiedDate),
             });
           });
-        },
+        });
       });
     };
 
@@ -41,20 +38,23 @@ angular.module('webappApp')
       // Must have entered a name
       if(!$scope.datasetName || $scope.datasetName === '') { return; }
 
-      // Try to create the new spreadsheet
+      var newName = $scope.datasetName;
+
+      // Try to create the new spreadsheet. Must be done through the raw request API.
       $window.gapi.client.request({
         path: 'drive/v2/files',
         method: 'POST',
         body: {
           'mimeType': 'application/vnd.google-apps.spreadsheet',
-          'title': $scope.datasetName,
+          'title': newName,
           'properties': [
             { key: 'isWeightySheet', value: true, visibility: 'PUBLIC' },
           ],
         },
-        callback: function(data) {
-          console.log('create', data);
-          $scope.refreshList();
+        callback: function(response) {
+          if(!response.kind || response.kind !== 'drive#file') { return; }
+          console.log('dataset "' + newName + '" created...');
+          $scope.$apply(function() { $scope.refreshList(); });
         }
       });
 
