@@ -3,6 +3,12 @@
 angular.module('webappApp')
   .controller('GoogleAccountCtrl', function ($scope, $window, gapi) {
     // jshint camelcase: false
+
+    // defaults
+    $scope.accessToken = null;
+    $scope.accessTokenExpiry = null;
+    $scope.isSignedIn = false;
+
     var authParams = {
       client_id: '266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com',
       scope: [
@@ -19,16 +25,19 @@ angular.module('webappApp')
         .then(function(params) {
           // success
           console.log('Authorization token obtained:', params);
+          $scope.accessToken = $window.gapi.auth.getToken();
           $scope.accessTokenExpiry = new Date(Date.now() + (params.expires_in * 1000));
           $scope.isSignedIn = true;
         }, function() {
           // For some reason auth failed
+          $scope.accessToken = null;
           $scope.accessTokenExpiry = null;
           $scope.isSignedIn = false;
         });
     };
 
     $scope.doLogout = function() {
+      $scope.accessToken = null;
       $scope.accessTokenExpiry = null;
       $scope.isSignedIn = false;
       $window.gapi.auth.setToken(null);

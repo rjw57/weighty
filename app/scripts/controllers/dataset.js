@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetCtrl', function ($scope, $routeParams, GoogleApi) {
+  .controller('DatasetCtrl', function ($scope, $routeParams, $http) {
     // useful constants
     var DAYS = 1000*60*60*24;
     var WORKSHEETS_FEED_SCHEMA = 'http://schemas.google.com/spreadsheets/2006#worksheetsfeed';
@@ -19,7 +19,19 @@ angular.module('webappApp')
       return;
     }
 
-    $scope.$watch('isSignedIn', function() {
+    var authHeaders = {};
+    $scope.$watch('accessToken', function() {
+      // jshint camelcase: false
+
+      if(!$scope.accessToken) {
+        authHeaders = {};
+        return;
+      }
+
+      authHeaders = {
+        'Authorization': $scope.accessToken.token_type + ' ' + $scope.accessToken.access_token,
+      };
+
       // MOCK weight data
       $scope.name = '';
       $scope.targetWeight = 100;
@@ -33,8 +45,9 @@ angular.module('webappApp')
       $scope.loading = true;
 
       // Kick off a request to the spreadsheet API.
-      GoogleApi.get(SSHEETS_FEED_BASE + $routeParams.sheetId, {
+      $http.get(SSHEETS_FEED_BASE + $routeParams.sheetId, {
           responseType: 'document',
+          headers: authHeaders,
         })
         .success(function(data) {
           data = angular.element(data);
@@ -60,7 +73,10 @@ angular.module('webappApp')
 
       $scope.spreadsheetViewLink = $scope.spreadsheetLinks[VIEW_LINK];
 
-      GoogleApi.get($scope.spreadsheetLinks[WORKSHEETS_FEED_SCHEMA], { responseType: 'document' })
+      $http.get($scope.spreadsheetLinks[WORKSHEETS_FEED_SCHEMA], {
+        responseType: 'document',
+        headers: authHeaders,
+      })
         .success(function(data) {
           $scope.worksheets = [];
 
@@ -85,7 +101,10 @@ angular.module('webappApp')
       if(!$scope.worksheets || $scope.worksheets.length === 0) { return; }
 
       // Data is stored in the first worksheet
-      GoogleApi.get($scope.worksheets[0].links[LIST_FEED_SCHEMA], { responseType: 'document' })
+      $http.get($scope.worksheets[0].links[LIST_FEED_SCHEMA], {
+        responseType: 'document',
+        headers: authHeaders,
+      })
         .success(function(data) {
           $scope.weights = [];
           angular.forEach(angular.element(data).find('entry'), function(entry) {

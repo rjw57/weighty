@@ -20,15 +20,17 @@ angular.module('webappApp')
           q: 'not trashed and properties has { key = \'isWeightySheet\' and value=\'true\' and visibility=\'PUBLIC\'}',
         },
         callback: function(data) {
-          console.log(data);
           if(data.kind !== 'drive#fileList') { return; }
-          $scope.items = [];
-          angular.forEach(data.items, function(item) {
-            $scope.items.push({
-              title: item.title,
-              id: item.id,
-              createdDate: Date.parse(item.createdDate),
-              modifiedDate: Date.parse(item.modifiedDate),
+          console.log('dataset list', data);
+          $scope.$apply(function() {
+            $scope.items = [];
+            angular.forEach(data.items, function(item) {
+              $scope.items.push({
+                title: item.title,
+                id: item.id,
+                createdDate: Date.parse(item.createdDate),
+                modifiedDate: Date.parse(item.modifiedDate),
+              });
             });
           });
         },
@@ -43,7 +45,7 @@ angular.module('webappApp')
       $window.gapi.client.request({
         path: 'drive/v2/files',
         method: 'POST',
-        params: {
+        body: {
           'mimeType': 'application/vnd.google-apps.spreadsheet',
           'title': $scope.datasetName,
           'properties': [
@@ -51,7 +53,7 @@ angular.module('webappApp')
           ],
         },
         callback: function(data) {
-          console.log(data);
+          console.log('create', data);
           $scope.refreshList();
         }
       });
