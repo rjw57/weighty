@@ -57,7 +57,7 @@ angular.module('webappApp')
 
     // Watch for new weights and re-compute derived metrics
     $scope.$watch('weights', function() {
-      $log.info('new weights available:', $scope.weights);
+      $log.info('new weights available');
       $scope.goal = [];
 
       // Update cached start and current weights
