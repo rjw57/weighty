@@ -25,12 +25,12 @@
       </form>
     </div>
 
-    <a class="list-group-item media" ng:href="#/dataset/{{ item.id }}"
-        ng-repeat="item in items | orderBy : '-modifiedDate'">
+    <a class="list-group-item media" ng:href="#/dataset/{{ dataset.id }}"
+        ng-repeat="dataset in datasets | orderBy : '-modifiedDate'">
       <div class="media-body" toggle="off" bubble target="datasetSidebar">
-          <h5 class="media-heading">{{ item.title }}</h5>
+          <h5 class="media-heading">{{ dataset.title }}</h5>
           <small>
-            <span class="text-muted">{{ item.modifiedDate | date : 'mediumDate' }}</span>
+            <span class="text-muted">{{ dataset.modifiedDate | date : 'mediumDate' }}</span>
           </small>
       </div>
     </a>
