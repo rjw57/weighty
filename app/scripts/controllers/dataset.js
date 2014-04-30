@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetCtrl', function ($scope, $routeParams, $http, $document, $q, gapi) {
+  .controller('DatasetCtrl', function ($scope, $routeParams, $log, dataset) {
     // useful constants
     var DAYS = 1000*60*60*24;
 
-    $scope.loaded = false;
+    // True iff we're currently loading a dataset
     $scope.loading = false;
 
     // We need a sheet id to continue
@@ -13,132 +13,51 @@ angular.module('webappApp')
       return;
     }
 
-    var verifyViaDriveApi = function(id) {
-      // Use the drive Api to verify that the tableId matches a file with the
-      // right properties. Return a promise which is fulfilled by a verification
-      // and is passed the id.
-      var deferred = $q.defer();
-      console.log('verifying against drive API');
-
-      gapi.load('drive', 'v2').then(function(drive) {
-        drive.files.get({ fileId: id }).then(function(file) {
-          var isValid = false;
-
-          // check the properties
-          angular.forEach(file.properties, function(property) {
-            if(property.key !== 'weightyVersion' || property.value !== '2') { return; }
-            isValid = true;
-          });
-
-          if(isValid) {
-            // success!
-            deferred.resolve(file);
-            return;
-          }
-
-          // failure :(
-          console.log('Drive file did not have expected property');
-          deferred.reject(file.properties);
-        }, function(err) {
-          console.log('Error verifying table via drive Api:', err);
-          deferred.reject(err);
-        });
-      });
-
-      return deferred.promise;
-    };
-
-    var verifyViaFusionTablesApi = function(id) {
-      // Perform an initial "get" of the table to verify the tableId which has
-      // been pulled straight from the URL. If we succeed in getting the table,
-      // check that there is are "Timestamp" and "Weight" columns.
-      var deferred = $q.defer();
-      console.log('verifying againset fusiontables API');
-
-      gapi.load('fusiontables', 'v1').then(function(fusiontables) {
-        fusiontables.table.get({ tableId: id }).then(function(table) {
-          var hasWeight = false, hasTimestamp = false;
-          angular.forEach(table.columns, function(column) {
-            if(column.name === 'Weight' && column.type === 'NUMBER') {
-              hasWeight = true;
-            } else if(column.name === 'Timestamp' && column.type === 'NUMBER') {
-              hasTimestamp = true;
-            }
-          });
-
-          if(hasWeight && hasTimestamp) {
-            deferred.resolve(table);
-          } else {
-            console.log('Error verifying table via fusiontables API; incorrect columns');
-            deferred.reject(table.columns);
-          }
-        }, function(err) {
-          console.log('Error verifying table via fusiontables Api:', err);
-          deferred.reject(err);
-        });
-      });
-
-      return deferred.promise;
-    };
-
     // Wait for login before verifying
     $scope.$watch('isSignedIn', function() {
-      $scope.datasetId = null;
+      if(!$scope.isSignedIn) {
+        $scope.verifiedDatasetId = null;
+        return;
+      }
 
-      if(!$scope.isSignedIn) { return; }
-
-      // We need both drive and fusiontable verification to pass
-      var id = $routeParams.sheetId;
-      $q.all({
-        drive: verifyViaDriveApi(id),
-        fusiontables: verifyViaFusionTablesApi(id)
-      }).then(function(ids) {
-        if(!ids.drive || !ids.fusiontables || ids.drive.id !== ids.fusiontables.tableId) {
-          console.log('dataset id failed verification');
-          return;
-        }
-
-        console.log('dataset id is verified');
-        $scope.datasetId = ids.drive.id;
-        $scope.name = ids.drive.title;
+      // Verify dataset
+      $scope.loading = true;
+      dataset.verifyDatasetId($routeParams.sheetId).then(function(resources) {
+        $log.info('dataset id ' + resources.verifiedId + ' has been verified');
+        $scope.verifiedDatasetId = resources.verifiedId;
+        $scope.name = resources.driveFile.title;
       }, function(err) {
-        console.log('dataset id failed verification:', err);
+        $log.error('Dataset failed verification:', err);
+        $scope.loading = false;
       });
     });
 
-    $scope.$watch('datasetId', function() {
-      $scope.refresh();
+    // When we have a verified dataset id, (re-)load it
+    $scope.$watch('verifiedDatasetId', function() {
+      $scope.reloadDataset();
     });
 
-    $scope.refresh = function() {
-      console.log('Refreshing dataset', $scope.datasetId);
+    // Load a dataset into the $scope.weights
+    $scope.reloadDataset = function() {
+      console.log('(Re-)loading dataset', $scope.verifiedDatasetId);
 
-      if(!$scope.datasetId) { return; }
+      if(!$scope.verifiedDatasetId) {
+        $scope.weights = [];
+        return;
+      }
 
-      gapi.load('fusiontables', 'v1').then(function(fusiontables) {
-        // We directly paste the datasetId into the SQL statement here which is
-        // a somewhat dangerous procedure. Hence the rather elaborate verification of
-        // the id we got from the URL.
-        fusiontables.query.sqlGet({
-          sql: 'SELECT Timestamp, Weight FROM ' + $scope.datasetId + ' ORDER BY Timestamp',
-        }).then(function(resp) {
-          // And finally we can update the records
-          $scope.weights = [];
-          angular.forEach(resp.rows, function(row) {
-            $scope.weights.push({
-              timestamp: row[0],
-              weight: row[1],
-              date: new Date(row[0]),
-            });
-          });
-          $scope.loaded = true;
-        }, function(err) {
-          console.log('Dataset fetch failed:', err);
-        });
+      $scope.loading = true;
+      dataset.get($scope.verifiedDatasetId).then(function(weights) {
+        $scope.weights = weights;
+        $scope.loading = false;
+      }, function(err) {
+        $log.error('Could not get dataset:', err);
       });
     };
 
+    // Watch for new weights and re-compute derived metrics
     $scope.$watch('weights', function() {
+      $log.info('new weights available:', $scope.weights);
       $scope.goal = [];
 
       // Update cached start and current weights
