@@ -3,6 +3,65 @@
 angular.module('webappApp')
   // A service for retrieving, verifying and modifying datasets
   .service('dataset', function ($log, $q, gapi) {
+    // Given a set of creation parameters, create a new dataset. Returns a
+    // promise which is resolved with the newly created dataset resource. (See
+    // dataset.list().)
+    //
+    // The creation parameters should have the following structure:
+    // {
+    //   title: <string>,     // required, human-readable name for dataset
+    //   metadata: {          // optional, JSON-friendly metadata to associate with dataset
+    //     height: <number>,  // optional, user's height in metres
+    //   },
+    // }
+    this.insert = function(params) {
+      if(!params || !params.title) {
+        return $q.reject('passed null parameters or a falsy title');
+      }
+      return gapi.load('fusiontables', 'v1').then(function(fusiontables) {
+        $log.info('creating new fusiontable "' + params.title + '"...');
+        return fusiontables.table.insert({
+          resource: {
+            name: params.title,
+            columns: [
+              {
+                columnId: 0,
+                name: 'Timestamp',
+                type: 'NUMBER',
+              },
+              {
+                columnId: 1,
+                name: 'Weight',
+                type: 'NUMBER',
+              },
+            ],
+            isExportable: true,
+            description: 'weighty record',
+          },
+        }).then(function(resp) {
+          $log.info('setting drive properties on "' + params.title + '"');
+          return gapi.load('drive', 'v2').then(function(drive) {
+            return drive.files.update({
+              fileId: resp.tableId,
+              resource: {
+                properties: [{
+                  key: 'weightyVersion',
+                  value: 2,
+                  visibility: 'PUBLIC'
+                },{
+                  key: 'weightyMetadata',
+                  value: JSON.stringify(params.metadata || {}),
+                  visibility: 'PUBLIC'
+                }],
+              },
+            }).then(function(driveFile) {
+              return datasetResourceFromDriveFile(driveFile);
+            });
+          });
+        });
+      });
+    };
+
     // Return a promise which is resolved with an object of the following form:
     //
     // {
@@ -17,8 +76,7 @@ angular.module('webappApp')
     //   title: <string>,       // human-friendly name for dataset
     //   createdDate: <Date>    // date on which dataset was created
     //   modifiedDate: <Date>   // date on which dataset was last modified
-    //   metadata: {
-    //     version: 1,          // version of weighty metadata
+    //   metadata: {            // [N.B. metadata field may be empty]
     //     height: <number>,    // user's height in metres (optional)
     //   },
     // }
@@ -105,7 +163,12 @@ angular.module('webappApp')
       var metadata = {};
       angular.forEach(driveFile.properties, function(property) {
         if(property.key === 'weightyMetadata') {
-          metadata = JSON.parse(property.value);
+          try {
+            metadata = JSON.parse(property.value);
+          } catch(err) {
+            $log.warn('ignoring invalid JSON in weighty metadata', err);
+            $log.warn('metadata was "' + property.value + '"');
+          }
         }
       });
 

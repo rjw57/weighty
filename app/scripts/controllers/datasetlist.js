@@ -30,46 +30,11 @@ angular.module('webappApp')
       // Must have entered a name
       if(!newName || newName === '') { return; }
 
-      gapi.load('fusiontables', 'v1').then(function(fusiontables) {
-        fusiontables.table.insert({
-          resource: {
-            name: newName,
-            columns: [
-              {
-                columnId: 0,
-                name: 'Timestamp',
-                type: 'NUMBER',
-              },
-              {
-                columnId: 1,
-                name: 'Weight',
-                type: 'NUMBER',
-              },
-            ],
-            isExportable: true,
-            description: 'weighty record',
-          },
-        }).then(function(resp) {
-          console.log('New dataset created', resp);
-          console.log('Setting properties...');
-          gapi.load('drive', 'v2').then(function(drive) {
-            drive.files.update({
-              fileId: resp.tableId,
-              resource: {
-                properties: [
-                  { key: 'weightyVersion', value: 2, visibility: 'PUBLIC' },
-                ],
-              },
-            }).then(function(resp) {
-              console.log('Set properties on new dataset', resp);
-              $scope.refreshList();
-            }, function(err) {
-              console.log('Error setting properties on new dataset', err);
-            });
-          });
-        }, function(err) {
-          console.log('Error creating table', err);
-        });
+      dataset.insert({ title: newName }).then(function(newDataset) {
+        $log.info('new dataset created');
+        $scope.datasets.push(newDataset);
+      }, function(err) {
+        $log.error('error creating dataset:', err);
       });
     };
   });
