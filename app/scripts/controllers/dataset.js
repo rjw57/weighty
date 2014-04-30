@@ -13,6 +13,41 @@ angular.module('webappApp')
       return;
     }
 
+    // Add a new measurement
+    $scope.submitNewMeasurement = function(measurement) {
+      if(!$scope.verifiedDatasetId) { return; }
+      $log.info('got new measurement:', measurement.weight);
+
+      dataset.addRow({
+        id: $scope.verifiedDatasetId,
+        timestamp: Date.now(),
+        weight: measurement.weight
+      }).then(function() {
+        $log.info('new measurement added');
+        $scope.reloadDataset();
+      }, function(err) {
+        $log.error('error adding new measurement', err);
+      });
+    };
+
+    // Load a dataset into the $scope.weights
+    $scope.reloadDataset = function() {
+      $log.info('(Re-)loading dataset', $scope.verifiedDatasetId);
+
+      if(!$scope.verifiedDatasetId) {
+        $scope.weights = [];
+        return;
+      }
+
+      $scope.loading = true;
+      dataset.get($scope.verifiedDatasetId).then(function(weights) {
+        $scope.weights = weights;
+        $scope.loading = false;
+      }, function(err) {
+        $log.error('Could not get dataset:', err);
+      });
+    };
+
     // Wait for login before verifying
     $scope.$watch('isSignedIn', function() {
       if(!$scope.isSignedIn) {
@@ -36,24 +71,6 @@ angular.module('webappApp')
     $scope.$watch('verifiedDatasetId', function() {
       $scope.reloadDataset();
     });
-
-    // Load a dataset into the $scope.weights
-    $scope.reloadDataset = function() {
-      $log.info('(Re-)loading dataset', $scope.verifiedDatasetId);
-
-      if(!$scope.verifiedDatasetId) {
-        $scope.weights = [];
-        return;
-      }
-
-      $scope.loading = true;
-      dataset.get($scope.verifiedDatasetId).then(function(weights) {
-        $scope.weights = weights;
-        $scope.loading = false;
-      }, function(err) {
-        $log.error('Could not get dataset:', err);
-      });
-    };
 
     // Watch for new weights and re-compute derived metrics
     $scope.$watch('weights', function() {

@@ -2,7 +2,7 @@
 
 angular.module('webappApp')
   // A service for retrieving, verifying and modifying datasets
-  .service('dataset', function ($log, $q, gapi) {
+  .service('dataset', function ($log, $q, $window, gapi) {
     // Given a set of creation parameters, create a new dataset. Returns a
     // promise which is resolved with the newly created dataset resource. (See
     // dataset.list().)
@@ -60,6 +60,37 @@ angular.module('webappApp')
           });
         });
       });
+    };
+
+    // Add a new measurement to an existing dataset. Takes a dataset id and an
+    // object of the form
+    // {
+    //   id: <string>,          // the dataset to add rows to
+    //   timestamp: <number>,   // milliseconds since 1/Jan/1970
+    //   weight: <number>,      // weight value in kilogrammes
+    // }
+    // Returns a promise which is resolved when the row is added. The return value
+    // is not defined.
+    //
+    // NOTE: it is important that you *verify* the id before using this function.
+    this.addRow = function(params) {
+      // Form CSV row
+      var csv = params.timestamp + ',' + params.weight;
+
+      // We need to do this using the raw gapi API and hence we need to wrap
+      // the promise so that the scope is properly updated.
+      return $q.when($window.gapi.client.request({
+        path: 'upload/fusiontables/v1/tables/' + params.id + '/import',
+        method: 'POST',
+        params: {
+          uploadType: 'media',
+          delimiter: ',',
+        },
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+        body: csv,
+      }));
     };
 
     // Return a promise which is resolved with an object of the following form:
