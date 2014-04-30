@@ -3,11 +3,47 @@
 angular.module('webappApp')
   // A service for retrieving, verifying and modifying datasets
   .service('dataset', function ($log, $q, gapi) {
+    // Return a promise which is resolved with an object of the following form:
+    //
+    // {
+    //   datasets: [],    // array of Dataset resources
+    // }
+    //
+    // Each Dataset resource is an object of the following form:
+    //
+    // {
+    //   kind: 'weighty#Dataset',
+    //   id: <string>,          // opaque dataset id
+    //   title: <string>,       // human-friendly name for dataset
+    //   createdDate: <Date>    // date on which dataset was created
+    //   modifiedDate: <Date>   // date on which dataset was last modified
+    //   metadata: {
+    //     version: 1,          // version of weighty metadata
+    //     height: <number>,    // user's height in metres (optional)
+    //   },
+    // }
+    this.list = function() {
+      // how to find weighty files
+      var searchQuery =
+          'not trashed and properties has ' +
+            '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
+      return gapi.load('drive', 'v2').then(function(drive) {
+        return drive.files.list({ q: searchQuery }).then(function(data) {
+          if(data.kind !== 'drive#fileList') { return; }
+          var datasets = [];
+          angular.forEach(data.items, function(driveFile) {
+            datasets.push(datasetResourceFromDriveFile(driveFile));
+          });
+          return datasets;
+        });
+      });
+    };
+
     // Given a dataset id verify the dataset a) exists and b) has our required
     // metadata. This is done through both the drive and fusiontables API. Use
     // this method to verify an untrusted dataset id from user input or URL
     // parameters. Returns a promise which is resolved if the validation
-    // succeeds with an object with the following fields:
+    // succeeds with a Dataset resource. (See dataset.list().)
     //
     // verifiedId: the verified dataset id
     // driveFile: the File resource returned by the drive API
@@ -27,9 +63,7 @@ angular.module('webappApp')
         }
 
         // OK, id checked out
-        return angular.extend({
-          verifiedId: resources.driveFile.id
-        }, resources);
+        return datasetResourceFromDriveFile(resources.driveFile);
       });
     };
 
@@ -39,7 +73,7 @@ angular.module('webappApp')
     //
     // IMPORTANT: The id from this is *directly* pasted into a fusiontables SQL
     // call. DO NOT pass an id to this function which has not been verified
-    // first via verifyDatasetId
+    // first via verifyDatasetId.
     this.get = function(verifiedDatasetId) {
       if(!verifiedDatasetId) {
         return $q.reject('passed an invalid or null dataset id');
@@ -66,6 +100,23 @@ angular.module('webappApp')
     };
 
     // INTERNAL FUNCTIONS
+
+    var datasetResourceFromDriveFile = function(driveFile) {
+      var metadata = {};
+      angular.forEach(driveFile.properties, function(property) {
+        if(property.key === 'weightyMetadata') {
+          metadata = JSON.parse(property.value);
+        }
+      });
+
+      return {
+        title: driveFile.title,
+        id: driveFile.id,
+        createdDate: Date.parse(driveFile.createdDate),
+        modifiedDate: Date.parse(driveFile.modifiedDate),
+        metadata: metadata,
+      };
+    };
 
     var verifyViaDriveApi = function(id) {
       // Use the drive Api to verify that the tableId matches a file with the

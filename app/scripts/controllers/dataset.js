@@ -22,10 +22,10 @@ angular.module('webappApp')
 
       // Verify dataset
       $scope.loading = true;
-      dataset.verifyDatasetId($routeParams.sheetId).then(function(resources) {
-        $log.info('dataset id ' + resources.verifiedId + ' has been verified');
-        $scope.verifiedDatasetId = resources.verifiedId;
-        $scope.name = resources.driveFile.title;
+      dataset.verifyDatasetId($routeParams.sheetId).then(function(dataset) {
+        $log.info('dataset id ' + dataset.id + ' has been verified');
+        $scope.verifiedDatasetId = dataset.id;
+        $scope.name = dataset.title;
       }, function(err) {
         $log.error('Dataset failed verification:', err);
         $scope.loading = false;
@@ -39,7 +39,7 @@ angular.module('webappApp')
 
     // Load a dataset into the $scope.weights
     $scope.reloadDataset = function() {
-      console.log('(Re-)loading dataset', $scope.verifiedDatasetId);
+      $log.info('(Re-)loading dataset', $scope.verifiedDatasetId);
 
       if(!$scope.verifiedDatasetId) {
         $scope.weights = [];
