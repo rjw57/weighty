@@ -1,9 +1,29 @@
 'use strict';
 
+// This is a horrible hack. A cleaner way of calling into the angular
+// module would be nice.
+window.onGapiLoad = function() {
+  window.gapiLoaded = true;
+  if(window.handleGapiLoad) {
+    window.handleGapiLoad();
+  }
+};
+
 angular.module('webappApp')
-  .run(function(gapi) {
-    // Signal to gapi that everything is ready
-    gapi.ready();
+  .run(function($window, $log, $rootScope, gapi) {
+    // was gapi already loaded?
+    if($window.gapiLoaded) {
+      // Signal to gapi that everything is ready
+      $log.info('gapi was already loaded by module initialisation');
+      gapi.ready();
+    } else {
+      // otherwise, replace the onload function
+      $log.info('gapi not yet loaded, setting event handler');
+      $window.handleGapiLoad = function() {
+        $log.info('gapi loaded');
+        gapi.ready();
+      };
+    }
   })
   .controller('GoogleAccountCtrl', function ($scope, $window, gapi) {
     // jshint camelcase: false
