@@ -32,7 +32,7 @@
     <div ng:include="'partials/datasetSidebar.html'" class="sidebar sidebar-left" toggleable parent-active-class="sidebar-left-in" id="datasetSidebar"></div>
 
     <div class="app">
-      <div class="navbar navbar-app navbar-absolute-top navbar-static-top">
+      <div class="navbar navbar-app navbar-absolute-top navbar-fixed-top">
         <div class="navbar-brand navbar-brand-center" yield-to="title">
             <span>weighty</span>
         </div>
@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <div class="navbar navbar-app navbar-absolute-bottom navbar-static-bottom">
+      <div class="navbar navbar-app navbar-absolute-bottom navbar-fixed-bottom">
         <div class="navbar-brand navbar-brand-left" ng:show="me">
           <img class="img-nav-profile img-responsive img-circle" ng:src="{{ me.image.url }}" alt="">
           {{ me.displayName }}
