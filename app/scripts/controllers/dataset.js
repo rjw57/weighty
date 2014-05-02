@@ -83,21 +83,24 @@ angular.module('webappApp')
       }
 
       // HACK
-      $scope.targetDate = new Date($scope.weights[0].date.getTime() + 100*DAYS);
-      $scope.targetWeight = 100;
+      $scope.targetDate = new Date(Date.parse('Oct 01, 2014'));
+      $scope.targetWeight = 75;
+      $log.info('target date: ' + $scope.targetDate);
+      $log.info('target weight: ' + $scope.targetWeight);
 
       $scope.startWeight = $scope.weights[0].weight;
       $scope.currentWeight = $scope.weights[$scope.weights.length-1].weight;
       $scope.progress = 1 -
         ($scope.currentWeight-$scope.targetWeight) / ($scope.startWeight-$scope.targetWeight);
 
+      var currentDate = Date.now() + 31*DAYS;
       var startDate = $scope.weights[0].date.getTime(),
         targetDate = $scope.targetDate.getTime(),
         startLogWeight = Math.log($scope.startWeight),
         targetLogWeight = Math.log($scope.targetWeight);
 
       // Update goal
-      for(var t = startDate; t <= targetDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
+      for(var t = startDate; t <= Math.max(currentDate, targetDate); t += Math.min(DAYS, (targetDate-startDate) / 100)) {
         var lambda = (t - startDate) / (targetDate - startDate);
         $scope.goal.push({
           date: new Date(t),
