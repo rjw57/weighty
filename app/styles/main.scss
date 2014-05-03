@@ -8,6 +8,14 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 
 @import url(//fonts.googleapis.com/css?family=Nunito);
 
+// begin: global layout
+.app-body {
+    // required for top and bottom navbar
+    padding-top: $navbar-height + $navbar-margin-bottom;
+    padding-bottom: $navbar-height + $navbar-margin-bottom;
+}
+// end: global layout
+
 // begin: profile name and image
 .img-nav-profile {
     @extend .img-circle;
@@ -23,7 +31,6 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 .navbar-profile {
     // padding-left: $padding-base-horizontal;
 }
-
 // end: profile name and image
 
 .overthrow-enabled .overthrow {
