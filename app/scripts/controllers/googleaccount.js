@@ -1,14 +1,5 @@
 'use strict';
 
-// This is a horrible hack. A cleaner way of calling into the angular
-// module would be nice.
-window.onGapiLoad = function() {
-  window.gapiLoaded = true;
-  if(window.handleGapiLoad) {
-    window.handleGapiLoad();
-  }
-};
-
 angular.module('webappApp')
   .run(function($window, $log, $rootScope, gapi) {
     // was gapi already loaded?
