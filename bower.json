@@ -13,7 +13,6 @@
     "angular-route": "~1.2.15",
     "nvd3": "~1.1.15-beta",
     "angular-oauth": "*",
-    "mobile-angular-ui": "~1.1.0-beta.11",
     "angular-gapi": "~0.9.1"
   },
   "devDependencies": {
