@@ -8,6 +8,24 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 
 @import url(//fonts.googleapis.com/css?family=Nunito);
 
+// begin: profile name and image
+.img-nav-profile {
+    @extend .img-circle;
+
+    width: 30px;// ceil((1.5 * $line-height-computed));
+    display: inline;
+    margin-bottom: floor((-0.5 * (30 - $font-size-base)));
+    margin-top: ceil((-0.5 * (30 - $font-size-base)));
+    position: relative; top: -1px; // HACK
+    margin-right: 0.5ex;
+}
+
+.navbar-profile {
+    // padding-left: $padding-base-horizontal;
+}
+
+// end: profile name and image
+
 .overthrow-enabled .overthrow {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
@@ -65,14 +83,6 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     padding: 0.2em 0;
 }
 
-.img-nav-profile {
-    width: 30px;// ceil((1.5 * $line-height-computed));
-    display: inline;
-    margin-bottom: floor((-0.5 * (30 - $font-size-base)));
-    margin-top: ceil((-0.5 * (30 - $font-size-base)));
-    position: relative; top: -1px; // HACK
-    margin-right: 0.5ex;
-}
 
 .nav-xs-profile { padding-right: $padding-base-horizontal; } // HACK
 

@@ -1,0 +1,35 @@
+<!-- top nav -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="navbar-header">
+    <a class="navbar-brand" href="#/">weighty</a>
+  </div>
+</nav>
+
+<!-- bottom nav -->
+<nav class="navbar navbar-inverse navbar-fixed-bottom">
+  <!-- we don't use navbar-{left, right} because we want to preserve
+       alignment even on small screens. -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-8">
+        <!-- profile name and image -->
+        <div ng:show="me" class="navbar-text navbar-profile">
+          <img ng:src="{{ me.image.url }}" class="img-nav-profile">
+          {{ me.displayName }}
+        </div>
+      </div>
+
+      <div class="col-xs-4 text-right">
+        <!-- sign in/out -->
+        <p class="navbar-text">
+          <a ng:hide="isSignedIn" ng:click="doLogin()" class="navbar-link" href="">
+            <span class="glyphicon glyphicon-log-in"></span> Sign in
+          </a>
+          <a ng:show="isSignedIn" ng:click="doLogout()" class="navbar-link" href="">
+            <span class="glyphicon glyphicon-log-out"></span> Sign out
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</nav>
