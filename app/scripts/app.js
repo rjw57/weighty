@@ -23,17 +23,6 @@ angular
         controller: 'DatasetListCtrl',
         active: 'datasets'
       })
-      /*
-      .when('/login', {
-        templateUrl: 'views/login.html',
-        controller: 'LoginCtrl',
-        active: 'login'
-      })
-      .when('/logout', {
-        templateUrl: 'views/logout.html',
-        controller: 'LogoutCtrl'
-      })
-      */
       .otherwise({
         redirectTo: '/',
       });
