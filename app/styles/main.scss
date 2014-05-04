@@ -9,7 +9,7 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 @import url(//fonts.googleapis.com/css?family=Nunito);
 
 // begin: global layout
-body {
+.app-content {
     // required for top and bottom navbar
     padding-top: $navbar-height + $navbar-margin-bottom;
     padding-bottom: $navbar-height + $navbar-margin-bottom;
