@@ -93,15 +93,49 @@ angular.module('webappApp')
       $scope.progress = 1 -
         ($scope.currentWeight-$scope.targetWeight) / ($scope.startWeight-$scope.targetWeight);
 
-      var currentDate = Date.now() + 14*DAYS;
+      var currentDate = Date.now() + 31*DAYS;
       var startDate = $scope.weights[0].date.getTime(),
+        endDate = $scope.weights[$scope.weights.length - 1].date.getTime(),
         targetDate = $scope.targetDate.getTime(),
         startLogWeight = Math.log($scope.startWeight),
         targetLogWeight = Math.log($scope.targetWeight);
 
+      var lastPlotDate = Math.max(currentDate, targetDate);
+      // var lastPlotDate = Math.min(currentDate, targetDate);
+
+      var t, lambda;
+
+      // Get list of weights where date is less than 10 days in the past and
+      // form matrices X and y where y is a list of log weights and rows of X are
+      // [date 1]. This is in preparation for least squares optimisation.
+      var y = [], X = [], XtX, Xty, b;
+      angular.forEach($scope.weights, function(w) {
+        if(w.date.getTime() < endDate - 10*DAYS) { return; }
+        y.push(Math.log(w.weight));
+        X.push([w.date.getTime(), 1]);
+      });
+
+      $scope.trend = null;
+      if(y.length > 6) {
+        // Least squares solution is b where (X' X) b = X' y
+        XtX = numeric.dot(numeric.transpose(X), X);
+        Xty = numeric.dot(numeric.transpose(X), y);
+        b = numeric.solve(XtX, Xty);
+
+        // Update trend
+        $scope.trend = [];
+        for(t = X[0][0]; t <= lastPlotDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
+          $scope.trend.push({
+            date: new Date(t),
+            weight: Math.exp(b[0]*t + b[1]),
+          });
+          if($scope.trend[$scope.trend.length - 1].weight < $scope.targetWeight) { break; }
+        }
+      }
+
       // Update goal
-      for(var t = startDate; t <= Math.min(currentDate, targetDate); t += Math.min(DAYS, (targetDate-startDate) / 100)) {
-        var lambda = (t - startDate) / (targetDate - startDate);
+      for(t = startDate; t <= lastPlotDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
+        lambda = (t - startDate) / (targetDate - startDate);
         $scope.goal.push({
           date: new Date(t),
           weight: Math.exp(lambda * targetLogWeight + (1-lambda) * startLogWeight),

@@ -14,7 +14,8 @@
     "nvd3": "~1.1.15-beta",
     "angular-oauth": "*",
     "angular-gapi": "~0.9.1",
-    "bootstrap-jasny": "~3.1.2"
+    "bootstrap-jasny": "~3.1.2",
+    "numericjs": "~1.2.6"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.15",
@@ -44,6 +45,11 @@
         "src/overthrow-init.js",
         "src/overthrow-polyfill.js",
         "src/overthrow-toss.js"
+      ]
+    },
+    "numericjs": {
+      "main": [
+        "src/numeric.js"
       ]
     }
   }

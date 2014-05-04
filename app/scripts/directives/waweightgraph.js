@@ -2,14 +2,15 @@
 
 angular.module('webappApp')
   .directive('waWeightGraph', function () {
-    var weightColor = '#428bca', goalColor = '#5cb85c';
+    var weightColor = '#428bca', goalColor = '#5cb85c', trendColor = '#93BCE0';
 
     return {
       template: '',
       restrict: 'E',
       scope: {
-        weights: '=weights',
-        goal: '=goal',
+        weights: '=',
+        goal: '=',
+        trend: '=',
       },
       link: function postLink(scope, element) {
         var chart = nv.models.lineChart()
@@ -37,20 +38,36 @@ angular.module('webappApp')
 
         // Update weights
         var updateData = function() {
-          var w = [], g = [], r, idx;
-          for(idx in scope.weights) {
-            r = scope.weights[idx];
-            w.push({ x: r.date, y: r.weight });
-          }
-          for(idx in scope.goal) {
-            r = scope.goal[idx];
-            g.push({ x: r.date, y: r.weight });
-          }
+          var vs, r, idx, datum = [];
 
-          svg.datum([
-            { values: g, key: 'goal', color: goalColor },
-            { values: w, key: 'weight', color: weightColor },
-          ]).call(chart);
+          vs = [];
+          if(scope.goal) {
+            for(idx in scope.goal) {
+              r = scope.goal[idx];
+              vs.push({ x: r.date, y: r.weight });
+            }
+          }
+          datum.push({ values: vs, key: 'goal', color: goalColor });
+
+          vs = [];
+          if(scope.trend) {
+            for(idx in scope.trend) {
+              r = scope.trend[idx];
+              vs.push({ x: r.date, y: r.weight });
+            }
+          }
+          datum.push({ values: vs, key: 'trend', color: trendColor });
+
+          vs = [];
+          if(scope.weights) {
+            for(idx in scope.weights) {
+              r = scope.weights[idx];
+              vs.push({ x: r.date, y: r.weight });
+            }
+          }
+          datum.push({ values: vs, key: 'weight', color: weightColor });
+
+          svg.datum(datum).call(chart);
         };
 
         scope.$watch('weights', updateData);
