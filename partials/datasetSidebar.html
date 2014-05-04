@@ -1,11 +1,11 @@
-<div class="scrollable">
-  <div class="scrollable-content" ng:hide="isSignedIn">
+<div class="navmenu navmenu-default navmenu-fixed-right offcanvas-sm" id="datasetList">
+  <div ng:hide="isSignedIn">
     <div class="section container text-centered text-muted">
       Sign in to manage your datasets.
     </div>
   </div>
 
-  <div class="scrollable-content" ng:controller="DatasetListCtrl" ng:show="isSignedIn">
+  <div ng:controller="DatasetListCtrl" ng:show="isSignedIn">
 
     <div class="list-group">
 
