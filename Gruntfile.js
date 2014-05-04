@@ -311,13 +311,9 @@ module.exports = function (grunt) {
             'images/{,*/}*.{webp}',
             'data/{,*/}*',
             'partials/{,*/}*',
-            'fonts/*'
+            'fonts/*',
+            'bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/*.*'
           ]
-        }, {
-          expand: true,
-          cwd: '<%= yeoman.app %>/bower_components/mobile-angular-ui/dist/fonts/',
-          dest: '<%= yeoman.dist %>/fonts',
-          src: ['*.{woff,ttf,svg}']
         }, {
           expand: true,
           cwd: '.tmp/images',
