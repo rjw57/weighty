@@ -1,56 +1,35 @@
 <!-- top nav -->
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container-fluid">
-    <div class="navbar-text pull-right">
-      <!-- sign in/out -->
-      <div>
-        <a class="navbar-link" href=""
-            data-toggle="offcanvas" data-target="#datasetList" data-canvas="body">
-          <span class="glyphicon glyphicon-stats"></span> Datasets
-        </a>
-      </div>
-    </div>
-  </div>
-    <!--
-  <button type="button" class="navbar-toggle"
-      data-toggle="offcanvas" data-target="#myNavmenu" data-canvas="body">
+<nav class="navbar navbar-default navbar-fixed-top hidden-md hidden-lg" role="navigation">
+  <button type="button" class="navbar-toggle visible-sm visible-xs"
+      data-toggle="offcanvas" data-target="#datasetList">
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
-  </button>]
-  -->
-<!--
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#/">weighty</a>
-    </div>
-  </div>
-  -->
+  </button>
+  <a class="navbar-brand" href="#/">weighty</a>
 </nav>
 
 <!-- bottom nav -->
-<nav class="navbar navbar-default navbar-fixed-bottom">
-  <!-- we don't use navbar-{left, right} because we want to preserve
-       alignment even on small screens. -->
-  <div class="container-fluid">
-    <div class="navbar-text pull-left">
-      <!-- profile name and image -->
-      <div ng:show="me">
-        <img ng:src="{{ me.image.url }}" class="img-nav-profile">
-        {{ me.displayName }}
-      </div>
-    </div>
+<nav class="navbar navbar-default navbar-fixed-top visible-md visible-lg content-navbar">
+  <ul class="nav navbar-nav">
+    <!-- sign in/out -->
+    <li>
+      <a ng:hide="isSignedIn" ng:click="doLogin()" class="navbar-link" href="">
+        <span class="glyphicon glyphicon-log-in"></span> Sign in
+      </a>
+    </li>
+    <li>
+      <a ng:show="isSignedIn" ng:click="doLogout()" class="navbar-link" href="">
+        <span class="glyphicon glyphicon-log-out"></span> Sign out
+      </a>
+    </li>
+  </ul>
 
-    <div class="navbar-text pull-right">
-      <!-- sign in/out -->
-      <div>
-        <a ng:hide="isSignedIn" ng:click="doLogin()" class="navbar-link" href="">
-          <span class="glyphicon glyphicon-log-in"></span> Sign in
-        </a>
-        <a ng:show="isSignedIn" ng:click="doLogout()" class="navbar-link" href="">
-          <span class="glyphicon glyphicon-log-out"></span> Sign out
-        </a>
-      </div>
+  <div class="navbar-text navbar-right profile-slug">
+    <!-- profile name and image -->
+    <div ng:show="me">
+      <img ng:src="{{ me.image.url }}" class="img-nav-profile">
+      {{ me.displayName }}
     </div>
   </div>
 </nav>

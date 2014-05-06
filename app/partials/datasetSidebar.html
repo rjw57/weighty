@@ -1,4 +1,25 @@
-<div class="navmenu navmenu-default navmenu-fixed-right offcanvas-sm" id="datasetList">
+<div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm" id="datasetList">
+  <a class="navmenu-brand visible-md visible-lg" href="#/">weighty</a>
+
+  <ul class="nav navmenu-nav">
+    <li>
+      <a ng:hide="isSignedIn" ng:click="doLogin()" class="navbar-link" href="">
+        <span class="glyphicon glyphicon-log-in"></span> Sign in
+      </a>
+    </li>
+    <li>
+      <a ng:show="isSignedIn" ng:click="doLogout()" class="navbar-link" href="">
+        <span class="glyphicon glyphicon-log-out"></span> Sign out
+        <span ng:show="me">({{me.displayName}})</span>
+      </a>
+    </li>
+    <li>
+      <a href="">
+        <span class="glyphicon glyphicon-plus"></span> New dataset&hellip;
+      </a>
+    </li>
+  </ul>
+
   <div ng:hide="isSignedIn">
     <div class="section container text-centered text-muted">
       Sign in to manage your datasets.
@@ -6,10 +27,10 @@
   </div>
 
   <div ng:controller="DatasetListCtrl" ng:show="isSignedIn">
+    <div class="navmenu-section">Datasets</div>
 
-    <div class="list-group">
-
-    <div class="list-group-item">
+    <!--
+    <div>
       <form name="newDatasetForm" class="container-fluid form">
         <div class="row">
           <div class="col-xs-9">
@@ -19,22 +40,22 @@
           <button type="submit" class="btn btn-primary col-xs-2"
               ng:disabled="newDatasetForm.$invalid"
               ng:click="submitNewDataset()">
-            <i class="fa fa-plus"></i>
+            <span class="glyphicon glyphicon-plus"></i>
           </button>
         </div>
       </form>
     </div>
+    -->
 
-    <a class="list-group-item media" ng:href="#/dataset/{{ dataset.id }}"
-        ng-repeat="dataset in datasets | orderBy : '-modifiedDate'">
-      <div class="media-body" toggle="off" bubble target="datasetSidebar">
-          <h5 class="media-heading">{{ dataset.title }}</h5>
-          <small>
-            <span class="text-muted">{{ dataset.modifiedDate | date : 'mediumDate' }}</span>
-          </small>
-      </div>
-    </a>
-
-    </div>
+    <ul class="nav navmenu-nav">
+      <li ng-repeat="dataset in datasets | orderBy : '-modifiedDate'">
+        <a ng:href="#/dataset/{{ dataset.id }}">
+            {{ dataset.title }}
+            <small>
+              <span class="text-muted">{{ dataset.modifiedDate | date : 'mediumDate' }}</span>
+            </small>
+        </a>
+      </li>
+    </ul>
   </div>
 </div>

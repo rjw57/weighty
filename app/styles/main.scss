@@ -14,6 +14,56 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     padding-top: $navbar-height + $navbar-margin-bottom;
     padding-bottom: $navbar-height + $navbar-margin-bottom;
 }
+
+.container {
+    max-width: 100%;
+}
+
+.navmenu {
+    padding-top: $navbar-height;
+
+    .navmenu-section {
+        @extend .text-muted;
+        @extend small;
+
+        font-weight: bold;
+        padding: $nav-link-padding;
+        text-transform: uppercase;
+    }
+}
+
+.navbar {
+    display: block;
+    text-align: center;
+}
+.navbar-brand {
+    display: inline-block;
+    float: none;
+}
+.navbar-toggle {
+    position: absolute;
+    float: left;
+    margin-left: $navbar-padding-horizontal;
+}
+
+.profile-slug {
+    padding-right: $navbar-padding-horizontal;
+}
+
+// dataset sidebar is visible in this case
+@media (min-width: 992px) {
+    body {
+        padding: 0 0 0 300px;
+    }
+
+    .navmenu {
+        padding-top: 0;
+    }
+
+    .content-navbar {
+        margin-left: 300px;
+    }
+}
 // end: global layout
 
 // begin: profile name and image
