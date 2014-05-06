@@ -108,11 +108,11 @@ angular.module('webappApp')
       // Get list of weights where date is less than 10 days in the past and
       // form matrices X and y where y is a list of log weights and rows of X are
       // [date 1]. This is in preparation for least squares optimisation.
-      var y = [], X = [], XtX, Xty, b;
+      var y = [], X = [], XtX, Xty, b, fitWeight;
       angular.forEach($scope.weights, function(w) {
-        if(w.date.getTime() < endDate - 10*DAYS) { return; }
-        y.push(Math.log(w.weight));
-        X.push([w.date.getTime(), 1]);
+        fitWeight = Math.exp(-Math.max(0, endDate - w.date.getTime()) / (14*DAYS));
+        y.push(fitWeight * Math.log(w.weight));
+        X.push([fitWeight * w.date.getTime(), fitWeight]);
       });
 
       $scope.trend = null;
@@ -124,7 +124,7 @@ angular.module('webappApp')
 
         // Update trend
         $scope.trend = [];
-        for(t = X[0][0]; t <= lastPlotDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
+        for(t = Math.max(startDate, endDate-14*DAYS); t <= lastPlotDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
           $scope.trend.push({
             date: new Date(t),
             weight: Math.exp(b[0]*t + b[1]),
