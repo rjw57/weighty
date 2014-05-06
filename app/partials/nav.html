@@ -8,28 +8,3 @@
   </button>
   <a class="navbar-brand" href="#/">weighty</a>
 </nav>
-
-<!-- bottom nav -->
-<nav class="navbar navbar-default navbar-fixed-top visible-md visible-lg content-navbar">
-  <ul class="nav navbar-nav">
-    <!-- sign in/out -->
-    <li>
-      <a ng:hide="isSignedIn" ng:click="doLogin()" class="navbar-link" href="">
-        <span class="glyphicon glyphicon-log-in"></span> Sign in
-      </a>
-    </li>
-    <li>
-      <a ng:show="isSignedIn" ng:click="doLogout()" class="navbar-link" href="">
-        <span class="glyphicon glyphicon-log-out"></span> Sign out
-      </a>
-    </li>
-  </ul>
-
-  <div class="navbar-text navbar-right profile-slug">
-    <!-- profile name and image -->
-    <div ng:show="me">
-      <img ng:src="{{ me.image.url }}" class="img-nav-profile">
-      {{ me.displayName }}
-    </div>
-  </div>
-</nav>

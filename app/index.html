@@ -28,11 +28,10 @@
     <![endif]-->
 
     <div ng:include="'partials/datasetSidebar.html'"></div>
-
     <div ng:include="'partials/nav.html'"></div>
 
-    <div class="container">
-      <div ng:view class="app-content"></div>
+    <div class="app-content">
+      <div ng:view class="container"></div>
     </div>
 
     <!--[if lt IE 9]>
@@ -82,6 +81,10 @@
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/bootstrap-jasny/dist/js/jasny-bootstrap.js"></script>
     <script src="bower_components/numericjs/src/numeric.js"></script>
+    <script src="bower_components/overthrow/src/overthrow-detect.js"></script>
+    <script src="bower_components/overthrow/src/overthrow-polyfill.js"></script>
+    <script src="bower_components/overthrow/src/overthrow-toss.js"></script>
+    <script src="bower_components/overthrow/src/overthrow-init.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 

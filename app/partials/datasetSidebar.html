@@ -1,33 +1,60 @@
-<div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm" id="datasetList">
-  <a class="navmenu-brand visible-md visible-lg" href="#/">weighty</a>
+<div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm overthrow" id="datasetList">
+  <a class="navmenu-brand visible-md visible-lg" href="#/">
+    weighty
+  </a>
+
+  <div ng:show="me">
+    <h5 class="navmenu-section">Current profile</h5>
+    <div class="navmenu-text">
+      <!-- profile name and image -->
+      <img ng:src="{{ me.image.url }}" class="img-nav-profile">
+      {{ me.displayName }}
+    </div>
+  </div>
+
+  <h5 class="navmenu-section">Actions</h5>
 
   <ul class="nav navmenu-nav">
-    <li>
-      <a ng:hide="isSignedIn" ng:click="doLogin()" class="navbar-link" href="">
+    <li ng:hide="isSignedIn" class="hidden-md hidden-lg">
+      <a ng:click="doLogin()" class="navbar-link" href="">
         <span class="glyphicon glyphicon-log-in"></span> Sign in
       </a>
     </li>
     <li>
-      <a ng:show="isSignedIn" ng:click="doLogout()" class="navbar-link" href="">
-        <span class="glyphicon glyphicon-log-out"></span> Sign out
-        <span ng:show="me">({{me.displayName}})</span>
+      <a href="">
+        <span class="glyphicon glyphicon-plus"></span> New dataset
       </a>
     </li>
-    <li>
-      <a href="">
-        <span class="glyphicon glyphicon-plus"></span> New dataset&hellip;
+    <li ng:show="isSignedIn" class="hidden-md hidden-lg">
+      <a ng:click="doLogout()" class="navbar-link" href="">
+        <span class="glyphicon glyphicon-log-out"></span> Sign out
       </a>
     </li>
   </ul>
 
+  <h5 class="navmenu-section">Datasets</h5>
+
   <div ng:hide="isSignedIn">
-    <div class="section container text-centered text-muted">
-      Sign in to manage your datasets.
+    <div class="navmenu-text">
+      <span class="text-muted">Sign in to manage your datasets</span>
     </div>
   </div>
 
   <div ng:controller="DatasetListCtrl" ng:show="isSignedIn">
-    <div class="navmenu-section">Datasets</div>
+    <div class="navmenu-text" ng:hide="datasets && datasets.length > 0">
+      <span class="text-muted">No datasets</span>
+    </div>
+
+    <ul class="nav navmenu-nav" ng:show="datasets && datasets.length > 0">
+      <li ng-repeat="dataset in datasets | orderBy : '-modifiedDate'">
+        <a ng:href="#/dataset/{{ dataset.id }}">
+            {{ dataset.title }}
+            <small>
+              <span class="text-muted">{{ dataset.modifiedDate | date : 'mediumDate' }}</span>
+            </small>
+        </a>
+      </li>
+    </ul>
 
     <!--
     <div>
@@ -46,16 +73,5 @@
       </form>
     </div>
     -->
-
-    <ul class="nav navmenu-nav">
-      <li ng-repeat="dataset in datasets | orderBy : '-modifiedDate'">
-        <a ng:href="#/dataset/{{ dataset.id }}">
-            {{ dataset.title }}
-            <small>
-              <span class="text-muted">{{ dataset.modifiedDate | date : 'mediumDate' }}</span>
-            </small>
-        </a>
-      </li>
-    </ul>
   </div>
 </div>

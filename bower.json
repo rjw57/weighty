@@ -15,7 +15,8 @@
     "angular-oauth": "*",
     "angular-gapi": "~0.9.1",
     "bootstrap-jasny": "~3.1.2",
-    "numericjs": "~1.2.6"
+    "numericjs": "~1.2.6",
+    "overthrow": "~0.7.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.15",
@@ -42,9 +43,9 @@
       "_comment": "overflow sensibly does not include build atrefacts in the source tree",
       "main": [
         "src/overthrow-detect.js",
-        "src/overthrow-init.js",
         "src/overthrow-polyfill.js",
-        "src/overthrow-toss.js"
+        "src/overthrow-toss.js",
+        "src/overthrow-init.js"
       ]
     },
     "numericjs": {

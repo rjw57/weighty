@@ -11,8 +11,8 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 // begin: global layout
 .app-content {
     // required for top and bottom navbar
-    padding-top: $navbar-height + $navbar-margin-bottom;
-    padding-bottom: $navbar-height + $navbar-margin-bottom;
+    margin-top: $navbar-height;
+    padding-top: $padding-base-vertical;
 }
 
 .container {
@@ -29,6 +29,18 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
         font-weight: bold;
         padding: $nav-link-padding;
         text-transform: uppercase;
+
+        background-color: darken($navbar-default-bg, 10%);
+    }
+
+    .navmenu-text {
+        padding: $nav-link-padding;
+    }
+}
+
+.navmenu-inverse {
+    .navmenu-section {
+        background-color: lighten($navbar-inverse-bg, 10%);
     }
 }
 
@@ -63,7 +75,20 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     .content-navbar {
         margin-left: 300px;
     }
+
+    .app-content {
+        // required for top navbar to be hidden
+        margin-top: 0;
+    }
 }
+
+/* Overthrow CSS:
+   Enable overflow: auto on elements with overthrow class when html element has overthrow class too */
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 // end: global layout
 
 // begin: profile name and image
