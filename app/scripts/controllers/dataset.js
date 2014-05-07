@@ -13,6 +13,31 @@ angular.module('webappApp')
       return;
     }
 
+    $scope.weightChartConfig = {
+      options: {
+        title: {
+          text: 'Progress',
+        },
+        xAxis: {
+          type: 'datetime',
+        },
+        yAxis : {
+          title: {
+            text: 'Weight / kg',
+          },
+          startOnTick: false,
+          minPadding: 0,
+          maxPadding: 0,
+        },
+        tooltip: {
+          valueDecimals: 1,
+          valueSuffix: 'kg',
+        },
+      },
+
+      series: [],
+    };
+
     // Add a new measurement
     $scope.submitNewMeasurement = function(measurement) {
       if(!$scope.verifiedDatasetId) { return; }
@@ -46,6 +71,76 @@ angular.module('webappApp')
       }, function(err) {
         $log.error('Could not get dataset:', err);
       });
+    };
+
+    var updateChartSeries = function() {
+      var data, weightColor = '#428bca', goalColor = '#5cb85c';
+
+      // weights
+      if($scope.weights) {
+        data = [];
+        angular.forEach($scope.weights, function(datum) {
+          data.push([datum.date.getTime(), datum.weight]);
+        });
+        $scope.weightChartConfig.series.push({
+          name: 'Weight',
+          data: data,
+          zIndex: 4,
+          color: weightColor,
+          marker: { enabled: false },
+        });
+      }
+
+      if($scope.goal) {
+        // goal
+        data = [];
+        angular.forEach($scope.goal, function(datum) {
+          data.push([datum.date.getTime(), datum.weight]);
+        });
+        $scope.weightChartConfig.series.push({
+          name: 'Goal',
+          data: data,
+          zIndex: 2,
+          color: goalColor,
+          marker: { enabled: false },
+        });
+      }
+
+      if($scope.trend) {
+        // trend
+        data = [];
+        angular.forEach($scope.trend, function(datum) {
+          data.push([datum.date.getTime(), datum.weight]);
+        });
+        $scope.weightChartConfig.series.push({
+          name: 'Trend',
+          id: 'trend',
+          data: data,
+          zIndex: 1,
+          color: weightColor,
+          dashStyle: 'Dash',
+          lineWidth: 1,
+          marker: { enabled: false },
+        });
+
+        if($scope.trendBounds) {
+          // trend bounds
+          data = [];
+          angular.forEach($scope.trendBounds, function(datum) {
+            data.push([datum.date.getTime(), datum.minWeight, datum.maxWeight]);
+          });
+          $scope.weightChartConfig.series.push({
+            name: 'Trend Range',
+            data: data,
+            type: 'arearange',
+            zIndex: 0,
+            lineWidth: 0,
+            color: weightColor,
+            fillOpacity: 0.3,
+            linkedTo: 'trend',
+          });
+        }
+      }
     };
 
     // Wait for login before verifying
@@ -118,14 +213,12 @@ angular.module('webappApp')
       var t, lambda, trendWeight, trendBootstrapWeight, trendMinWeight, trendMaxWeight;
 
       $scope.trend = null;
-      $scope.trendMin = null;
-      $scope.trendMax = null;
+      $scope.trendBounds = null;
       if(trendRegression.m !== null) {
         // Update trend
         $scope.trend = [];
-        $scope.trendMin = [];
-        $scope.trendMax = [];
-        for(t = Math.max(startDate, endDate-14*DAYS);
+        $scope.trendBounds = [];
+        for(t = Math.max(startDate, endDate-1*DAYS);
             t <= lastPlotDate;
             t += Math.min(DAYS, (targetDate-startDate) / 100))
         {
@@ -142,17 +235,11 @@ angular.module('webappApp')
             });
           }
 
-          if(trendMinWeight >= $scope.targetWeight) {
-            $scope.trendMin.push({
+          if(trendMinWeight >= $scope.targetWeight || trendMaxWeight >= $scope.targetWeight) {
+            $scope.trendBounds.push({
               date: new Date(t),
-              weight: trendMinWeight,
-            });
-          }
-
-          if(trendMaxWeight >= $scope.targetWeight) {
-            $scope.trendMax.push({
-              date: new Date(t),
-              weight: trendMaxWeight,
+              minWeight: Math.max($scope.targetWeight, trendMinWeight),
+              maxWeight: Math.max($scope.targetWeight, trendMaxWeight),
             });
           }
         }
@@ -166,5 +253,7 @@ angular.module('webappApp')
           weight: Math.exp(lambda * targetLogWeight + (1-lambda) * startLogWeight),
         });
       }
+
+      updateChartSeries();
     });
   });

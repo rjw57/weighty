@@ -1,46 +1,10 @@
-<!--
-<div content-for="title">
-  Dataset
-</div>
-
-<div content-for="navbarAction">
-  <div class="btn btn-navbar" toggle target="addMeasurementOverlay">
-    <i class="fa fa-plus"></i> New weight
-  </div>
-</div>
-
-<div class="scrollable" ng:hide="isSignedIn">
-  <div class="scrollable-content">
-    <div class="container section">
-      <br/>
-      <p class="lead text-center"><strong>Sign in to see this dataset.</strong></p>
-    </div>
-  </div>
-</div>
-
-<div overlay="addMeasurementOverlay">
-  <h4 class="overlay-title">Add a new weight measurement</h4>
-  <div class="container">
-    <form class="form" name="addMeasurementForm">
-      <input type="number" class="form-control" name="weight" placeholder="kilos"
-        ng:model="measurement.weight" required/>
-      <button toggle="off" bubble ng:click="submitNewMeasurement(measurement)"
-        target="addMeasurementOverlay" ng:disabled="addMeasurementForm.$invalid"
-        type="submit" class="form-control btn btn-primary">Add</buton>
-      </div>
-    </form>
-  </div>
-</div>
--->
-
-<!-- begin view content -->
-<div class="loading-indicator" ng:show="loading">
+<div class="loading-indicator" data-ng-show="loading">
   <p class="lead text-center">
     <strong>Loading&hellip;</strong>
   </p>
 </div>
 
-<div ng:hide="loading">
+<div data-ng-hide="loading">
   <h1 class="page-header">{{ name }}</h1>
 
   <div class="row">
@@ -56,13 +20,9 @@
 
           <div class="weight-progress-container col-sm-6 col-xs-4">
             <div class="weight-progress-bar">
-              <wa-progress-bar min="0" max="100" value="{{ 100 * progress }}" />
+              <div class="wa-progress-bar" data-min="0" data-max="100"
+                data-value="{{ 100 * progress }}"></div>
             </div>
-            <!--
-            <div class="visible-xs weight-progress-label" style="text-align: center">
-              <span class="weight-progress-percentage">{{ 100 * progress | number : 0 }}% to</span>
-            </div>
-            -->
           </div>
 
           <div class="col-sm-3 col-xs-4">
@@ -72,9 +32,7 @@
           </div>
         </div>
       </div>
-      <wa:weight-graph class="weight-graph"
-        weights="weights" goal="goal" trend="trend"
-        trend-min="trendMin" trend-max="trendMax"></wa:weight-graph>
+      <div class="highchart" id="weightProgress" data-config="weightChartConfig"></div>
     </div>
 
     <div class="col-sm-6 col-md-4">
@@ -82,27 +40,14 @@
       <form name="addMeasurementForm">
         <div class="input-group">
           <input type="numeric" class="form-control" name="weight" placeholder="kilos"
-            ng:model="measurement.weight" required>
-          <span toggle="off" ng:click="submitNewMeasurement(measurement)"
-              target="addMeasurementOverlay" ng:disabled="addMeasurementForm.$invalid"
-              type="submit" class="input-group-addon btn btn-default">
-            <span class="glyphicon glyphicon-plus"></span> Add
+            data-ng-model="measurement.weight" required>
+          <span data-ng-click="submitNewMeasurement(measurement)"
+              data-ng-disabled="addMeasurementForm.$invalid"
+              class="input-group-addon btn btn-default">
+            <span class="glyphicon glyphicon-plus"><!-- + --></span> Add
           </span>
         </div>
       </form>
     </div>
   </div>
 </div>
-<!--
-<div class="section container">
-  <div title="Personal details" bs:panel>
-    <div class="row">
-      <div class="col-sm-6">
-        <input class="form-control" type="number" name="height" placeholder="Height in cm" />
-      </div>
-    </div>
-  </div>
-</div>
--->
-
-<!-- end view content -->

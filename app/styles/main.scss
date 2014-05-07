@@ -110,6 +110,12 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 }
 // end: profile name and image
 
+// begin: dataset page
+#weightProgress {
+    width: 100%;
+}
+// end: dataset page
+
 .overthrow-enabled .overthrow {
     overflow: auto;
     -webkit-overflow-scrolling: touch;

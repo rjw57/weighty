@@ -3,7 +3,7 @@
 angular.module('webappApp')
   .directive('waProgressBar', function () {
     return {
-      restrict: 'E',
+      restrict: 'EAC',
       templateUrl: 'waprogressbar.html',
       scope: { min: '@', max: '@', value: '@' },
     };
