@@ -112,7 +112,13 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 
 // begin: dataset page
 #weightProgress {
-    width: 100%;
+    height: (3/4) * (2/3) * $container-desktop;
+}
+
+@media (max-width: $screen-tablet) {
+    #weightProgress {
+        height: 0.75 * (3/4) * (2/3) * $container-tablet;
+    }
 }
 // end: dataset page
 
