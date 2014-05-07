@@ -15,7 +15,7 @@
   <h5 class="navmenu-section">Actions</h5>
 
   <ul class="nav navmenu-nav">
-    <li ng:hide="isSignedIn" class="hidden-md hidden-lg">
+    <li ng:hide="isSignedIn">
       <a ng:click="doLogin()" class="navbar-link" href="">
         <span class="glyphicon glyphicon-log-in"></span> Sign in
       </a>
@@ -25,7 +25,7 @@
         <span class="glyphicon glyphicon-plus"></span> New dataset
       </a>
     </li>
-    <li ng:show="isSignedIn" class="hidden-md hidden-lg">
+    <li ng:show="isSignedIn">
       <a ng:click="doLogout()" class="navbar-link" href="">
         <span class="glyphicon glyphicon-log-out"></span> Sign out
       </a>

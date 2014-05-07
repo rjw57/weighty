@@ -1,0 +1,5 @@
+<div data-ng-show="alert" class="alert alert-fixed-top" data-ng-class="'alert-' + alert.type">
+  <button type="button" class="close" aria-hidden="true" data-ng-click="dismiss()">&times;</button>
+  <strong data-ng-show="alert.heading">{{ alert.heading }}</strong>
+  {{ alert.message }}
+</div>

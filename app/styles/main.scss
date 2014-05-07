@@ -87,8 +87,15 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
-
 // end: global layout
+
+// begin: global alerts
+.alert-fixed-top {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: 0px 1px 8px -4px #000;
+}
+// end: global alerts
 
 // begin: profile name and image
 .img-nav-profile {

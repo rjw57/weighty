@@ -57,6 +57,12 @@ angular.module('webappApp')
       $scope.accessTokenExpiry = null;
       $scope.isSignedIn = false;
       $window.gapi.auth.setToken(null);
+
+      $scope.$emit('alertMessage', {
+        type: 'success',
+        heading: 'Sign out successful.',
+        message: 'You are now signed out from Google.'
+      });
     };
 
     // Attempt an immediate mode login when the gapi provider is ready
