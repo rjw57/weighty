@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetCtrl', function ($scope, $routeParams, $log, dataset) {
+  .controller('DatasetCtrl', function ($scope, $routeParams, $log, dataset, Analysis) {
     // useful constants
     var DAYS = 1000*60*60*24;
 
@@ -103,31 +103,26 @@ angular.module('webappApp')
       var lastPlotDate = Math.max(currentDate, targetDate);
       // var lastPlotDate = Math.min(currentDate, targetDate);
 
+      var regressPoints = [];
+      angular.forEach($scope.weights, function(w) {
+        regressPoints.push({
+          x: w.date.getTime(),
+          y: Math.log(w.weight),
+          w: Math.exp(-Math.max(0, endDate - w.date.getTime()) / (14*DAYS)),
+        });
+      });
+      var trendRegression = Analysis.regress(regressPoints);
+
       var t, lambda;
 
-      // Get list of weights where date is less than 10 days in the past and
-      // form matrices X and y where y is a list of log weights and rows of X are
-      // [date 1]. This is in preparation for least squares optimisation.
-      var y = [], X = [], XtX, Xty, b, fitWeight;
-      angular.forEach($scope.weights, function(w) {
-        fitWeight = Math.exp(-Math.max(0, endDate - w.date.getTime()) / (14*DAYS));
-        y.push(fitWeight * Math.log(w.weight));
-        X.push([fitWeight * w.date.getTime(), fitWeight]);
-      });
-
       $scope.trend = null;
-      if(y.length > 6) {
-        // Least squares solution is b where (X' X) b = X' y
-        XtX = numeric.dot(numeric.transpose(X), X);
-        Xty = numeric.dot(numeric.transpose(X), y);
-        b = numeric.solve(XtX, Xty);
-
+      if(trendRegression.m !== null) {
         // Update trend
         $scope.trend = [];
         for(t = Math.max(startDate, endDate-14*DAYS); t <= lastPlotDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
           $scope.trend.push({
             date: new Date(t),
-            weight: Math.exp(b[0]*t + b[1]),
+            weight: Math.exp(trendRegression.m*t + trendRegression.c),
           });
           if($scope.trend[$scope.trend.length - 1].weight < $scope.targetWeight) { break; }
         }
