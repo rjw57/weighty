@@ -20,6 +20,9 @@ angular.module('webappApp')
         },
         xAxis: {
           type: 'datetime',
+          endOnTick: false,
+          minPadding: 0,
+          maxPadding: 0,
         },
         yAxis : {
           title: {
