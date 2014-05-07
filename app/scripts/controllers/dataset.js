@@ -16,7 +16,12 @@ angular.module('webappApp')
     $scope.weightChartConfig = {
       options: {
         title: {
-          text: 'Progress',
+          text: null,
+        },
+        exporting: {
+          buttons: {
+            contextButton: { enabled: false },
+          },
         },
         xAxis: {
           type: 'datetime',
@@ -26,7 +31,7 @@ angular.module('webappApp')
         },
         yAxis : {
           title: {
-            text: 'Weight / kg',
+            text: 'kg',
           },
           startOnTick: false,
           minPadding: 0,
@@ -77,6 +82,8 @@ angular.module('webappApp')
     };
 
     var updateChartSeries = function() {
+      if(!$scope.weightChartConfig) { return; }
+
       var data, weightColor = '#428bca', goalColor = '#5cb85c';
 
       // weights

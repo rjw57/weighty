@@ -5,30 +5,26 @@
 </div>
 
 <div data-ng-hide="loading">
-  <h1 class="page-header">{{ name }}</h1>
-
   <div class="row">
     <div class="col-sm-6 col-md-8">
-      <h3>Progress</h3>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-sm-3 col-xs-4">
-            <div class="weight-badge weight-badge-danger">
-              {{ startWeight | number : 0 }} <small>kg</small>
-            </div>
+      <h3>{{ name }}</h3>
+      <div class="row">
+        <div class="col-sm-3 col-xs-4">
+          <div class="weight-badge weight-badge-danger">
+            {{ startWeight | number : 0 }}<small>kg</small>
           </div>
+        </div>
 
-          <div class="weight-progress-container col-sm-6 col-xs-4">
-            <div class="weight-progress-bar">
-              <div class="wa-progress-bar" data-min="0" data-max="100"
-                data-value="{{ 100 * progress }}"></div>
-            </div>
+        <div class="weight-progress-container col-sm-6 col-xs-4">
+          <div class="weight-progress-bar">
+            <div class="wa-progress-bar" data-min="0" data-max="100"
+              data-value="{{ 100 * progress }}"></div>
           </div>
+        </div>
 
-          <div class="col-sm-3 col-xs-4">
-            <div class="weight-badge weight-badge-success">
-              {{ targetWeight | number : 0 }} <small>kg</small>
-            </div>
+        <div class="col-sm-3 col-xs-4">
+          <div class="weight-badge weight-badge-success">
+            {{ targetWeight | number : 0 }}<small>kg</small>
           </div>
         </div>
       </div>
