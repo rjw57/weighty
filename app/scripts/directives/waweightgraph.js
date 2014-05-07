@@ -41,7 +41,6 @@ angular.module('webappApp')
 
         // Update weights
         var updateData = function() {
-          console.log(scope);
           var vs, r, idx, datum = [];
 
           vs = [];

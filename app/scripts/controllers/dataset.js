@@ -134,7 +134,6 @@ angular.module('webappApp')
 
           trendMinWeight = Math.exp(trendBootstrapWeight.mu - 3*trendBootstrapWeight.sigma);
           trendMaxWeight = Math.exp(trendBootstrapWeight.mu + 3*trendBootstrapWeight.sigma);
-          $log.info(trendWeight, trendMinWeight, trendMaxWeight);
 
           if(trendWeight >= $scope.targetWeight) {
             $scope.trend.push({
