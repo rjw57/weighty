@@ -2,7 +2,8 @@
 
 angular.module('webappApp')
   .directive('waWeightGraph', function () {
-    var weightColor = '#428bca', goalColor = '#5cb85c', trendColor = '#93BCE0';
+    var weightColor = '#428bca', goalColor = '#5cb85c', trendColor = '#93BCE0',
+      trendBoundColor = '#93BCE0';
 
     return {
       template: '',
@@ -11,6 +12,8 @@ angular.module('webappApp')
         weights: '=',
         goal: '=',
         trend: '=',
+        trendMin: '=',
+        trendMax: '=',
       },
       link: function postLink(scope, element) {
         var chart = nv.models.lineChart()
@@ -38,6 +41,7 @@ angular.module('webappApp')
 
         // Update weights
         var updateData = function() {
+          console.log(scope);
           var vs, r, idx, datum = [];
 
           vs = [];
@@ -57,6 +61,24 @@ angular.module('webappApp')
             }
           }
           datum.push({ values: vs, key: 'trend', color: trendColor });
+
+          vs = [];
+          if(scope.trendMin) {
+            for(idx in scope.trendMin) {
+              r = scope.trendMin[idx];
+              vs.push({ x: r.date, y: r.weight });
+            }
+          }
+          datum.push({ values: vs, key: 'trend minimum', color: trendBoundColor });
+
+          vs = [];
+          if(scope.trendMax) {
+            for(idx in scope.trendMax) {
+              r = scope.trendMax[idx];
+              vs.push({ x: r.date, y: r.weight });
+            }
+          }
+          datum.push({ values: vs, key: 'trend maximum', color: trendBoundColor });
 
           vs = [];
           if(scope.weights) {

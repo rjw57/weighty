@@ -2,6 +2,14 @@
 
 angular.module('webappApp')
   .service('Analysis', function Analysis() {
+    var sampleWithReplacement = function(array) {
+      var idx, rv = [];
+      for(idx = 0; idx < array.length; idx+=1) {
+        rv.push(array[Math.floor(Math.random() * array.length)]);
+      }
+      return rv;
+    };
+
     // Takes an array of { x: <num>, y: <num>, w: <num> } objects and performs
     // linear least squares regression. Returns an object { m: <num>, c: <num> }
     // where m is the slope of the fitted line and c its intercept. Both will be
@@ -29,5 +37,37 @@ angular.module('webappApp')
       b = numeric.solve(XtX, Xty);
 
       return { m: b[0], c: b[1] };
+    };
+
+    this.evaluateRegression = function(regression, x) {
+      return regression.m * x + regression.c;
+    };
+
+    this.regressBootstrap = function(points, options) {
+      var sampleIdx, regressions = [];
+
+      options = angular.extend({
+        bootstrapSamples: 100,
+      }, options);
+
+      for(sampleIdx=0; sampleIdx<options.bootstrapSamples; sampleIdx+=1) {
+        regressions.push(this.regress(sampleWithReplacement(points)));
+      }
+
+      return regressions;
+    };
+
+    this.evaluateBootstrapRegression = function(bootstrapRegression, x) {
+      var squaredSum = 0, sum = 0, sample, idx, variance, mean;
+      for(idx = 0; idx<bootstrapRegression.length; idx += 1) {
+        sample = this.evaluateRegression(bootstrapRegression[idx], x);
+        squaredSum += sample * sample;
+        sum += sample;
+      }
+
+      mean = sum / bootstrapRegression.length;
+      variance = Math.max(0, (squaredSum / bootstrapRegression.length) - mean*mean);
+
+      return { mu: mean, sigma: Math.sqrt(variance) };
     };
   });

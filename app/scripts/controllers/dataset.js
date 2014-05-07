@@ -111,20 +111,51 @@ angular.module('webappApp')
           w: Math.exp(-Math.max(0, endDate - w.date.getTime()) / (14*DAYS)),
         });
       });
-      var trendRegression = Analysis.regress(regressPoints);
 
-      var t, lambda;
+      var trendRegression = Analysis.regress(regressPoints);
+      var trendBootstrapRegression = Analysis.regressBootstrap(regressPoints);
+
+      var t, lambda, trendWeight, trendBootstrapWeight, trendMinWeight, trendMaxWeight;
 
       $scope.trend = null;
+      $scope.trendMin = null;
+      $scope.trendMax = null;
       if(trendRegression.m !== null) {
         // Update trend
         $scope.trend = [];
-        for(t = Math.max(startDate, endDate-14*DAYS); t <= lastPlotDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
-          $scope.trend.push({
-            date: new Date(t),
-            weight: Math.exp(trendRegression.m*t + trendRegression.c),
-          });
-          if($scope.trend[$scope.trend.length - 1].weight < $scope.targetWeight) { break; }
+        $scope.trendMin = [];
+        $scope.trendMax = [];
+        for(t = Math.max(startDate, endDate-14*DAYS);
+            t <= lastPlotDate;
+            t += Math.min(DAYS, (targetDate-startDate) / 100))
+        {
+          trendWeight = Math.exp(Analysis.evaluateRegression(trendRegression, t));
+          trendBootstrapWeight = Analysis.evaluateBootstrapRegression(trendBootstrapRegression, t);
+
+          trendMinWeight = Math.exp(trendBootstrapWeight.mu - 3*trendBootstrapWeight.sigma);
+          trendMaxWeight = Math.exp(trendBootstrapWeight.mu + 3*trendBootstrapWeight.sigma);
+          $log.info(trendWeight, trendMinWeight, trendMaxWeight);
+
+          if(trendWeight >= $scope.targetWeight) {
+            $scope.trend.push({
+              date: new Date(t),
+              weight: trendWeight,
+            });
+          }
+
+          if(trendMinWeight >= $scope.targetWeight) {
+            $scope.trendMin.push({
+              date: new Date(t),
+              weight: trendMinWeight,
+            });
+          }
+
+          if(trendMaxWeight >= $scope.targetWeight) {
+            $scope.trendMax.push({
+              date: new Date(t),
+              weight: trendMaxWeight,
+            });
+          }
         }
       }
 
