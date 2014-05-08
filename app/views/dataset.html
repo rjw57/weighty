@@ -9,7 +9,7 @@
   <div class="row">
     <div class="col-sm-3 col-xs-4">
       <div class="weight-badge weight-badge-danger">
-        {{ startWeight | number : 0 }}&nbsp;<small>kg</small>
+        {{ startWeight | number : 0 }}&nbsp;<span class="unit">kg</span>
       </div>
     </div>
 
@@ -22,36 +22,37 @@
 
     <div class="col-sm-3 col-xs-4">
       <div class="weight-badge weight-badge-success">
-        {{ targetWeight | number : 0 }}&nbsp;<small>kg</small>
+        {{ targetWeight | number : 0 }}&nbsp;<span class="unit">kg</span>
       </div>
     </div>
   </div>
+
+  <form name="smallScreenAddMeasurementForm" class="form visible-xs" role="form">
+    <div class="form-group">
+      <label for="weight" class="sr-only control-label">New weight measurement</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="weight" placeholder="kilos"
+          pattern="^[0-9]+(\.[0-9]*)?$"
+          data-ng-pattern="/^[0-9]+(\.[0-9]*)?$/" data-ng-required="true"
+          data-ng-model="measurement.weight" required>
+        <span data-ng-click="submitNewMeasurement(measurement)"
+            data-ng-disabled="smallScreenAddMeasurementForm.$invalid"
+            class="input-group-addon btn btn-default">
+          <span class="glyphicon glyphicon-plus"><!-- + --></span>
+          <span class="hidden-xs">Add new measurement</span>
+        </span>
+      </div>
+    </div>
+  </form>
+
   <div class="row">
     <div class="col-sm-6 col-md-8">
       <h3>Weight chart</h3>
       <div class="highchart" id="weightProgress" data-config="weightChartConfig"></div>
-
-      <form name="addMeasurementForm" class="form-horizontal" role="form">
-        <div class="form-group">
-          <label for="weight" class="hidden control-label">New weight measurement</label>
-          <div class="input-group">
-            <input type="text" class="form-control" name="weight" placeholder="kilos"
-              pattern="^[0-9]+(\.[0-9]*)?$"
-              data-ng-pattern="/^[0-9]+(\.[0-9]*)?$/" data-ng-required="true"
-              data-ng-model="measurement.weight" required>
-            <span data-ng-click="submitNewMeasurement(measurement)"
-                data-ng-disabled="addMeasurementForm.$invalid"
-                class="input-group-addon btn btn-default">
-              <span class="glyphicon glyphicon-plus"><!-- + --></span>
-              <span class="hidden-xs">Add new measurement</span>
-            </span>
-          </div>
-        </div>
-      </form>
     </div>
 
     <div class="col-sm-6 col-md-4">
-      <h3 class="hidden">Personal data</h3>
+      <h3 class="sr-only">Personal data</h3>
       <div class="h3">
         Personal data
         <div class="pull-right">
@@ -88,7 +89,7 @@
                 data-e-inputmode="numeric" data-e-pattern="^[0-9]+(\.[0-9]*)?$"
                 data-e-ng-pattern="/^[0-9]+(\.[0-9]*)?$/">
               <span data-ng-show="dataset.metadata.height">
-                {{ dataset.metadata.height | number : 2 }} <small>m</small>
+                {{ dataset.metadata.height | number : 2 }} <span class="unit">m</span>
               </span>
               <span class="text-muted" data-ng-hide="dataset.metadata.height">unknown</span>
             </span>
@@ -100,12 +101,12 @@
       <table class="table">
         <tr>
           <td>Starting weight <span class="table-secondary">(smoothed)</span></td>
-          <td class="text-right">{{ startWeight | number : 1 }}&nbsp;<small>kg</small></td>
+          <td class="text-right">{{ startWeight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
         </tr>
         <tr>
           <td>Last measurement</td>
           <td class="text-right">
-            {{ weights[weights.length-1].weight | number : 1 }}&nbsp;<small>kg</small>
+            {{ weights[weights.length-1].weight | number : 1 }}&nbsp;<span class="unit">kg</span>
             <div class="table-secondary">
               {{ weights[weights.length-1].date | date : 'mediumDate' }}
             </div>
@@ -113,14 +114,14 @@
         </tr>
         <tr>
           <td>Current weight <span class="table-secondary">(estimate)</span></td>
-          <td class="text-right">{{ currentTrendWeight | number : 1 }}&nbsp;<small>kg</small></td>
+          <td class="text-right">{{ currentTrendWeight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
         </tr>
         <tr>
           <td>Current loss <span class="table-secondary">(estimate)</span></td>
           <td class="text-right">
-            {{ startWeight - currentTrendWeight | number : 1 }}&nbsp;<small>kg</small>
+            {{ startWeight - currentTrendWeight | number : 1 }}&nbsp;<span class="unit">kg</span>
             <div class="table-secondary">
-              {{ progress * 100 | number : 0}}%&nbsp;of&nbsp;{{ startWeight - targetWeight | number : 1}}&nbsp;<small>kg</small>
+              {{ progress * 100 | number : 0}}%&nbsp;of&nbsp;{{ startWeight - targetWeight | number : 1}}&nbsp;<span class="unit">kg</span>
             </div>
           </td>
         </tr>
@@ -134,6 +135,43 @@
           </td>
         </tr>
       </table>
+
     </div>
+  </div>
+
+  <div class="hidden-xs">
+    <h3>Data</h3>
+    <form name="largeScreenAddMeasurementForm" class="form" role="form">
+      <div class="form-group">
+        <label for="weight" class="sr-only control-label">New weight measurement</label>
+        <div class="input-group">
+          <input type="text" class="form-control" name="weight" placeholder="kilos"
+            pattern="^[0-9]+(\.[0-9]*)?$"
+            data-ng-pattern="/^[0-9]+(\.[0-9]*)?$/" data-ng-required="true"
+            data-ng-model="measurement.weight" required>
+          <span data-ng-click="submitNewMeasurement(measurement)"
+              data-ng-disabled="largeScreenAddMeasurementForm.$invalid"
+              class="input-group-addon btn btn-default">
+            <span class="glyphicon glyphicon-plus"><!-- + --></span>
+            <span class="hidden-xs">Add new measurement</span>
+          </span>
+        </div>
+      </div>
+    </form>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Weight</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-ng-repeat="record in weights | orderBy : '-timestamp'">
+          <td>{{ record.date | date : 'medium' }}</td>
+          <td>{{ record.weight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

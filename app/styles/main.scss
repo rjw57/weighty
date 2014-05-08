@@ -94,6 +94,10 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
     @extend .text-muted;
     @extend .small;
 }
+
+.unit {
+    @extend .small;
+}
 // end: global style
 
 // begin: global alerts
