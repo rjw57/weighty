@@ -19,7 +19,7 @@ angular.module('webappApp')
           zoomType: 'x',
         },
         title: {
-          text: 'Weight record chart',
+          text: null,
         },
         exporting: {
           buttons: {
@@ -34,10 +34,19 @@ angular.module('webappApp')
         },
         yAxis : {
           title: {
-            text: 'kg',
+            text: null,
           },
           startOnTick: false,
           minPadding: 0,
+          maxPadding: 0,
+          gridLineColor: '#DDD',
+          labels: {
+            formatter: function() {
+              return Highcharts.numberFormat(this.value, 0) +
+                '<small class="text-muted"> kg</small>';
+            },
+            useHTML: true,
+          },
         },
         tooltip: {
           valueDecimals: 1,
@@ -85,6 +94,8 @@ angular.module('webappApp')
 
     var updateChartSeries = function() {
       if(!$scope.weightChartConfig) { return; }
+
+      $scope.weightChartConfig.series = [];
 
       var data, weightColor = '#428bca', goalColor = '#5cb85c';
 
@@ -196,9 +207,8 @@ angular.module('webappApp')
       $log.info('target weight: ' + $scope.targetWeight);
 
       $scope.startWeight = $scope.weights[0].weight;
-      $scope.currentWeight = $scope.weights[$scope.weights.length-1].weight;
-      $scope.progress = 1 -
-        ($scope.currentWeight-$scope.targetWeight) / ($scope.startWeight-$scope.targetWeight);
+      $scope.endWeight = $scope.weights[$scope.weights.length-1].weight;
+      $scope.currentWeight = null;
 
       var currentDate = Date.now() + 31*DAYS;
       var startDate = $scope.weights[0].date.getTime(),
@@ -211,6 +221,24 @@ angular.module('webappApp')
       // var lastPlotDate = Math.min(currentDate, targetDate);
 
       var regressPoints = [];
+
+      // Regress weight weighted to start of data
+      regressPoints = [];
+      angular.forEach($scope.weights, function(w) {
+        regressPoints.push({
+          x: w.date.getTime(),
+          y: Math.log(w.weight),
+          w: Math.exp(-Math.max(0, w.date.getTime()-startDate) / (14*DAYS)),
+        });
+      });
+      if(regressPoints.length > 3) {
+        startLogWeight = Analysis.evaluateRegression(
+            Analysis.regress(regressPoints), startDate);
+        $scope.startWeight = Math.exp(startLogWeight);
+      }
+
+      // Regress weights weighted to end of data
+      regressPoints = [];
       angular.forEach($scope.weights, function(w) {
         regressPoints.push({
           x: w.date.getTime(),
@@ -227,6 +255,12 @@ angular.module('webappApp')
       $scope.trend = null;
       $scope.trendBounds = null;
       if(trendRegression.m !== null) {
+        // Update current weight to regressed value for now
+        $scope.endWeight = Math.exp(Analysis.evaluateRegression(
+              trendRegression, endDate));
+        $scope.currentTrendWeight = Math.exp(Analysis.evaluateRegression(
+              trendRegression, Date.now()));
+
         // Update trend
         $scope.trend = [];
         $scope.trendBounds = [];
@@ -267,5 +301,8 @@ angular.module('webappApp')
       }
 
       updateChartSeries();
+
+      $scope.progress = 1 -
+        ($scope.endWeight-$scope.targetWeight) / ($scope.startWeight-$scope.targetWeight);
     });
   });

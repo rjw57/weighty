@@ -22,6 +22,7 @@
     "angular": false,
     "d3": false,
     "nv": false,
-    "numeric": false
+    "numeric": false,
+    "Highcharts": false
   }
 }
