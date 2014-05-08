@@ -85,8 +85,8 @@ angular.module('webappApp')
       }
 
       $scope.loading = true;
-      dataset.get($scope.verifiedDatasetId).then(function(weights) {
-        $scope.weights = weights;
+      dataset.getData($scope.verifiedDatasetId).then(function(resp) {
+        $scope.weights = resp;
         $scope.loading = false;
       }, function(err) {
         $log.error('Could not get dataset:', err);
@@ -179,7 +179,7 @@ angular.module('webappApp')
       dataset.verifyDatasetId($routeParams.sheetId).then(function(dataset) {
         $log.info('dataset id ' + dataset.id + ' has been verified');
         $scope.verifiedDatasetId = dataset.id;
-        $scope.name = dataset.title;
+        $scope.dataset = dataset;
       }, function(err) {
         $log.error('Dataset failed verification:', err);
         $scope.loading = false;

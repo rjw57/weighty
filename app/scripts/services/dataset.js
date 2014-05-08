@@ -199,13 +199,14 @@ angular.module('webappApp')
     };
 
     // Given a (verified) dataset id, return a promise which is resolved with
-    // an array of { weight, timestamp, date } objects loaded from the dataset.
-    // The promise is rejected if there is an error retrieving the data.
+    // an array of { weight, timestamp, date } objects loaded from the
+    // dataset. The promise is rejected if there is an error retrieving the
+    // data.
     //
     // IMPORTANT: The id from this is *directly* pasted into a fusiontables SQL
     // call. DO NOT pass an id to this function which has not been verified
     // first via verifyDatasetId.
-    this.get = function(verifiedDatasetId) {
+    this.getData = function(verifiedDatasetId) {
       if(!verifiedDatasetId) {
         return $q.reject('passed an invalid or null dataset id');
       }

@@ -5,7 +5,7 @@
 </div>
 
 <div data-ng-hide="loading">
-  <h1 class="page-header">{{ name }}</h1>
+  <h1 class="page-header">{{ dataset.title }}</h1>
   <div class="row">
     <div class="col-sm-3 col-xs-4">
       <div class="weight-badge weight-badge-danger">
@@ -45,6 +45,17 @@
           </span>
         </div>
       </form>
+
+      <h3>Personal data</h3>
+      <table class="table">
+        <tr>
+          <td>Height</td>
+          <td class="text-right">
+            <span data-ng-show="metadata.height">{{ metadata.height }} <small>m</small></span>
+            <span class="text-muted" data-ng-hide="metadata.height">unknown</span>
+          </td>
+        </tr>
+      </table>
 
       <h3>Statistics</h3>
       <table class="table">
