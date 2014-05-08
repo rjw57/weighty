@@ -30,22 +30,27 @@
     <div class="col-sm-6 col-md-8">
       <h3>Weight chart</h3>
       <div class="highchart" id="weightProgress" data-config="weightChartConfig"></div>
+
+      <form name="addMeasurementForm" class="form-horizontal" role="form">
+        <div class="form-group">
+          <label for="weight" class="hidden control-label">New weight measurement</label>
+          <div class="input-group">
+            <input type="text" class="form-control" name="weight" placeholder="kilos"
+              pattern="^[0-9]+(\.[0-9]*)?$"
+              data-ng-pattern="/^[0-9]+(\.[0-9]*)?$/" data-ng-required="true"
+              data-ng-model="measurement.weight" required>
+            <span data-ng-click="submitNewMeasurement(measurement)"
+                data-ng-disabled="addMeasurementForm.$invalid"
+                class="input-group-addon btn btn-default">
+              <span class="glyphicon glyphicon-plus"><!-- + --></span>
+              <span class="hidden-xs">Add new measurement</span>
+            </span>
+          </div>
+        </div>
+      </form>
     </div>
 
     <div class="col-sm-6 col-md-4">
-      <h3>Update</h3>
-      <form name="addMeasurementForm">
-        <div class="input-group">
-          <input type="numeric" class="form-control" name="weight" placeholder="kilos"
-            data-ng-model="measurement.weight" required>
-          <span data-ng-click="submitNewMeasurement(measurement)"
-              data-ng-disabled="addMeasurementForm.$invalid"
-              class="input-group-addon btn btn-default">
-            <span class="glyphicon glyphicon-plus"><!-- + --></span> Record
-          </span>
-        </div>
-      </form>
-
       <h3 class="hidden">Personal data</h3>
       <div class="h3">
         Personal data
@@ -58,7 +63,8 @@
               <span class="glyphicon glyphicon-remove"><!-- remove --></span>
               <span class="hidden">Cancel</span>
             </button>
-            <button type="submit" data-ng-disabled="personalDataForm.$waiting"
+            <button type="submit"
+                data-ng-disabled="personalDataForm.$waiting"
                 class="btn btn-sm btn-primary">
               <span class="glyphicon glyphicon-ok"><!-- ok --></span>
               <span class="hidden">Save</span>
@@ -79,7 +85,8 @@
             <span data-editable-text="dataset.metadata.height" data-e-name="height"
                 data-onbeforesave="(+$data > 0) ? null : 'must be a number'"
                 data-e-form="personalDataForm" data-e-placeholder="metres"
-                data-e-inputmode="numeric" data-e-pattern="[0-9]*(\.[0-9]*)?">
+                data-e-inputmode="numeric" data-e-pattern="^[0-9]+(\.[0-9]*)?$"
+                data-e-ng-pattern="/^[0-9]+(\.[0-9]*)?$/">
               <span data-ng-show="dataset.metadata.height">
                 {{ dataset.metadata.height | number : 2 }} <small>m</small>
               </span>
