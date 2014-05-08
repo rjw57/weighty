@@ -134,12 +134,24 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
 
 // begin: dataset page
 #weightProgress {
-    height: (3/4) * (2/3) * $container-desktop;
+    height: 0.75 * $screen-xs-min;
 }
 
-@media (max-width: $screen-tablet) {
+@media (min-width: $screen-sm-min) {
     #weightProgress {
-        height: 0.75 * (3/4) * (2/3) * $container-tablet;
+        height: 0.67 * 0.75 * $screen-sm-min;
+    }
+}
+
+@media (min-width: $screen-md-min) {
+    #weightProgress {
+        height: 0.67 * 0.75 * $screen-md-min;
+    }
+}
+
+@media (min-width: $screen-lg-min) {
+    #weightProgress {
+        height: 0.67 * 0.75 * $screen-lg-min;
     }
 }
 // end: dataset page

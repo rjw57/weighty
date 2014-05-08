@@ -4,7 +4,7 @@ angular.module('webappApp')
   .controller('DatasetCtrl', function ($scope, $routeParams, $log, $filter, dataset, Analysis) {
     // useful constants
     var DAYS = 1000*60*60*24;
-    // var IDEAL_BMI = 22;
+    var IDEAL_BMI = 22;
     var WEIGHT_COLOR = '#428bca'/*, GOAL_COLOR = '#5cb85c'*/;
 
     // We need a sheet id to continue
@@ -261,6 +261,12 @@ angular.module('webappApp')
 
         // BMI requires height
         $scope.stats.bmi = calculateBMI(newVal.weight, newVal.height);
+
+        // Compute ideal weight from BMI
+        $scope.stats.idealWeight = IDEAL_BMI * (newVal.height * newVal.height);
+
+        // HACK
+        $scope.target.weight = $scope.stats.idealWeight;
       },
       true // <- do deep compare of watch expression
     );

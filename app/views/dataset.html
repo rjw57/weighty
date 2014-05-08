@@ -65,6 +65,12 @@
             </span>
           </td>
         </tr>
+        <tr data-ng-show="stats.idealWeight">
+          <td>Ideal weight</td>
+          <td class="text-right">
+            {{ stats.idealWeight | number : 1}}&nbsp;<span class="unit">kg</span>
+          </td>
+        </tr>
         <tr>
           <td>Last measurement</td>
           <td class="text-right">
