@@ -15,8 +15,11 @@ angular.module('webappApp')
 
     $scope.weightChartConfig = {
       options: {
+        chart: {
+          zoomType: 'x',
+        },
         title: {
-          text: null,
+          text: 'Weight record chart',
         },
         exporting: {
           buttons: {
@@ -27,7 +30,7 @@ angular.module('webappApp')
           type: 'datetime',
           endOnTick: false,
           minPadding: 0,
-          maxPadding: 0,
+          minRange: 14 * 24 * 3600000, // fortnight
         },
         yAxis : {
           title: {
@@ -35,7 +38,6 @@ angular.module('webappApp')
           },
           startOnTick: false,
           minPadding: 0,
-          maxPadding: 0,
         },
         tooltip: {
           valueDecimals: 1,
