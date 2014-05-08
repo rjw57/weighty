@@ -105,6 +105,10 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
 .unit {
     @extend .small;
 }
+
+.editable-empty, .editable-empty:hover {
+    font-style: inherit;
+}
 // end: global style
 
 // begin: global alerts

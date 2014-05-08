@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webappApp')
-  .controller('DatasetCtrl', function ($scope, $routeParams, $log, dataset, Analysis) {
+  .controller('DatasetCtrl', function ($scope, $routeParams, $log, $filter, dataset, Analysis) {
     // useful constants
     var DAYS = 1000*60*60*24;
     // var IDEAL_BMI = 22;
@@ -18,6 +18,17 @@ angular.module('webappApp')
     $scope.target = {
       date: new Date(Date.parse('Oct 01, 2014')),
       weight: 75,
+    };
+
+    // Metabolic genders
+    $scope.sexes = [
+      { value: 'male', text: 'Male' },
+      { value: 'female', text: 'Female' },
+    ];
+
+    $scope.nameSex = function(sex) {
+      var selected = $filter('filter')($scope.sexes, { value: sex });
+      return (sex && selected.length) ? selected[0].text : null;
     };
 
     // Config for the weight chart
@@ -96,6 +107,12 @@ angular.module('webappApp')
     $scope.stats = { };
 
     //// SCOPE ACTIONS
+
+    $scope.open = function($event,opened) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope[opened] = true;
+    };
 
     // Add a new measurement
     $scope.submitNewMeasurement = function(measurement) {

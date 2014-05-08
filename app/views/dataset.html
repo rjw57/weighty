@@ -163,9 +163,11 @@
         <tr>
           <td>Sex</td>
           <td class="text-right">
-            <span>
+            <span data-editable-select="dataset.metadata.sex" data-e-name="sex"
+                data-e-form="personalDataForm"
+                data-e-ng-options="s.value as s.text for s in sexes">
               <span data-ng-show="dataset.metadata.sex">
-                {{ dataset.metadata.sex }}
+                {{ nameSex(dataset.metadata.sex) }}
               </span>
               <span class="text-muted" data-ng-hide="dataset.metadata.sex">unknown</span>
             </span>
@@ -174,9 +176,14 @@
         <tr>
           <td>Birth date</td>
           <td class="text-right">
-            <span>
+            <span data-editable-bsdate="dataset.metadata.birthDate"
+                data-e-name="birthDate" data-e-form="personalDataForm"
+                data-e-class="input-sm form-control"
+                data-e-is-open="birthDateOpened"
+                data-e-ng-click="open($event, 'birthDateOpened')"
+                data-e-datepicker-popup="dd-MMMM-yyyy">
               <span data-ng-show="dataset.metadata.birthDate">
-                {{ dataset.metadata.birthDate | date : 'mediumDate' }}
+                {{ dataset.metadata.birthDate | date : 'longDate' }}
               </span>
               <span class="text-muted" data-ng-hide="dataset.metadata.birthDate">unknown</span>
             </span>

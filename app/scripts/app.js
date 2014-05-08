@@ -8,7 +8,8 @@ angular
     'ngRoute',
     'gapi.client',
     'highcharts-ng',
-    'xeditable'
+    'xeditable',
+    'ui.bootstrap'
   ])
   .run(function(editableOptions, editableThemes) {
     // Configure x-editable
