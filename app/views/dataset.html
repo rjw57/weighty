@@ -46,13 +46,43 @@
         </div>
       </form>
 
-      <h3>Personal data</h3>
+      <h3 class="hidden">Personal data</h3>
+      <div class="h3">
+        Personal data
+        <div class="pull-right">
+          <form data-editable-form name="personalDataForm"
+              data-blur="cancel"
+              data-ng-show="personalDataForm.$visible">
+            <button type="button" data-ng-disabled="personalDataForm.$waiting"
+                data-ng-click="personalDataForm.$cancel()" class="btn btn-sm btn-default">
+              <span class="glyphicon glyphicon-remove"><!-- remove --></span>
+              <span class="hidden">Cancel</span>
+            </button>
+            <button type="submit" data-ng-disabled="personalDataForm.$waiting"
+                class="btn btn-sm btn-primary">
+              <span class="glyphicon glyphicon-ok"><!-- ok --></span>
+              <span class="hidden">Save</span>
+            </button>
+          </form>
+          <button class="btn btn-sm btn-link" data-ng-show="!personalDataForm.$visible"
+              data-ng-click="personalDataForm.$show()">
+              <span class="text-muted glyphicon glyphicon-pencil"><!-- pencil --></span>
+              <span class="hidden">Edit</span>
+          </button>
+        </div>
+      </div>
+
       <table class="table">
         <tr>
           <td>Height</td>
           <td class="text-right">
-            <span data-ng-show="metadata.height">{{ metadata.height }} <small>m</small></span>
-            <span class="text-muted" data-ng-hide="metadata.height">unknown</span>
+            <span data-editable-text="metadata.height" data-e-name="height"
+                data-onbeforesave="(+$data > 0) ? null : 'must be a number'"
+                data-e-form="personalDataForm" data-e-placeholder="metres"
+                data-e-inputmode="numeric" data-e-pattern="[0-9]*(\.[0-9]*)?">
+              <span data-ng-show="metadata.height">{{ metadata.height }} <small>m</small></span>
+              <span class="text-muted" data-ng-hide="metadata.height">unknown</span>
+            </span>
           </td>
         </tr>
       </table>

@@ -10,6 +10,12 @@ angular
     'highcharts-ng',
     'xeditable'
   ])
+  .run(function(editableOptions, editableThemes) {
+    // Configure x-editable
+    editableThemes.bs3.inputClass = 'input-sm';
+    editableThemes.bs3.buttonsClass = 'btn-sm';
+    editableOptions.theme = 'bs3';
+  })
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
