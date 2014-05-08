@@ -36,6 +36,7 @@ angular.module('webappApp')
       options: {
         chart: {
           zoomType: 'x',
+          spacing: [5, 0, 10, 0],
         },
         title: {
           text: null,
@@ -57,13 +58,14 @@ angular.module('webappApp')
             text: null,
           },
           startOnTick: false,
+          endOnTick: true,
           minPadding: 0,
           maxPadding: 0,
           gridLineColor: '#DDD',
           labels: {
             formatter: function() {
               return Highcharts.numberFormat(this.value, 0) +
-                '<small class="text-muted"> kg</small>';
+                '&nbsp;<span class="unit">kg</span>';
             },
             useHTML: true,
           },
