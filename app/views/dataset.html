@@ -52,6 +52,45 @@
     </div>
 
     <div class="col-sm-6 col-md-4">
+      <h3>Statistics</h3>
+      <table class="table">
+        <tr>
+          <td>Starting weight <span class="table-secondary">(smoothed)</span></td>
+          <td class="text-right">{{ startWeight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
+        </tr>
+        <tr>
+          <td>Last measurement</td>
+          <td class="text-right">
+            {{ weights[weights.length-1].weight | number : 1 }}&nbsp;<span class="unit">kg</span>
+            <div class="table-secondary">
+              {{ weights[weights.length-1].date | date : 'mediumDate' }}
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Current weight <span class="table-secondary">(estimate)</span></td>
+          <td class="text-right">{{ currentTrendWeight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
+        </tr>
+        <tr>
+          <td>Current loss <span class="table-secondary">(estimate)</span></td>
+          <td class="text-right">
+            {{ startWeight - currentTrendWeight | number : 1 }}&nbsp;<span class="unit">kg</span>
+            <div class="table-secondary">
+              {{ progress * 100 | number : 0}}%&nbsp;of&nbsp;{{ startWeight - targetWeight | number : 1}}&nbsp;<span class="unit">kg</span>
+            </div>
+          </td>
+        </tr>
+        <tr data-ng-show="stats.bmi">
+          <td>Current BMI <span class="table-secondary">(estimate)</span></td>
+          <td class="text-right">
+            {{ stats.bmi | number : 0 }}
+            <div class="table-secondary" data-ng-show="stats.bmiCategory">
+              {{ stats.bmiCategory }}
+            </div>
+          </td>
+        </tr>
+      </table>
+
       <h3 class="sr-only">Personal data</h3>
       <div class="h3">
         Personal data
@@ -119,46 +158,6 @@
           </td>
         </tr>
       </table>
-
-      <h3>Statistics</h3>
-      <table class="table">
-        <tr>
-          <td>Starting weight <span class="table-secondary">(smoothed)</span></td>
-          <td class="text-right">{{ startWeight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
-        </tr>
-        <tr>
-          <td>Last measurement</td>
-          <td class="text-right">
-            {{ weights[weights.length-1].weight | number : 1 }}&nbsp;<span class="unit">kg</span>
-            <div class="table-secondary">
-              {{ weights[weights.length-1].date | date : 'mediumDate' }}
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>Current weight <span class="table-secondary">(estimate)</span></td>
-          <td class="text-right">{{ currentTrendWeight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
-        </tr>
-        <tr>
-          <td>Current loss <span class="table-secondary">(estimate)</span></td>
-          <td class="text-right">
-            {{ startWeight - currentTrendWeight | number : 1 }}&nbsp;<span class="unit">kg</span>
-            <div class="table-secondary">
-              {{ progress * 100 | number : 0}}%&nbsp;of&nbsp;{{ startWeight - targetWeight | number : 1}}&nbsp;<span class="unit">kg</span>
-            </div>
-          </td>
-        </tr>
-        <tr data-ng-show="stats.bmi">
-          <td>Current BMI <span class="table-secondary">(estimate)</span></td>
-          <td class="text-right">
-            {{ stats.bmi | number : 0 }}
-            <div class="table-secondary" data-ng-show="stats.bmiCategory">
-              {{ stats.bmiCategory }}
-            </div>
-          </td>
-        </tr>
-      </table>
-
     </div>
   </div>
 
