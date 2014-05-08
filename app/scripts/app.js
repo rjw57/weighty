@@ -7,7 +7,8 @@ angular
     'ngSanitize',
     'ngRoute',
     'gapi.client',
-    'highcharts-ng'
+    'highcharts-ng',
+    'xeditable'
   ])
   .config(function ($routeProvider) {
     $routeProvider
