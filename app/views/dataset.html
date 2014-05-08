@@ -114,6 +114,12 @@
             </div>
           </td>
         </tr>
+        <tr data-ng-show="stats.bmr">
+          <td>Basal metabolic rate</td>
+          <td class="text-right">
+            {{ stats.bmr | number : 0 }}&nbsp;<span class="unit">kcal/day</span>
+          </td>
+        </tr>
       </table>
 
       <h3 class="sr-only">Personal data</h3>

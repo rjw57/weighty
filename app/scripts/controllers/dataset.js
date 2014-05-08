@@ -251,15 +251,43 @@ angular.module('webappApp')
 
     // update derived statistics when metadata and/or data change
     $scope.$watch(
-      '{ metadata: dataset.metadata, weight: trend.nowValue }',
+      '{ height: dataset.metadata.height, weight: trend.nowValue }',
       function(newVal) {
         // Do nothing if we don't have the basic data
-        if(!newVal.metadata || !newVal.weight) { return; }
+        if(!newVal.height || !newVal.weight) {
+          $scope.stats.bmi = undefined;
+          return;
+        }
 
         // BMI requires height
-        $scope.stats.bmi = (newVal.metadata.height) ?
-          calculateBMI(newVal.weight, newVal.metadata.height)
-          : undefined;
+        $scope.stats.bmi = calculateBMI(newVal.weight, newVal.height);
+      },
+      true // <- do deep compare of watch expression
+    );
+
+    $scope.$watch(
+      '{ metadata: dataset.metadata, weight: trend.nowValue }',
+      function(newVal) {
+        var bmr;
+
+        // Do nothing if we don't have the basic data
+        if(!newVal.metadata || !newVal.weight || !newVal.metadata.height ||
+            !newVal.metadata.sex || !newVal.metadata.birthDate) {
+          $scope.stats.bmr = undefined;
+          return;
+        }
+
+        // The Mifflin St Jeor Equation
+        bmr = (10 * newVal.weight) + (6.25 * 100 * newVal.metadata.height) -
+          (5 * (Date.now() - Date.parse(newVal.metadata.birthDate))/(365.25 * DAYS));
+
+        if(newVal.metadata.sex === 'male') {
+          bmr += 5;
+        } else if(newVal.metadata.sex === 'female') {
+          bmr -= 161;
+        }
+
+        $scope.stats.bmr = bmr;
       },
       true // <- do deep compare of watch expression
     );
