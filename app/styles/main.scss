@@ -1,12 +1,15 @@
+@import url(//fonts.googleapis.com/css?family=Nunito);
+@import url(//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic);
+
 // This is the font path used for glyphicons. In Gruntfile.js we have a dedicated
 // copy-job which moves the fonts over to the right place.
 $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
 
+$font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
 // bower:scss
 @import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
 // endbower
-
-@import url(//fonts.googleapis.com/css?family=Nunito);
 
 // begin: global layout
 .app-content {
@@ -90,6 +93,10 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 // end: global layout
 
 // begin: global style
+.navmenu-brand, .navbar-brand {
+    font-family: 'Nunito', $font-family-base;
+}
+
 .table-secondary {
     @extend .text-muted;
     @extend .small;
@@ -136,10 +143,6 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 .overthrow-enabled .overthrow {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-}
-
-.app-name {
-    font-family: 'Nunito', $font-family-base;
 }
 
 .loading-indicator {
