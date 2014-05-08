@@ -8,21 +8,21 @@
   <h1 class="page-header">{{ dataset.title }}</h1>
   <div class="row">
     <div class="col-sm-3 col-xs-4">
-      <div class="weight-badge weight-badge-danger">
-        {{ startWeight | number : 0 }}&nbsp;<span class="unit">kg</span>
+      <div class="weight-badge weight-badge-danger" data-ng-show="trend.startValue">
+        {{ trend.startValue | number : 0 }}&nbsp;<span class="unit">kg</span>
       </div>
     </div>
 
     <div class="weight-progress-container col-sm-6 col-xs-4">
-      <div class="weight-progress-bar">
+      <div class="weight-progress-bar" data-ng-show="stats.progress">
         <div class="wa-progress-bar" data-min="0" data-max="100"
-          data-value="{{ 100 * progress }}"></div>
+          data-value="{{ 100 * stats.progress }}"></div>
       </div>
     </div>
 
     <div class="col-sm-3 col-xs-4">
-      <div class="weight-badge weight-badge-success">
-        {{ targetWeight | number : 0 }}&nbsp;<span class="unit">kg</span>
+      <div class="weight-badge weight-badge-success" data-ng-show="target.weight">
+        {{ target.weight | number : 0 }}&nbsp;<span class="unit">kg</span>
       </div>
     </div>
   </div>
@@ -56,36 +56,61 @@
       <table class="table">
         <tr>
           <td>Starting weight <span class="table-secondary">(smoothed)</span></td>
-          <td class="text-right">{{ startWeight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
+          <td class="text-right">
+            <div data-ng-show="trend.startValue">
+              {{ trend.startValue | number : 1 }}&nbsp;<span class="unit">kg</span>
+            </div>
+            <span class="text-muted" data-ng-hide="trend.startValue">
+              no data
+            </span>
+          </td>
         </tr>
         <tr>
           <td>Last measurement</td>
           <td class="text-right">
-            {{ weights[weights.length-1].weight | number : 1 }}&nbsp;<span class="unit">kg</span>
-            <div class="table-secondary">
-              {{ weights[weights.length-1].date | date : 'mediumDate' }}
+            <div data-ng-show="weightData && (weightData.length > 0)">
+              {{ weightData[weightData.length-1].weight | number : 1 }}&nbsp;<span class="unit">kg</span>
+              <div class="table-secondary">
+                {{ weightData[weightData.length-1].date | date : 'mediumDate' }}
+              </div>
             </div>
+            <span class="text-muted" data-ng-hide="weightData && (weightData.length > 0)">
+              no data
+            </span>
           </td>
         </tr>
         <tr>
           <td>Current weight <span class="table-secondary">(estimate)</span></td>
-          <td class="text-right">{{ currentTrendWeight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
+          <td class="text-right">
+            <div data-ng-show="trend.nowValue">
+              {{ trend.nowValue | number : 1 }}&nbsp;<span class="unit">kg</span>
+            </div>
+            <span class="text-muted" data-ng-hide="trend.nowValue">
+              no data
+            </span>
+          </td>
         </tr>
         <tr>
           <td>Current loss <span class="table-secondary">(estimate)</span></td>
           <td class="text-right">
-            {{ startWeight - currentTrendWeight | number : 1 }}&nbsp;<span class="unit">kg</span>
-            <div class="table-secondary">
-              {{ progress * 100 | number : 0}}%&nbsp;of&nbsp;{{ startWeight - targetWeight | number : 1}}&nbsp;<span class="unit">kg</span>
+            <div data-ng-show="trend.startValue && trend.nowValue && target.weight">
+              {{ trend.startValue - trend.nowValue | number : 1 }}&nbsp;<span class="unit">kg</span>
+              <div class="table-secondary" data-ng-show="stats.progress">
+                {{ stats.progress * 100 | number : 0}}%&nbsp;of&nbsp;{{ trend.startValue - target.weight | number : 1}}&nbsp;<span class="unit">kg</span>
+              </div>
             </div>
+            <span class="text-muted"
+                data-ng-hide="trend.startValue && trend.nowValue && target.weight">
+              no data
+            </span>
           </td>
         </tr>
         <tr data-ng-show="stats.bmi">
           <td>Current BMI <span class="table-secondary">(estimate)</span></td>
           <td class="text-right">
-            {{ stats.bmi | number : 0 }}
-            <div class="table-secondary" data-ng-show="stats.bmiCategory">
-              {{ stats.bmiCategory }}
+            {{ stats.bmi.value | number : 0 }}
+            <div class="table-secondary" data-ng-show="stats.bmi.description">
+              {{ stats.bmi.description }}
             </div>
           </td>
         </tr>
@@ -189,9 +214,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr data-ng-repeat="record in weights | orderBy : '-timestamp'">
-          <td>{{ record.date | date : 'medium' }}</td>
-          <td>{{ record.weight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
+        <tr data-ng-repeat="datum in weightData | orderBy : '-timestamp'">
+          <td>{{ datum.date | date : 'medium' }}</td>
+          <td>{{ datum.weight | number : 1 }}&nbsp;<span class="unit">kg</span></td>
         </tr>
       </tbody>
     </table>

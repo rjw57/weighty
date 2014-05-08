@@ -4,15 +4,23 @@ angular.module('webappApp')
   .controller('DatasetCtrl', function ($scope, $routeParams, $log, dataset, Analysis) {
     // useful constants
     var DAYS = 1000*60*60*24;
-
-    // True iff we're currently loading a dataset
-    $scope.loading = false;
+    // var IDEAL_BMI = 22;
+    var WEIGHT_COLOR = '#428bca'/*, GOAL_COLOR = '#5cb85c'*/;
 
     // We need a sheet id to continue
     if(!$routeParams.sheetId) {
       return;
     }
 
+    //// SCOPE VALUES
+
+    // HACK: hardcoded
+    $scope.target = {
+      date: new Date(Date.parse('Oct 01, 2014')),
+      weight: 75,
+    };
+
+    // Config for the weight chart
     $scope.weightChartConfig = {
       options: {
         chart: {
@@ -55,62 +63,47 @@ angular.module('webappApp')
         },
       },
 
-      series: [],
+      series: [{
+        name: 'Weight',
+        id: 'weight',
+        data: [],
+        zIndex: 4,
+        color: WEIGHT_COLOR,
+        marker: { enabled: false },
+      }, {
+        name: 'Trend',
+        id: 'trend',
+        data: [],
+        zIndex: 1,
+        dashStyle: 'Dash',
+        color: WEIGHT_COLOR,
+        lineWidth: 1,
+        marker: { enabled: false },
+      }, {
+        name: 'Trend Range',
+        id: 'trend-range',
+        data: [],
+        type: 'arearange',
+        zIndex: 0,
+        color: WEIGHT_COLOR,
+        lineWidth: 0,
+        fillOpacity: 0.3,
+        linkedTo: 'trend',
+      }],
     };
 
+    // Derived statistics from data and metadata (personal details)
     $scope.stats = { };
 
-    // update BMI
-    $scope.$watch('{ height: dataset.metadata.height, weight: currentTrendWeight }',
-      function(newVal) {
-        if(!newVal || !newVal.height || !newVal.weight) { return; }
-
-        var bmi = $scope.stats.bmi = newVal.weight / (newVal.height * newVal.height);
-
-        if(bmi < 15) {
-          $scope.stats.bmiCategory = 'very severely underweight';
-        } else if(bmi < 16) {
-          $scope.stats.bmiCategory = 'severely underweight';
-        } else if(bmi < 18.5) {
-          $scope.stats.bmiCategory = 'underweight';
-        } else if(bmi < 25) {
-          $scope.stats.bmiCategory = 'normal';
-        } else if(bmi < 30) {
-          $scope.stats.bmiCategory = 'overweight';
-        } else if(bmi < 35) {
-          $scope.stats.bmiCategory = 'moderately obese';
-        } else if(bmi < 40) {
-          $scope.stats.bmiCategory = 'severely obese';
-        } else {
-          $scope.stats.bmiCategory = 'vary severely obese';
-        }
-      },
-      true
-    );
-
-    $scope.$watch('dataset.metadata', function(newVal, oldVal) {
-      // Don't do anything if metadata is unset
-      if(!newVal) {
-        return;
-      }
-
-      // Don't try to patch metadata if there was no previous value
-      if(oldVal) {
-        dataset.patch($scope.verifiedDatasetId, {
-          metadata: newVal,
-        }).then(function() {
-          $scope.$emit('alertMessage', { type: 'success', message: 'Updated personal data' });
-        });
-      }
-    }, true);
+    //// SCOPE ACTIONS
 
     // Add a new measurement
     $scope.submitNewMeasurement = function(measurement) {
-      if(!$scope.verifiedDatasetId) { return; }
+      if(!$scope.dataset.id) { return; }
       $log.info('got new measurement:', measurement.weight);
 
       dataset.addRow({
-        id: $scope.verifiedDatasetId,
+        id: $scope.dataset.id,
         timestamp: Date.now(),
         weight: measurement.weight
       }).then(function() {
@@ -119,7 +112,7 @@ angular.module('webappApp')
           type: 'success',
           message: 'Successfully added measurement.'
         });
-        $scope.reloadDataset();
+        reloadDataset();
       }, function(err) {
         $scope.$emit('alertMessage', {
           type: 'danger',
@@ -129,235 +122,208 @@ angular.module('webappApp')
       });
     };
 
-    // Load a dataset into the $scope.weights
-    $scope.reloadDataset = function() {
-      $log.info('(Re-)loading dataset', $scope.verifiedDatasetId);
+    //// WATCH FUNCTIONS
 
-      if(!$scope.verifiedDatasetId) {
-        $scope.weights = [];
+    // Wait for login before verifying
+    $scope.$watch('isSignedIn', function() {
+      // If not signed in, remove current dataset
+      if(!$scope.isSignedIn) {
+        $scope.dataset = undefined;
         return;
       }
 
-      $scope.loading = true;
-      dataset.getData($scope.verifiedDatasetId).then(function(resp) {
-        $scope.weights = resp;
-        $scope.loading = false;
+      // Otherwise, verify dataset
+      dataset.verifyDatasetId($routeParams.sheetId).then(function(dataset) {
+        $log.info('dataset id ' + dataset.id + ' has been verified');
+        $scope.dataset = dataset;
+      }, function(err) {
+        $log.error('Dataset failed verification:', err);
+      });
+    });
+
+    // When dataset *id* changes, reload weight data
+    $scope.$watch('dataset.id', function() {
+      reloadDataset();
+    });
+
+    // watch for new weights and update trend data
+    $scope.$watch(
+      '{ weightData: weightData, target: target }',
+      function(newVal) {
+        var t, regressPoints, startDate, endDate, regression, bootstrapRegression;
+        var trendWeight, trendBootstrapWeight, trendMin, trendMax, trendDatum;
+        var weightData = newVal.weightData, target = newVal.target;
+
+        $scope.trend = { };
+
+        if(!weightData || (weightData.length < 1) || !target ) { return; }
+
+        startDate = weightData[0].date.getTime();
+        endDate = weightData[weightData.length - 1].date.getTime();
+
+        // Regress weights weighted to start of data
+        regressPoints = [];
+        angular.forEach(weightData, function(datum) {
+          regressPoints.push({
+            x: datum.date.getTime(),
+            y: Math.log(datum.weight),
+            w: Math.exp(-Math.max(0, datum.date.getTime() - startDate) / (14*DAYS)),
+          });
+        });
+
+        $scope.trend.startValue = Math.exp(Analysis.evaluateRegression(
+            Analysis.regress(regressPoints), startDate));
+
+        // Regress weights weighted to end of data
+        regressPoints = [];
+        angular.forEach(weightData, function(datum) {
+          regressPoints.push({
+            x: datum.date.getTime(),
+            y: Math.log(datum.weight),
+            w: Math.exp(-Math.max(0, endDate - datum.date.getTime()) / (14*DAYS)),
+          });
+        });
+        regression = Analysis.regress(regressPoints);
+        bootstrapRegression = Analysis.regressBootstrap(regressPoints);
+
+        $scope.trend.endValue = Math.exp(Analysis.evaluateRegression(
+            Analysis.regress(regressPoints), endDate));
+
+        // Abort if regression failed
+        if(!regression.m) { return; }
+
+        // Record trend data
+        $scope.trend.data = [];
+        for(t = Math.max(startDate, endDate-7*DAYS); t <= target.date.getTime();
+            t += Math.min(DAYS, (target.date.getTime()-startDate) / 100))
+        {
+          trendWeight = Math.exp(Analysis.evaluateRegression(regression, t));
+          trendBootstrapWeight = Analysis.evaluateBootstrapRegression(bootstrapRegression, t);
+          trendMin = Math.exp(trendBootstrapWeight.mu - 3*trendBootstrapWeight.sigma);
+          trendMax = Math.exp(trendBootstrapWeight.mu + 3*trendBootstrapWeight.sigma);
+
+          trendDatum = {
+            timestamp: t,
+            min: trendMin,
+            max: trendMax,
+            value: trendWeight,
+          };
+
+          $scope.trend.data.push(trendDatum);
+        }
+
+        // Record trend value for "now"
+        $scope.trend.nowValue = Math.exp(Analysis.evaluateRegression(regression, Date.now()));
+      },
+      true
+    );
+
+    // update progress given trend and target
+    $scope.$watch('{ target: target, trend: trend }', function(newVal) {
+      var trend = newVal.trend, target = newVal.target;
+
+      if(!trend || !target) {
+        $scope.stats.progress = undefined;
+        return;
+      }
+
+      $scope.stats.progress = 1 - (trend.endValue-target.weight) / (trend.startValue-target.weight);
+    }, true);
+
+    // update derived statistics when metadata and/or data change
+    $scope.$watch(
+      '{ metadata: dataset.metadata, weight: trend.nowValue }',
+      function(newVal) {
+        // Do nothing if we don't have the basic data
+        if(!newVal.metadata || !newVal.weight) { return; }
+
+        // BMI requires height
+        $scope.stats.bmi = (newVal.metadata.height) ?
+          calculateBMI(newVal.weight, newVal.metadata.height)
+          : undefined;
+      },
+      true // <- do deep compare of watch expression
+    );
+
+    // watch for new series data and update graph
+    $scope.$watch('{ weight: weightData, trend: trend, target: target }', function(newVal) {
+      angular.forEach($scope.weightChartConfig.series, function(series) {
+        if(series.id === 'weight') {
+          series.data = [];
+          angular.forEach(newVal.weight, function(datum) {
+            series.data.push([datum.date.getTime(), datum.weight]);
+          });
+        } else if(series.id === 'trend') {
+          series.data = [];
+          angular.forEach(newVal.trend.data, function(datum) {
+            if(datum.value >= newVal.target.weight) {
+              series.data.push([datum.timestamp, datum.value]);
+            }
+          });
+        } else if(series.id === 'trend-range') {
+          series.data = [];
+          angular.forEach(newVal.trend.data, function(datum) {
+            if((datum.min >= newVal.target.weight) || (datum.max >= newVal.target.weight)) {
+              series.data.push([
+                datum.timestamp,
+                Math.max(newVal.target.weight, datum.min),
+                Math.max(newVal.target.weight, datum.max),
+              ]);
+            }
+          });
+        }
+      });
+    }, true);
+
+    // patch dataset if metadata changes
+    $scope.$watch('dataset.metadata', function(newVal, oldVal) {
+      // Don't do anything if metadata is unset or there was no previous value
+      if(!newVal || !oldVal) { return; }
+
+      dataset.patch($scope.dataset.id, {
+        metadata: newVal,
+      }).then(function() {
+        $scope.$emit('alertMessage', { type: 'success', message: 'Updated personal data' });
+      });
+    }, true);
+
+    //// UTILITY FUNCTIONS
+
+    var calculateBMI = function(weight, height) {
+      var bmi = weight / (height * height), bmiCategory;
+
+      if(bmi < 15) {
+        bmiCategory = 'very severely underweight';
+      } else if(bmi < 16) {
+        bmiCategory = 'severely underweight';
+      } else if(bmi < 18.5) {
+        bmiCategory = 'underweight';
+      } else if(bmi < 25) {
+        bmiCategory = 'normal';
+      } else if(bmi < 30) {
+        bmiCategory = 'overweight';
+      } else if(bmi < 35) {
+        bmiCategory = 'moderately obese';
+      } else if(bmi < 40) {
+        bmiCategory = 'severely obese';
+      } else {
+        bmiCategory = 'vary severely obese';
+      }
+
+      return { value: bmi, description: bmiCategory };
+    };
+
+    // Load a dataset into the $scope.weightData
+    var reloadDataset = function() {
+      $scope.weightData = undefined;
+      if(!$scope.dataset) { return; }
+
+      $log.info('(Re-)loading dataset', $scope.dataset.id);
+
+      dataset.getData($scope.dataset.id).then(function(resp) {
+        $scope.weightData = resp;
       }, function(err) {
         $log.error('Could not get dataset:', err);
       });
     };
-
-    var updateChartSeries = function() {
-      if(!$scope.weightChartConfig) { return; }
-
-      $scope.weightChartConfig.series = [];
-
-      var data, weightColor = '#428bca', goalColor = '#5cb85c';
-
-      // weights
-      if($scope.weights) {
-        data = [];
-        angular.forEach($scope.weights, function(datum) {
-          data.push([datum.date.getTime(), datum.weight]);
-        });
-        $scope.weightChartConfig.series.push({
-          name: 'Weight',
-          data: data,
-          zIndex: 4,
-          color: weightColor,
-          marker: { enabled: false },
-        });
-      }
-
-      if($scope.goal) {
-        // goal
-        data = [];
-        angular.forEach($scope.goal, function(datum) {
-          data.push([datum.date.getTime(), datum.weight]);
-        });
-        $scope.weightChartConfig.series.push({
-          name: 'Goal',
-          data: data,
-          zIndex: 2,
-          color: goalColor,
-          marker: { enabled: false },
-        });
-      }
-
-      if($scope.trend) {
-        // trend
-        data = [];
-        angular.forEach($scope.trend, function(datum) {
-          data.push([datum.date.getTime(), datum.weight]);
-        });
-        $scope.weightChartConfig.series.push({
-          name: 'Trend',
-          id: 'trend',
-          data: data,
-          zIndex: 1,
-          color: weightColor,
-          dashStyle: 'Dash',
-          lineWidth: 1,
-          marker: { enabled: false },
-        });
-
-        if($scope.trendBounds) {
-          // trend bounds
-          data = [];
-          angular.forEach($scope.trendBounds, function(datum) {
-            data.push([datum.date.getTime(), datum.minWeight, datum.maxWeight]);
-          });
-          $scope.weightChartConfig.series.push({
-            name: 'Trend Range',
-            data: data,
-            type: 'arearange',
-            zIndex: 0,
-            lineWidth: 0,
-            color: weightColor,
-            fillOpacity: 0.3,
-            linkedTo: 'trend',
-          });
-        }
-      }
-    };
-
-    // Wait for login before verifying
-    $scope.$watch('isSignedIn', function() {
-      if(!$scope.isSignedIn) {
-        $scope.verifiedDatasetId = null;
-        return;
-      }
-
-      // Verify dataset
-      $scope.loading = true;
-      dataset.verifyDatasetId($routeParams.sheetId).then(function(dataset) {
-        $log.info('dataset id ' + dataset.id + ' has been verified');
-        $scope.verifiedDatasetId = dataset.id;
-        $scope.dataset = dataset;
-      }, function(err) {
-        $log.error('Dataset failed verification:', err);
-        $scope.loading = false;
-      });
-    });
-
-    // When we have a verified dataset id, (re-)load it
-    $scope.$watch('verifiedDatasetId', function() {
-      $scope.reloadDataset();
-    });
-
-    // Watch for new weights and re-compute derived metrics
-    $scope.$watch('weights', function() {
-      $log.info('new weights available');
-      $scope.goal = [];
-
-      // Update cached start and current weights
-      if(!$scope.weights || $scope.weights.length === 0) {
-        return;
-      }
-
-      // HACK
-      $scope.targetDate = new Date(Date.parse('Oct 01, 2014'));
-      $scope.targetWeight = 77;
-      $log.info('target date: ' + $scope.targetDate);
-      $log.info('target weight: ' + $scope.targetWeight);
-
-      $scope.startWeight = $scope.weights[0].weight;
-      $scope.endWeight = $scope.weights[$scope.weights.length-1].weight;
-      $scope.currentWeight = null;
-
-      var currentDate = Date.now() + 31*DAYS;
-      var startDate = $scope.weights[0].date.getTime(),
-        endDate = $scope.weights[$scope.weights.length - 1].date.getTime(),
-        targetDate = $scope.targetDate.getTime(),
-        startLogWeight = Math.log($scope.startWeight),
-        targetLogWeight = Math.log($scope.targetWeight);
-
-      var lastPlotDate = Math.max(currentDate, targetDate);
-      // var lastPlotDate = Math.min(currentDate, targetDate);
-
-      var regressPoints = [];
-
-      // Regress weight weighted to start of data
-      regressPoints = [];
-      angular.forEach($scope.weights, function(w) {
-        regressPoints.push({
-          x: w.date.getTime(),
-          y: Math.log(w.weight),
-          w: Math.exp(-Math.max(0, w.date.getTime()-startDate) / (14*DAYS)),
-        });
-      });
-      if(regressPoints.length > 3) {
-        startLogWeight = Analysis.evaluateRegression(
-            Analysis.regress(regressPoints), startDate);
-        $scope.startWeight = Math.exp(startLogWeight);
-      }
-
-      // Regress weights weighted to end of data
-      regressPoints = [];
-      angular.forEach($scope.weights, function(w) {
-        regressPoints.push({
-          x: w.date.getTime(),
-          y: Math.log(w.weight),
-          w: Math.exp(-Math.max(0, endDate - w.date.getTime()) / (14*DAYS)),
-        });
-      });
-
-      var trendRegression = Analysis.regress(regressPoints);
-      var trendBootstrapRegression = Analysis.regressBootstrap(regressPoints);
-
-      var t, lambda, trendWeight, trendBootstrapWeight, trendMinWeight, trendMaxWeight;
-
-      $scope.trend = null;
-      $scope.trendBounds = null;
-      if(trendRegression.m !== null) {
-        // Update current weight to regressed value for now
-        $scope.endWeight = Math.exp(Analysis.evaluateRegression(
-              trendRegression, endDate));
-        $scope.currentTrendWeight = Math.exp(Analysis.evaluateRegression(
-              trendRegression, Date.now()));
-
-        // Update trend
-        $scope.trend = [];
-        $scope.trendBounds = [];
-        for(t = Math.max(startDate, endDate-7*DAYS);
-            t <= lastPlotDate;
-            t += Math.min(DAYS, (targetDate-startDate) / 100))
-        {
-          trendWeight = Math.exp(Analysis.evaluateRegression(trendRegression, t));
-          trendBootstrapWeight = Analysis.evaluateBootstrapRegression(trendBootstrapRegression, t);
-
-          trendMinWeight = Math.exp(trendBootstrapWeight.mu - 3*trendBootstrapWeight.sigma);
-          trendMaxWeight = Math.exp(trendBootstrapWeight.mu + 3*trendBootstrapWeight.sigma);
-
-          if(trendWeight >= $scope.targetWeight) {
-            $scope.trend.push({
-              date: new Date(t),
-              weight: trendWeight,
-            });
-          }
-
-          if(trendMinWeight >= $scope.targetWeight || trendMaxWeight >= $scope.targetWeight) {
-            $scope.trendBounds.push({
-              date: new Date(t),
-              minWeight: Math.max($scope.targetWeight, trendMinWeight),
-              maxWeight: Math.max($scope.targetWeight, trendMaxWeight),
-            });
-          }
-        }
-      }
-
-      // Update goal
-      for(t = startDate; t <= lastPlotDate; t += Math.min(DAYS, (targetDate-startDate) / 100)) {
-        lambda = (t - startDate) / (targetDate - startDate);
-        $scope.goal.push({
-          date: new Date(t),
-          weight: Math.exp(lambda * targetLogWeight + (1-lambda) * startLogWeight),
-        });
-      }
-
-      updateChartSeries();
-
-      $scope.progress = 1 -
-        ($scope.endWeight-$scope.targetWeight) / ($scope.startWeight-$scope.targetWeight);
-    });
   });
