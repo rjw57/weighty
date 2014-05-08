@@ -96,6 +96,17 @@
             </span>
           </td>
         </tr>
+        <tr>
+          <td>Sex</td>
+          <td class="text-right">
+            <span>
+              <span data-ng-show="dataset.metadata.sex">
+                {{ dataset.metadata.sex }}
+              </span>
+              <span class="text-muted" data-ng-hide="dataset.metadata.sex">unknown</span>
+            </span>
+          </td>
+        </tr>
       </table>
 
       <h3>Statistics</h3>
