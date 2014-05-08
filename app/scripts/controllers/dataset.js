@@ -30,6 +30,7 @@ angular.module('webappApp')
           type: 'datetime',
           endOnTick: false,
           minPadding: 0,
+          maxPadding: 0,
           minRange: 14 * 24 * 3600000, // fortnight
         },
         yAxis : {
