@@ -264,7 +264,7 @@ angular.module('webappApp')
         // Update trend
         $scope.trend = [];
         $scope.trendBounds = [];
-        for(t = Math.max(startDate, endDate-1*DAYS);
+        for(t = Math.max(startDate, endDate-7*DAYS);
             t <= lastPlotDate;
             t += Math.min(DAYS, (targetDate-startDate) / 100))
         {
