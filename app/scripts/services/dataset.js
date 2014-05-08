@@ -62,6 +62,48 @@ angular.module('webappApp')
       });
     };
 
+    // Patch a dataset with new metadata. Takes a *verified* id (see
+    // verifyDatasetId) and sets metadata in the params object. Returns a
+    // promise which is fulfilled with the new dataset resource.
+    //
+    // NOTE: metadata will be replace in its *entirety* if present.
+    //
+    // The parameters should have the following structure:
+    // {
+    //   title: <string>,     // optional, human-readable name for dataset
+    //   metadata: {          // optional, JSON-friendly metadata to associate with dataset
+    //     height: <number>,  // optional, user's height in metres
+    //   },
+    // }
+    this.patch = function(verifiedId, params) {
+      $log.info('patching drive properties on ' + verifiedId);
+
+      // Build the patch object
+      var patchObject = {};
+
+      if(params.title) {
+        patchObject.tile = params.title;
+      }
+
+      if(params.metadata) {
+        patchObject.properties = [{
+          key: 'weightyMetadata',
+          value: JSON.stringify(params.metadata || {}),
+          visibility: 'PUBLIC'
+        }];
+      }
+
+      // Kick off the request
+      return gapi.load('drive', 'v2').then(function(drive) {
+        return drive.files.patch({
+          fileId: verifiedId,
+          resource: patchObject,
+        }).then(function(driveFile) {
+          return datasetResourceFromDriveFile(driveFile);
+        });
+      });
+    };
+
     // Add a new measurement to an existing dataset. Takes a dataset id and an
     // object of the form
     // {
