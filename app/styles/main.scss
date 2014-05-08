@@ -89,6 +89,13 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 }
 // end: global layout
 
+// begin: global style
+.table-secondary {
+    @extend .text-muted;
+    @extend .small;
+}
+// end: global style
+
 // begin: global alerts
 .alert-fixed-top {
     border-top-left-radius: 0;

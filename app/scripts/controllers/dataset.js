@@ -58,6 +58,52 @@ angular.module('webappApp')
       series: [],
     };
 
+    $scope.stats = { };
+
+    // update BMI
+    $scope.$watch('{ height: dataset.metadata.height, weight: currentTrendWeight }',
+      function(newVal) {
+        if(!newVal || !newVal.height || !newVal.weight) { return; }
+
+        var bmi = $scope.stats.bmi = newVal.weight / (newVal.height * newVal.height);
+
+        if(bmi < 15) {
+          $scope.stats.bmiCategory = 'very severely underweight';
+        } else if(bmi < 16) {
+          $scope.stats.bmiCategory = 'severely underweight';
+        } else if(bmi < 18.5) {
+          $scope.stats.bmiCategory = 'underweight';
+        } else if(bmi < 25) {
+          $scope.stats.bmiCategory = 'normal';
+        } else if(bmi < 30) {
+          $scope.stats.bmiCategory = 'overweight';
+        } else if(bmi < 35) {
+          $scope.stats.bmiCategory = 'moderately obese';
+        } else if(bmi < 40) {
+          $scope.stats.bmiCategory = 'severely obese';
+        } else {
+          $scope.stats.bmiCategory = 'vary severely obese';
+        }
+      },
+      true
+    );
+
+    $scope.$watch('dataset.metadata', function(newVal, oldVal) {
+      // Don't do anything if metadata is unset
+      if(!newVal) {
+        return;
+      }
+
+      // Don't try to patch metadata if there was no previous value
+      if(oldVal) {
+        dataset.patch($scope.verifiedDatasetId, {
+          metadata: newVal,
+        }).then(function() {
+          $scope.$emit('alertMessage', { type: 'success', message: 'Updated personal data' });
+        });
+      }
+    }, true);
+
     // Add a new measurement
     $scope.submitNewMeasurement = function(measurement) {
       if(!$scope.verifiedDatasetId) { return; }
@@ -69,8 +115,16 @@ angular.module('webappApp')
         weight: measurement.weight
       }).then(function() {
         $log.info('new measurement added');
+        $scope.$emit('alertMessage', {
+          type: 'success',
+          message: 'Successfully added measurement.'
+        });
         $scope.reloadDataset();
       }, function(err) {
+        $scope.$emit('alertMessage', {
+          type: 'danger',
+          message: 'Error adding measurement.',
+        });
         $log.error('error adding new measurement', err);
       });
     };

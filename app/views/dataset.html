@@ -76,12 +76,14 @@
         <tr>
           <td>Height</td>
           <td class="text-right">
-            <span data-editable-text="metadata.height" data-e-name="height"
+            <span data-editable-text="dataset.metadata.height" data-e-name="height"
                 data-onbeforesave="(+$data > 0) ? null : 'must be a number'"
                 data-e-form="personalDataForm" data-e-placeholder="metres"
                 data-e-inputmode="numeric" data-e-pattern="[0-9]*(\.[0-9]*)?">
-              <span data-ng-show="metadata.height">{{ metadata.height }} <small>m</small></span>
-              <span class="text-muted" data-ng-hide="metadata.height">unknown</span>
+              <span data-ng-show="dataset.metadata.height">
+                {{ dataset.metadata.height | number : 2 }} <small>m</small>
+              </span>
+              <span class="text-muted" data-ng-hide="dataset.metadata.height">unknown</span>
             </span>
           </td>
         </tr>
@@ -90,24 +92,37 @@
       <h3>Statistics</h3>
       <table class="table">
         <tr>
-          <td>Starting weight <span class="text-muted">(smoothed)</span></td>
+          <td>Starting weight <span class="table-secondary">(smoothed)</span></td>
           <td class="text-right">{{ startWeight | number : 1 }}&nbsp;<small>kg</small></td>
         </tr>
         <tr>
-          <td>Most recent weight <span class="text-muted">(smoothed)</span></td>
-          <td class="text-right">{{ endWeight | number : 1 }}&nbsp;<small>kg</small></td>
+          <td>Last measurement</td>
+          <td class="text-right">
+            {{ weights[weights.length-1].weight | number : 1 }}&nbsp;<small>kg</small>
+            <div class="table-secondary">
+              {{ weights[weights.length-1].date | date : 'mediumDate' }}
+            </div>
+          </td>
         </tr>
         <tr>
-          <td>Current weight <span class="text-muted">(estimate)</span></td>
+          <td>Current weight <span class="table-secondary">(estimate)</span></td>
           <td class="text-right">{{ currentTrendWeight | number : 1 }}&nbsp;<small>kg</small></td>
         </tr>
         <tr>
-          <td>Current loss <span class="text-muted">(estimate)</span></td>
+          <td>Current loss <span class="table-secondary">(estimate)</span></td>
           <td class="text-right">
             {{ startWeight - currentTrendWeight | number : 1 }}&nbsp;<small>kg</small>
-            <div class="text-muted">
-              {{ progress * 100 | number : 0}}%
-              of {{ startWeight - targetWeight | number : 1}}&nbsp;<small>kg</small>
+            <div class="table-secondary">
+              {{ progress * 100 | number : 0}}%&nbsp;of&nbsp;{{ startWeight - targetWeight | number : 1}}&nbsp;<small>kg</small>
+            </div>
+          </td>
+        </tr>
+        <tr data-ng-show="stats.bmi">
+          <td>Current BMI <span class="table-secondary">(estimate)</span></td>
+          <td class="text-right">
+            {{ stats.bmi | number : 0 }}
+            <div class="table-secondary" data-ng-show="stats.bmiCategory">
+              {{ stats.bmiCategory }}
             </div>
           </td>
         </tr>
