@@ -71,6 +71,12 @@
             {{ stats.idealWeight | number : 1}}&nbsp;<span class="unit">kg</span>
           </td>
         </tr>
+        <tr data-ng-show="trend.finishDate">
+          <td>Completion date <span class="table-secondary">(estimate)</span></td>
+          <td class="text-right">
+            {{ trend.finishDate | date : 'mediumDate' }}
+          </td>
+        </tr>
         <tr>
           <td>Last weight measurement</td>
           <td class="text-right">
@@ -195,7 +201,7 @@
                 data-e-ng-click="open($event, 'birthDateOpened')"
                 data-e-datepicker-popup="dd-MMMM-yyyy">
               <span data-ng-show="dataset.metadata.birthDate">
-                {{ dataset.metadata.birthDate | date : 'longDate' }}
+                {{ dataset.metadata.birthDate | date : 'mediumDate' }}
               </span>
               <span class="text-muted" data-ng-hide="dataset.metadata.birthDate">unknown</span>
             </span>

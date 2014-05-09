@@ -14,11 +14,7 @@ angular.module('webappApp')
 
     //// SCOPE VALUES
 
-    // HACK: hardcoded
-    $scope.target = {
-      date: new Date(Date.parse('Oct 01, 2014')),
-      weight: 75,
-    };
+    $scope.target = { };
 
     // Metabolic genders
     $scope.sexes = [
@@ -213,8 +209,25 @@ angular.module('webappApp')
 
         // Record trend data
         $scope.trend.data = [];
-        for(t = Math.max(startDate, endDate-7*DAYS); t <= target.date.getTime();
-            t += Math.min(DAYS, (target.date.getTime()-startDate) / 100))
+        var lastPlotDate = endDate + 31*DAYS;
+
+        if(target.weight) {
+          lastPlotDate = (Math.log(target.weight) - regression.c) / regression.m;
+          $scope.trend.finishDate = new Date(Math.max(lastPlotDate, endDate));
+
+          // No less than a month from end measurement
+          lastPlotDate = Math.max(lastPlotDate, endDate + 31*DAYS);
+
+          // No more than six months from end measurement
+          lastPlotDate = Math.min(lastPlotDate, endDate + 6*31*DAYS);
+        }
+
+        if(target.date) {
+          lastPlotDate = target.date.getTime();
+        }
+
+        for(t = Math.max(startDate, endDate-7*DAYS); t <= lastPlotDate;
+            t += Math.min(DAYS, (lastPlotDate-startDate) / 100))
         {
           trendWeight = Math.exp(Analysis.evaluateRegression(regression, t));
           trendBootstrapWeight = Analysis.evaluateBootstrapRegression(bootstrapRegression, t);
