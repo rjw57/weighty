@@ -49,23 +49,6 @@ angular.module('webappApp')
           maxPadding: 0,
           minRange: 14 * 24 * 3600000, // fortnight
         },
-        yAxis : {
-          title: {
-            text: null,
-          },
-          startOnTick: false,
-          endOnTick: true,
-          minPadding: 0,
-          maxPadding: 0,
-          gridLineColor: '#DDD',
-          labels: {
-            formatter: function() {
-              return Highcharts.numberFormat(this.value, 0) +
-                '&nbsp;<span class="unit">kg</span>';
-            },
-            useHTML: true,
-          },
-        },
         tooltip: {
           valueDecimals: 1,
           valueSuffix: 'kg',
@@ -99,6 +82,23 @@ angular.module('webappApp')
         fillOpacity: 0.3,
         linkedTo: 'trend',
       }],
+      yAxis : {
+        title: {
+          text: null,
+        },
+        startOnTick: false,
+        endOnTick: true,
+        minPadding: 0,
+        maxPadding: 0,
+        gridLineColor: '#DDD',
+        labels: {
+          formatter: function() {
+            return Highcharts.numberFormat(this.value, 0) +
+              '&nbsp;<span class="unit">kg</span>';
+          },
+          useHTML: true,
+        },
+      },
     };
 
     // Derived statistics from data and metadata (personal details)
@@ -269,6 +269,7 @@ angular.module('webappApp')
         // Do nothing if we don't have the basic data
         if(!newVal.height || !newVal.weight) {
           $scope.stats.bmi = undefined;
+          $scope.stats.bmiBoundaries = undefined;
           return;
         }
 
@@ -278,11 +279,73 @@ angular.module('webappApp')
         // Compute ideal weight from BMI
         $scope.stats.idealWeight = IDEAL_BMI * (newVal.height * newVal.height);
 
+        // Compute boundaries for BMI
+        $scope.stats.bmiBoundaries = [
+          18.5 * newVal.height * newVal.height, // underweight -> healthy
+          25 * newVal.height * newVal.height, // healthy -> overweight
+          30 * newVal.height * newVal.height, // overweight -> obese
+        ];
+
         // HACK
         $scope.target.weight = $scope.stats.idealWeight;
       },
       true // <- do deep compare of watch expression
     );
+
+    $scope.$watch('stats.bmiBoundaries', function(boundaries) {
+      var underweightColor = '#fffff0',
+        healthyColor = '#f0fff0',
+        overweightColor = '#fffff0',
+        obeseColor = '#fff0f0';
+
+      if(!boundaries || (boundaries.length < 3)) {
+        $scope.weightChartConfig.options.yAxis.plotBands = null;
+      }
+
+      $scope.weightChartConfig.yAxis.plotBands = [{
+        color: underweightColor,
+        from: -Infinity,
+        to: boundaries[0],
+        label: {
+          text: 'underweight',
+          style: {
+            opacity: 0.33,
+          },
+        },
+      }, {
+        color: healthyColor,
+        from: boundaries[0],
+        to: boundaries[1],
+        label: {
+          text: 'healthy',
+          style: {
+            opacity: 0.33,
+          },
+        },
+      }, {
+        color: overweightColor,
+        from: boundaries[1],
+        to: boundaries[2],
+        label: {
+          text: 'overweight',
+          style: {
+            opacity: 0.33,
+          },
+        },
+      }, {
+        color: obeseColor,
+        from: boundaries[2],
+        to: Infinity,
+        label: {
+          text: 'obese',
+          style: {
+            opacity: 0.33,
+          },
+        },
+      }];
+
+      $log.info('options', $scope.weightChartConfig);
+    }, true);
 
     $scope.$watch(
       '{ metadata: dataset.metadata, weight: trend.nowValue }',
@@ -365,7 +428,7 @@ angular.module('webappApp')
       } else if(bmi < 18.5) {
         bmiCategory = 'underweight';
       } else if(bmi < 25) {
-        bmiCategory = 'normal';
+        bmiCategory = 'healthy';
       } else if(bmi < 30) {
         bmiCategory = 'overweight';
       } else if(bmi < 35) {
