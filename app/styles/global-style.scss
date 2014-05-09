@@ -45,6 +45,7 @@
     .navmenu-section {
         @extend .text-muted;
         @extend small;
+        font-weight: bold;
         text-transform: uppercase;
         background-color: darken($navbar-default-bg, 10%);
     }
