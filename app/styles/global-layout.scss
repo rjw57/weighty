@@ -11,27 +11,8 @@
 .container { max-width: 100%; }
 
 .container, .container-accent, .container-secondary {
-    padding-top: $padding-xs-vertical;
     padding-bottom: ceil((0.5 * $line-height-computed));
 }
-
-@media (min-width: $screen-sm-min) {
-    .container, .container-accent, .container-secondary {
-        padding-top: $padding-small-vertical;
-    }
-};
-
-@media (min-width: $screen-md-min) {
-    .container, .container-accent, .container-secondary {
-        padding-top: $padding-base-vertical;
-    }
-};
-
-@media (min-width: $screen-lg-min) {
-    .container, .container-accent, .container-secondary {
-        padding-top: $padding-large-vertical;
-    }
-};
 
 // navbar related styles
 .navbar {
