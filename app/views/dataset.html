@@ -13,7 +13,7 @@
 
   <div class="container">
     <form name="smallScreenAddMeasurementForm" class="form visible-xs" role="form">
-      <h4>Add new measurement</h4>
+      <h3>Add new measurement</h3>
       <div class="form-group">
         <label for="weight" class="sr-only control-label">New weight measurement</label>
         <div class="input-group">
@@ -32,35 +32,45 @@
     </form>
 
     <div class="row">
-      <div class="col-sm-6 col-md-8">
-        <h4>Overview</h4>
-        <div class="overview row" data-ng-show="trend.startValue &amp;&amp; stats.progress &amp;&amp; target.weight">
-          <div class="col-sm-3 col-xs-4">
+      <div class="col-md-6 col-lg-8">
+        <h3>Overview</h3>
+        <div class="row v-center-row"
+            data-ng-show="trend.startValue &amp;&amp; stats.progress &amp;&amp; target.weight">
+          <div class="col-xs-4 v-center-col">
             <div class="weight-badge weight-badge-danger">
               {{ trend.startValue | number : 0 }}&nbsp;<span class="unit">kg</span>
+              <div class="small visible-lg"
+                  data-ng-show="weightData &amp;&amp; (weightData.length > 0)">
+                {{ weightData[0].date | date : 'mediumDate' }}
+              </div>
             </div>
           </div>
 
-          <div class="weight-progress-container col-sm-6 col-xs-4">
+          <div class="col-xs-4 v-center-col">
             <div class="weight-progress-bar">
               <div class="wa-progress-bar" data-min="0" data-max="100"
-                data-value="{{ 100 * stats.progress }}"></div>
+                data-value="{{ 100 * stats.progress }}">
+              </div>
             </div>
           </div>
 
-          <div class="col-sm-3 col-xs-4">
+          <div class="col-xs-4 v-center-col">
             <div class="weight-badge weight-badge-success">
               {{ target.weight | number : 0 }}&nbsp;<span class="unit">kg</span>
+              <div class="small visible-lg"
+                  data-ng-show="trend.finishDate">
+                {{ trend.finishDate | date : 'mediumDate' }}
+              </div>
             </div>
           </div>
         </div>
 
-        <h4>Chart</h4>
+        <h3>Chart</h3>
         <div class="highchart" id="weightProgress" data-config="weightChartConfig"></div>
       </div>
 
-      <div class="col-sm-6 col-md-4">
-        <h4>Statistics</h4>
+      <div class="col-md-6 col-lg-4">
+        <h3>Statistics</h3>
         <table class="table">
           <tr>
             <td>Starting weight <span class="table-secondary">(smoothed)</span></td>
@@ -142,8 +152,8 @@
           </tr>
         </table>
 
-        <h4 class="sr-only">Personal data</h4>
-        <div class="h4">
+        <h3 class="sr-only">Personal data</h3>
+        <div class="h3">
           Personal data
           <div class="pull-right">
             <form data-editable-form name="personalDataForm"
@@ -218,12 +228,11 @@
         </table>
       </div>
     </div>
-
   </div>
 
   <div class="hidden-xs container-secondary">
     <div class="container">
-      <h4>All data</h4>
+      <h3>All data</h3>
       <form name="largeScreenAddMeasurementForm" class="form" role="form">
         <div class="form-group">
           <label for="weight" class="sr-only control-label">New weight measurement</label>

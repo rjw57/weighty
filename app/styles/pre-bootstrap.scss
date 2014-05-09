@@ -1,0 +1,10 @@
+// Bootstrap-specific variable overrides. This file is imported ahead of the
+// main bootstrap sass.
+
+// This is the font path used for glyphicons. In Gruntfile.js we have a dedicated
+// copy-job which moves the fonts over to the right place.
+$icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
+
+// Set the default font before
+$font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+

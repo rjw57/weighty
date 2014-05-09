@@ -1,0 +1,72 @@
+// Styles specific to the dataset page
+
+// bower:scss
+@import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
+// endbower
+
+.overview-row {
+    padding-bottom: $line-height-computed;
+}
+
+.v-center-row {
+    display:table !important;
+}
+
+.v-center-col {
+    display: table-cell !important;
+    vertical-align: middle;
+    float: none;
+}
+
+.weight-badge {
+    padding: $padding-base-vertical $padding-base-horizontal;
+    border-radius: $border-radius-large;
+    font-size: $font-size-large;
+    color: #fff;
+    text-align: center;
+}
+
+.weight-badge-danger { background-color: $brand-danger; }
+.weight-badge-success { background-color: $brand-success; }
+
+.weight-progress-bar {
+    .progress {
+        border-radius: $border-radius-large;
+        background-color: lighten($brand-primary, 25%);
+        margin: 0;
+    }
+
+    .progress-bar {
+        background-color: $brand-primary;
+    }
+}
+
+.table-data {
+    max-height: ceil(($container-sm * (9/16)));
+    overflow: auto;
+}
+
+#weightProgress {
+    height: ceil((0.5 * $container-sm));
+}
+
+// responsive media queries
+@media (min-width: $screen-sm-min) {
+    #weightProgress {
+        height: ceil(((9/16) * $container-sm));
+    }
+}
+
+@media (min-width: $screen-md-min) {
+    #weightProgress {
+        height: ceil((0.67 * (9/16) * $container-md));
+    }
+}
+
+@media (min-width: $screen-lg-min) {
+    #weightProgress {
+        height: ceil((0.67 * (9/16) * $container-lg));
+    }
+}
+// end: dataset page
+

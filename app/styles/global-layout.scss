@@ -1,0 +1,80 @@
+// Global layout which affects every page
+
+// bower:scss
+@import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
+// endbower
+
+// ensure the application content has a margin for the top navbar
+.app-content { margin-top: $navbar-height; }
+
+// don't let containers overlap the page
+.container { max-width: 100%; }
+
+// navbar related styles
+.navbar {
+    display: block;
+    text-align: center;
+
+    .navbar-brand {
+        display: inline-block;
+        float: none;
+    }
+
+    .navbar-toggle {
+        position: absolute;
+        float: left;
+        margin-left: $navbar-padding-horizontal;
+    }
+}
+
+// navmenu (sidebar) styles
+.navmenu {
+    padding-top: $navbar-height;
+
+    .navmenu-section {
+        padding: $nav-link-padding;
+    }
+
+    .navmenu-text {
+        padding: $nav-link-padding;
+    }
+}
+
+.profile-slug {
+    padding-right: $navbar-padding-horizontal;
+}
+
+// dataset sidebar is visible in this case
+@media (min-width: $screen-md-min) {
+    body {
+        padding: 0 0 0 300px;
+    }
+
+    .navmenu {
+        padding-top: 0;
+    }
+
+    .content-navbar {
+        margin-left: 300px;
+    }
+
+    .app-content {
+        // required for top navbar to be hidden
+        margin-top: 0;
+    }
+}
+
+// Overthrow CSS:
+// Enable overflow: auto on elements with overthrow class when html element has
+// overthrow class too
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.browsehappy {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}

@@ -1,0 +1,74 @@
+// Style which applies to elements which are common to all pages
+
+// bower:scss
+@import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
+// endbower
+
+// page layout
+.container-accent, .container-secondary {
+    padding-top: $padding-xs-vertical;
+    padding-bottom: ceil((0.5 * $line-height-computed));
+}
+
+.container-accent {
+    background-color: $brand-primary;
+    color: #fff;
+}
+
+.container-secondary {
+    background-color: $gray-lighter;
+}
+
+@media (min-width: $screen-sm-min) {
+    .container-accent, .container-secondary {
+        padding-top: $padding-small-vertical;
+    }
+};
+
+@media (min-width: $screen-md-min) {
+    .container-accent, .container-secondary {
+        padding-top: $padding-base-vertical;
+    }
+};
+
+@media (min-width: $screen-lg-min) {
+    .container-accent, .container-secondary {
+        padding-top: $padding-large-vertical;
+    }
+};
+// /page layout
+
+// navbar and navmenu
+.navmenu {
+    box-shadow: 0px 0px 8px -3px #000;
+
+    .navmenu-section {
+        @extend .text-muted;
+        @extend small;
+        text-transform: uppercase;
+        background-color: darken($navbar-default-bg, 10%);
+    }
+
+    .navmenu-inverse {
+        .navmenu-section {
+            background-color: lighten($navbar-inverse-bg, 10%);
+        }
+    }
+}
+
+.navmenu-brand, .navbar-brand {
+    font-family: 'Nunito', $font-family-base;
+}
+
+.table-secondary {
+    @extend .text-muted;
+    @extend .small;
+}
+// /navbar and navmenu
+
+// body text
+.unit { @extend .small; }
+
+.editable-empty, .editable-empty:hover {
+    font-style: inherit;
+}
