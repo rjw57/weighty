@@ -44,6 +44,7 @@
 
 #weightProgress {
     height: ceil((0.5 * $container-sm));
+    padding-bottom: ceil(($line-height-computed));
 }
 
 // responsive media queries

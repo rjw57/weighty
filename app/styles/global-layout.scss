@@ -10,10 +10,6 @@
 // don't let containers overlap the page
 .container { max-width: 100%; }
 
-.container, .container-accent, .container-secondary {
-    padding-bottom: ceil((0.5 * $line-height-computed));
-}
-
 // navbar related styles
 .navbar {
     display: block;
