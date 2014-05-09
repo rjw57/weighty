@@ -32,7 +32,7 @@ angular.module('webappApp')
       options: {
         chart: {
           zoomType: 'x',
-          spacing: [5, 0, 10, 0],
+          spacing: [10, 0, 10, 0],
         },
         title: {
           text: null,

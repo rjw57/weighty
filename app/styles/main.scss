@@ -23,6 +23,7 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
 
 .navmenu {
     padding-top: $navbar-height;
+    box-shadow: 0px 0px 8px -3px #000;
 
     .navmenu-section {
         @extend .text-muted;
@@ -64,6 +65,10 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
     padding-right: $navbar-padding-horizontal;
 }
 
+.overview {
+    padding-top: $padding-base-vertical;
+}
+
 // dataset sidebar is visible in this case
 @media (min-width: 992px) {
     body {
@@ -93,6 +98,38 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
 // end: global layout
 
 // begin: global style
+.container-accent, .container-secondary {
+    padding-top: $padding-xs-vertical;
+    padding-bottom: ceil((0.5 * $line-height-computed));
+}
+
+.container-accent {
+    background-color: $brand-primary;
+    color: #fff;
+}
+
+.container-secondary {
+    background-color: $gray-lighter;
+}
+
+@media (min-width: $screen-sm-min) {
+    .container-accent, .container-secondary {
+        padding-top: $padding-small-vertical;
+    }
+};
+
+@media (min-width: $screen-md-min) {
+    .container-accent, .container-secondary {
+        padding-top: $padding-base-vertical;
+    }
+};
+
+@media (min-width: $screen-lg-min) {
+    .container-accent, .container-secondary {
+        padding-top: $padding-large-vertical;
+    }
+};
+
 .navmenu-brand, .navbar-brand {
     font-family: 'Nunito', $font-family-base;
 }
@@ -133,36 +170,9 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
 // end: profile name and image
 
 // begin: dataset page
-#weightProgress {
-    height: 0.75 * $screen-xs-min;
-}
-
-@media (min-width: $screen-sm-min) {
-    #weightProgress {
-        height: 0.67 * 0.75 * $screen-sm-min;
-    }
-}
-
-@media (min-width: $screen-md-min) {
-    #weightProgress {
-        height: 0.67 * 0.75 * $screen-md-min;
-    }
-}
-
-@media (min-width: $screen-lg-min) {
-    #weightProgress {
-        height: 0.67 * 0.75 * $screen-lg-min;
-    }
-}
-// end: dataset page
-
-.overthrow-enabled .overthrow {
+.table-data {
+    max-height: 400px;
     overflow: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.loading-indicator {
-    padding: 3*$padding-large-vertical 0;
 }
 
 .weight-badge {
@@ -177,6 +187,9 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
 .weight-badge-success { background-color: $brand-success; }
 
 .weight-progress-container {
+    display: table-cell;
+    vertical-align: middle;
+
     .weight-progress-bar {
         padding-top: $padding-large-vertical;
         padding-bottom: $padding-large-vertical;
@@ -184,7 +197,6 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
         .progress {
             border-radius: $border-radius-large;
             background-color: lighten($brand-primary, 25%);
-            height: 43px - 2 * $padding-large-vertical; // FIXME should really be computed
         }
 
         .progress-bar {
@@ -198,8 +210,56 @@ $font-family-sans-serif: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-seri
     }
 }
 
-.weight-graph svg {
-    height: 300px;
+#weightProgress {
+    height: floor((0.75 * $screen-phone));
+}
+
+@media (min-width: $screen-sm-min) {
+    #weightProgress {
+        height: floor((0.67 * 0.75 * $screen-sm));
+    }
+}
+
+@media (min-width: $screen-md-min) {
+    #weightProgress {
+        height: floor((0.67 * 0.75 * $screen-md));
+    }
+}
+
+@media (min-width: $screen-lg-min) {
+    #weightProgress {
+        height: floor((0.5 * 0.75 * $screen-lg));
+    }
+}
+// end: dataset page
+
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.loading-indicator {
+    padding: 3*$padding-large-vertical 0;
+}
+// end: dataset page
+
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.loading-indicator {
+    padding: 3*$padding-large-vertical 0;
+}
+// end: dataset page
+
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.loading-indicator {
+    padding: 3*$padding-large-vertical 0;
 }
 
 .browsehappy {
