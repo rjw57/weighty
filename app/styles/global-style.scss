@@ -5,11 +5,6 @@
 // endbower
 
 // page layout
-.container-accent, .container-secondary {
-    padding-top: $padding-xs-vertical;
-    padding-bottom: ceil((0.5 * $line-height-computed));
-}
-
 .container-accent {
     background-color: $brand-primary;
     color: #fff;
@@ -18,24 +13,6 @@
 .container-secondary {
     background-color: $gray-lighter;
 }
-
-@media (min-width: $screen-sm-min) {
-    .container-accent, .container-secondary {
-        padding-top: $padding-small-vertical;
-    }
-};
-
-@media (min-width: $screen-md-min) {
-    .container-accent, .container-secondary {
-        padding-top: $padding-base-vertical;
-    }
-};
-
-@media (min-width: $screen-lg-min) {
-    .container-accent, .container-secondary {
-        padding-top: $padding-large-vertical;
-    }
-};
 // /page layout
 
 // navbar and navmenu
