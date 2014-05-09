@@ -34,7 +34,7 @@
     <div class="row">
       <div class="col-sm-6 col-md-8">
         <h4>Overview</h4>
-        <div class="overview row" data-ng-show="trend.startValue && stats.progress && target.weight">
+        <div class="overview row" data-ng-show="trend.startValue &amp;&amp; stats.progress &amp;&amp; target.weight">
           <div class="col-sm-3 col-xs-4">
             <div class="weight-badge weight-badge-danger">
               {{ trend.startValue | number : 0 }}&nbsp;<span class="unit">kg</span>
@@ -88,13 +88,13 @@
           <tr>
             <td>Last weight measurement</td>
             <td class="text-right">
-              <div data-ng-show="weightData && (weightData.length > 0)">
+              <div data-ng-show="weightData &amp;&amp; (weightData.length > 0)">
                 {{ weightData[weightData.length-1].weight | number : 1 }}&nbsp;<span class="unit">kg</span>
                 <div class="table-secondary">
                   {{ weightData[weightData.length-1].date | date : 'mediumDate' }}
                 </div>
               </div>
-              <span class="text-muted" data-ng-hide="weightData && (weightData.length > 0)">
+              <span class="text-muted" data-ng-hide="weightData &amp;&amp; (weightData.length > 0)">
                 no data
               </span>
             </td>
@@ -113,14 +113,14 @@
           <tr>
             <td>Current loss <span class="table-secondary">(estimate)</span></td>
             <td class="text-right">
-              <div data-ng-show="trend.startValue && trend.nowValue && target.weight">
+              <div data-ng-show="trend.startValue &amp;&amp; trend.nowValue &amp;&amp; target.weight">
                 {{ trend.startValue - trend.nowValue | number : 1 }}&nbsp;<span class="unit">kg</span>
                 <div class="table-secondary" data-ng-show="stats.progress">
                   {{ stats.progress * 100 | number : 0}}%&nbsp;of&nbsp;{{ trend.startValue - target.weight | number : 1}}&nbsp;<span class="unit">kg</span>
                 </div>
               </div>
               <span class="text-muted"
-                  data-ng-hide="trend.startValue && trend.nowValue && target.weight">
+                  data-ng-hide="trend.startValue &amp;&amp; trend.nowValue &amp;&amp; target.weight">
                 no data
               </span>
             </td>
