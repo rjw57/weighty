@@ -7,30 +7,11 @@
 <div data-ng-show="dataset">
   <div class="container-accent">
     <div class="container">
-      <h1>{{ dataset.title }}</h1>
+      <h2>{{ dataset.title }}</h2>
     </div>
   </div>
 
   <div class="container">
-    <form name="smallScreenAddMeasurementForm" class="form visible-xs" role="form">
-      <h3>Add new measurement</h3>
-      <div class="form-group">
-        <label for="weight" class="sr-only control-label">New weight measurement</label>
-        <div class="input-group">
-          <input type="number" class="form-control" name="weight" placeholder="kilos"
-            pattern="^[0-9]+(\.[0-9]*)?$" min="0" step="0.1"
-            data-ng-pattern="/^[0-9]+(\.[0-9]*)?$/" data-ng-required="true"
-            data-ng-model="measurement.weight" required>
-          <span data-ng-click="submitNewMeasurement(measurement)"
-              data-ng-disabled="smallScreenAddMeasurementForm.$invalid"
-              class="input-group-addon btn btn-default">
-            <span class="glyphicon glyphicon-plus"><!-- + --></span>
-            <span class="hidden-xs">Add new measurement</span>
-          </span>
-        </div>
-      </div>
-    </form>
-
     <div class="row">
       <div class="col-md-6 col-lg-8">
         <h3>Overview</h3>
@@ -65,7 +46,40 @@
           </div>
         </div>
 
-        <h3>Chart</h3>
+        <div class="h3">
+          Chart
+          <div class="pull-right">
+            <a class="btn btn-sm btn-link" href=""
+                data-ng-click="showAddMeasurement = !showAddMeasurement">
+              <span class="glyphicon glyphicon-plus"><!-- + --></span>
+              New measurement
+            </a>
+          </div>
+          <h3 class="sr-only">Chart</h3>
+        </div>
+
+        <div data-collapse="!showAddMeasurement">
+          <div class="well well-sm">
+            <form name="addMeasurementForm" class="form" role="form">
+              <div class="input-group">
+                <input type="number" class="form-control" name="weight" placeholder="kilos"
+                  pattern="^[0-9]+(\.[0-9]*)?$" min="0" step="0.1"
+                  data-ng-pattern="/^[0-9]+(\.[0-9]*)?$/" data-ng-required="true"
+                  data-ng-model="measurement.weight" data-required>
+                <span data-ng-click="submitNewMeasurement(measurement); measurement=null; showAddMeasurement = false"
+                    data-ng-disabled="addMeasurementForm.$invalid"
+                    class="input-group-addon btn btn-default">
+                  <span class="glyphicon glyphicon-plus"><!-- + --></span>
+                  <span class="hidden-xs">Add new measurement</span>
+                </span>
+              </div>
+              <button type="submit" class="hidden"
+                  data-ng-click="submitNewMeasurement(measurement); measurement=null; showAddMeasurement = false"
+                  data-ng-disabled="addMeasurementForm.$invalid">
+              </button>
+            </form>
+          </div>
+        </div>
         <div class="highchart" id="weightProgress" data-config="weightChartConfig"></div>
       </div>
 
@@ -233,23 +247,6 @@
   <div class="hidden-xs container-secondary">
     <div class="container">
       <h3>All data</h3>
-      <form name="largeScreenAddMeasurementForm" class="form" role="form">
-        <div class="form-group">
-          <label for="weight" class="sr-only control-label">New weight measurement</label>
-          <div class="input-group">
-            <input type="number" class="form-control" name="weight" placeholder="kilos"
-              pattern="^[0-9]+(\.[0-9]*)?$" min="0" step="0.1"
-              data-ng-pattern="/^[0-9]+(\.[0-9]*)?$/" data-ng-required="true"
-              data-ng-model="measurement.weight" required>
-            <span data-ng-click="submitNewMeasurement(measurement)"
-                data-ng-disabled="largeScreenAddMeasurementForm.$invalid"
-                class="input-group-addon btn btn-default">
-              <span class="glyphicon glyphicon-plus"><!-- + --></span>
-              <span class="hidden-xs">Add new measurement</span>
-            </span>
-          </div>
-        </div>
-      </form>
 
       <div class="table-data">
         <table class="table">
