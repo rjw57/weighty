@@ -87,6 +87,7 @@
         <h3>Statistics</h3>
         <table class="table">
           <tr>
+            <!--
             <td>Starting weight <span class="table-secondary">(smoothed)</span></td>
             <td class="text-right">
               <div data-ng-show="trend.startValue">
@@ -96,11 +97,21 @@
                 no data
               </span>
             </td>
+            -->
           </tr>
           <tr data-ng-show="stats.idealWeight">
             <td>Ideal weight</td>
             <td class="text-right">
               {{ stats.idealWeight | number : 1}}&nbsp;<span class="unit">kg</span>
+            </td>
+          </tr>
+          <tr data-ng-show="netCalories">
+            <td>
+              Net energy intake
+            </td>
+            <td class="text-right">
+              {{ netCalories | number : 0 }}&nbsp;<span class="unit">kcal/day</span>
+              <div class="table-secondary">Diet minus exercise</div>
             </td>
           </tr>
           <tr data-ng-show="trend.finishDate">

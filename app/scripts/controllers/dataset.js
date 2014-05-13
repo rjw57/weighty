@@ -5,7 +5,7 @@ angular.module('webappApp')
     // useful constants
     var DAYS = 1000*60*60*24;
     var IDEAL_BMI = 22;
-    var WEIGHT_COLOR = '#428bca'/*, GOAL_COLOR = '#5cb85c'*/;
+    var WEIGHT_COLOR = '#428bca', GOAL_COLOR = '#5cb85c';
 
     // We need a sheet id to continue
     if(!$routeParams.sheetId) {
@@ -15,6 +15,7 @@ angular.module('webappApp')
     //// SCOPE VALUES
 
     $scope.target = { };
+    $scope.netCalories = 200; // kcal/day
 
     // Metabolic genders
     $scope.sexes = [
@@ -63,13 +64,22 @@ angular.module('webappApp')
         color: WEIGHT_COLOR,
         marker: { enabled: false },
       }, {
+        name: 'Goal',
+        id: 'goal',
+        data: [],
+        zIndex: 3,
+        color: GOAL_COLOR,
+        dashStyle: 'Dash',
+        lineWidth: 2,
+        marker: { enabled: false },
+      }, {
         name: 'Trend',
         id: 'trend',
         data: [],
         zIndex: 1,
         dashStyle: 'Dash',
         color: WEIGHT_COLOR,
-        lineWidth: 1,
+        lineWidth: 2,
         marker: { enabled: false },
       }, {
         name: 'Trend Range',
@@ -374,13 +384,114 @@ angular.module('webappApp')
       true // <- do deep compare of watch expression
     );
 
+    // The goal is based on a net input kilocalories per day figure stored in
+    // $scope.netCalories. Call this value P_n when rescaled to be kcal/second.
+    // Time is measured in seconds since start, weight in kilogrammes and
+    // height in metres.
+    //
+    // The Mifflin St Jeor Equation gives Basal Metabolic Rate, P_m as
+    //
+    // P_m = k_1 m(t) + k_2 h - k_3 (t-t_0) + k_4) [ kcal/sec ]
+    //
+    // where m(t) is body mass at time t, h is height and t_0 is birth time.
+    // (Not that t_0 will be -ve.) The overall power input (-ve being deficit) is
+    //
+    // P = P_n - P_m [kcal/sec]
+    //
+    // Let D be the energy density of body fat (~6600 kcal/kg). The change in
+    // body mass is therefore
+    //
+    // m'(t) = P/D = - a_1 m(t) - a_2 t + K [kg/sec]
+    //
+    // where a_1 = k_1/D, a_2 = k_3/D, K = (P_n - k_2 h - k_3 t_0 - k_4)/D.
+    //
+    // So (thanks to Wolfram Alpha),
+    //
+    // m(t) = C \exp(- a_1 t) - (a_2/a_1) t + K/a_1 + a_2/(a_1 * a_1)
+    //
+    // where C is some constant
+    $scope.$watch(
+      '{ netCalories: netCalories, metadata: dataset.metadata, weight: trend.startValue, weightData: weightData }',
+      function(newVal) {
+        // jshint camelcase: false
+
+        // Do nothing if we don't have the basic data
+        if(!newVal.metadata || !newVal.weight || !newVal.metadata.height ||
+            !newVal.metadata.sex || !newVal.metadata.birthDate || !newVal.netCalories ||
+            !newVal.weightData) {
+          $scope.goalParams = undefined;
+          return;
+        }
+
+        // Compute inputs to equation above
+        var SECS_IN_DAY = 60 * 60 * 24;
+        var DAYS_IN_YEAR = 365.25;
+        var startDate = newVal.weightData[0].date.getTime();
+        var t = (Date.now() - startDate) / (1000 * SECS_IN_DAY),
+            t_0 = (Date.parse(newVal.metadata.birthDate) - startDate) / (1000 * SECS_IN_DAY),
+            h = newVal.metadata.height,
+            D = 6600,
+            P_n = newVal.netCalories,
+            k_1 = 10,
+            k_2 = 6.45 * 100, // height in metres -> centimetres
+            k_3 = 5 / DAYS_IN_YEAR, // age in days -> years
+            k_4 = ((newVal.metadata.sex === 'male') ? 5 : -161);
+        var a_1 = k_1/D, a_2 = k_3/D, K = (P_n - k_2 * h - k_3 * t_0 - k_4)/D;
+
+        // Fit start value (t=0) to obtain C
+        var C = newVal.weight - (a_2 / (a_1*a_1)) - (K/a_1);
+
+        // Record goal parameters
+        $scope.goalParams = {
+          expCoeff: C,
+          expRate: -a_1,
+          timeCoeff: -(a_2/a_1),
+          timeOffset: startDate/(1000 * SECS_IN_DAY),
+          constant: K/a_1 + a_2/(a_1*a_1),
+        };
+
+        $log.info('new goal params', $scope.goalParams);
+        $log.info('goal now:', evaluateGoal($scope.goalParams, Date.now()));
+        $log.info('goal start:', evaluateGoal($scope.goalParams, startDate));
+      },
+      true
+    );
+
+    // watch for new goal and update series
+    $scope.$watch(
+      '{ params: goalParams, weightData: weightData, trend: trend }',
+      function(newVal) {
+        if(!newVal || !newVal.params || !newVal.weightData ||
+            !newVal.trend || !newVal.trend.data)
+        {
+          $scope.goalData = [];
+          return;
+        }
+
+        var startDate = newVal.weightData[0].date.getTime(),
+          endDate = newVal.trend.data[newVal.trend.data.length-1].timestamp,
+          t;
+
+        $scope.goalData = [];
+        for(t = startDate; t <= endDate; t += Math.max(DAYS, (endDate-startDate)/100)) {
+          $scope.goalData.push({ timestamp: t, weight: evaluateGoal(newVal.params, t) });
+        }
+      },
+      true
+    );
+
     // watch for new series data and update graph
-    $scope.$watch('{ weight: weightData, trend: trend, target: target }', function(newVal) {
+    $scope.$watch('{ weight: weightData, goal: goalData, trend: trend, target: target }', function(newVal) {
       angular.forEach($scope.weightChartConfig.series, function(series) {
         if(series.id === 'weight') {
           series.data = [];
           angular.forEach(newVal.weight, function(datum) {
             series.data.push([datum.date.getTime(), datum.weight]);
+          });
+        } else if(series.id === 'goal') {
+          series.data = [];
+          angular.forEach(newVal.goal, function(datum) {
+            series.data.push([datum.timestamp, datum.weight]);
           });
         } else if(series.id === 'trend') {
           series.data = [];
@@ -417,6 +528,16 @@ angular.module('webappApp')
     }, true);
 
     //// UTILITY FUNCTIONS
+
+    // Evaluate the goal at the given time. (Milliseconds since 1/Jan/1970)
+    var evaluateGoal = function(params, t) {
+      // Re-scale and offset t into seconds since start
+      t = (t / (1000*60*60*24)) - params.timeOffset;
+
+      // Evaluate
+      return params.expCoeff * Math.exp(params.expRate * t) -
+        params.timeCoeff * t + params.constant;
+    };
 
     var calculateBMI = function(weight, height) {
       var bmi = weight / (height * height), bmiCategory;
