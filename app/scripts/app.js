@@ -5,7 +5,8 @@ angular
     'ngCookies',
     'ngResource',
     'ngSanitize',
-    'ngRoute'
+    'ngRoute',
+    'gapi.client',
   ])
   .config(function ($routeProvider) {
     $routeProvider

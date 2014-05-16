@@ -6,11 +6,33 @@ describe('Service: dataset', function () {
   beforeEach(module('weightyApp'));
 
   // instantiate service
-  var dataset, validId = 'validId', invalidId = 'invalidId',
-    $rootScope;
-  beforeEach(inject(function (_dataset_, _$rootScope_) {
+  var $rootScope, dataset, validId = 'validId', invalidId = 'invalidId';
+  beforeEach(inject(function (_dataset_, _$rootScope_, gapi) {
       dataset = _dataset_;
       $rootScope = _$rootScope_;
+
+      gapi._injectFileResource({
+        id: validId,
+        title: 'my dataset',
+        properties: [{
+          key: 'weightyVersion',
+          value: '2',
+        }],
+        createdDate: new Date(1400254308997).toString(),
+        modifiedDate: new Date(1400254308997).toString(),
+      });
+
+      gapi._injectTableResource({
+        tableId: validId,
+        title: 'my dataset',
+        columns: [{
+          name: 'Weight',
+          type: 'NUMBER',
+        }, {
+          name: 'Timestamp',
+          type: 'NUMBER',
+        }],
+      });
   }));
 
   it('should be something', function () {
@@ -61,5 +83,28 @@ describe('Service: dataset', function () {
     expect(wasResolved).toBe(true);
 
     expect(datasetObj).not.toBeUndefined();
+  });
+
+  describe('getting a valid dataset', function() {
+    var validDataset;
+
+    beforeEach(function() {
+      dataset(validId).then(function(obj) {
+        validDataset = obj;
+      });
+      $rootScope.$apply();
+    });
+
+    it('should be something', function () {
+      expect(!!validDataset).toBe(true);
+    });
+
+    it('should have a title', function () {
+      expect(!!validDataset.title).toBe(true);
+    });
+
+    it('should have a metadata object', function () {
+      expect(!!validDataset.metadata).toBe(true);
+    });
   });
 });
