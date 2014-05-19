@@ -309,7 +309,10 @@ angular.module('webappApp')
         obeseColor = '#fff0f0';
 
       if(!boundaries || (boundaries.length < 3)) {
-        $scope.weightChartConfig.options.yAxis.plotBands = null;
+        if($scope.weightChartConfig.yAxis) {
+          $scope.weightChartConfig.yAxis.plotBands = null;
+        }
+        return;
       }
 
       $scope.weightChartConfig.yAxis.plotBands = [{
@@ -427,8 +430,7 @@ angular.module('webappApp')
         var SECS_IN_DAY = 60 * 60 * 24;
         var DAYS_IN_YEAR = 365.25;
         var startDate = newVal.weightData[0].date.getTime();
-        var t = (Date.now() - startDate) / (1000 * SECS_IN_DAY),
-            t_0 = (Date.parse(newVal.metadata.birthDate) - startDate) / (1000 * SECS_IN_DAY),
+        var t_0 = (Date.parse(newVal.metadata.birthDate) - startDate) / (1000 * SECS_IN_DAY),
             h = newVal.metadata.height,
             D = 6600,
             P_n = newVal.netCalories,
