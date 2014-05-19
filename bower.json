@@ -56,5 +56,8 @@
         "src/numeric.js"
       ]
     }
+  },
+  "resolutions": {
+    "angular": "~1.2.15"
   }
 }
