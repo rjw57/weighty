@@ -221,8 +221,8 @@ angular.module('webappApp')
           var weights = [];
           angular.forEach(resp.rows, function(row) {
             weights.push({
-              timestamp: row[0],
-              weight: row[1],
+              timestamp: +row[0], // force interpretation as number
+              weight: +row[1],    // force interpretation as number
               date: new Date(row[0]),
             });
           });
