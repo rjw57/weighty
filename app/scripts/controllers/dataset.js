@@ -461,7 +461,7 @@ angular.module('webappApp')
 
     // watch for new goal and update series
     $scope.$watch(
-      '{ params: goalParams, weightData: weightData, trend: trend }',
+      '{ params: goalParams, weightData: weightData, trend: trend, target: target }',
       function(newVal) {
         if(!newVal || !newVal.params || !newVal.weightData ||
             !newVal.trend || !newVal.trend.data)
@@ -476,7 +476,11 @@ angular.module('webappApp')
 
         $scope.goalData = [];
         for(t = startDate; t <= endDate; t += Math.max(DAYS, (endDate-startDate)/100)) {
-          $scope.goalData.push({ timestamp: t, weight: evaluateGoal(newVal.params, t) });
+          var w = evaluateGoal(newVal.params, t);
+          if(w < newVal.target.weight) {
+            continue;
+          }
+          $scope.goalData.push({ timestamp: t, weight: w });
         }
       },
       true
