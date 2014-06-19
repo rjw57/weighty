@@ -49,9 +49,6 @@
       <li ng-repeat="dataset in datasets | orderBy : '-modifiedDate'">
         <a ng:href="#/dataset/{{ dataset.id }}">
             {{ dataset.title }}
-            <small>
-              <span class="text-muted">{{ dataset.modifiedDate | date : 'mediumDate' }}</span>
-            </small>
         </a>
       </li>
     </ul>
