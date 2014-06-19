@@ -237,7 +237,7 @@ angular.module('webappApp')
           lastPlotDate = target.date.getTime();
         }
 
-        for(t = Math.max(startDate, endDate-7*DAYS); t <= lastPlotDate;
+        for(t = Math.max(startDate, endDate); t <= lastPlotDate;
             t += Math.min(DAYS, (lastPlotDate-startDate) / 100))
         {
           trendWeight = Math.exp(Analysis.evaluateRegression(regression, t));
