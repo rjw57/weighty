@@ -93,6 +93,7 @@ angular.module('webappApp')
         linkedTo: 'trend',
       }],
       yAxis : {
+        allowDecimals: false,
         title: {
           text: null,
         },
