@@ -1,18 +1,95 @@
+<link rel="import" href="../bower_components/google-apis/google-apis.html">
+<link rel="import" href="../bower_components/google-signin/google-signin.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer-filters/polymer-filters.html">
 
-<polymer-element name="dataset-list" noscript>
+<link rel="import" href="card-list.html">
+<link rel="import" href="loading-throbber.html">
+
+<polymer-element name="dataset-list" attributes=""
+    on-google-signin-aware-success="{{ signedIn }}"
+    on-google-signin-aware-signed-out="{{ signedOut }}">
   <template>
     <style>
       :host {
         display: block;
       }
-
-      #list-container {
-        padding: 8px;
-      }
     </style>
-    <div id="list-container" horizontal layout wrap touch-action="scroll">
-      <content></content>
-    </div>
+    <google-signin-aware
+      id="signin" scopes="https://www.googleapis.com/auth/drive"
+    ></google-signin-aware>
+    <template if="{{ isLoading }}">
+      <loading-throbber fill></loading-throbber>
+    </template>
+    <card-list>
+      <template repeat="{{ dataset in datasets }}">
+        <card-sheet>
+          <div title>{{ dataset.title }}</div>
+          <div subtitle>{{ dataset.modifiedDate | parseDate | date('yyyy-MM-dd') }}</div>
+        </card-sheet>
+      </template>
+    </card-list>
   </template>
+  <script>
+    Polymer({
+      // Properties
+      authData: null,
+      datasets: [],
+      isLoading: false,
+
+      // Observers
+      observe: {
+        authData: 'refresh',
+      },
+
+      // Filters
+      parseDate: function(value) {
+        return new Date(value);
+      },
+
+      // Event handlers
+      signedIn: function(event, authData) {
+        this.authData = authData;
+      },
+
+      signedOut: function() {
+        this.authData = null;
+      },
+
+      refresh: function() {
+        var self = this;
+
+        // Clear existing list
+        this.datasets = [];
+
+        // If auth data is null, clear dataset list
+        if(this.authData === null) {
+          return;
+        }
+
+        // Otherwise, kick off the dataset API call...
+
+        // how to find weighty files
+        var searchQuery = 'not trashed and properties has ' +
+          '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
+
+        // kick off query
+        self.isLoading = true;
+        gapi.client.load('drive', 'v2', function() {
+          var drive = gapi.client.drive;
+          drive.files.list({ q: searchQuery }).execute(function(data) {
+            console.log('datasets query returned', data);
+
+            if(data.kind !== 'drive#fileList') {
+              // There was an error!
+              return;
+            }
+
+            self.datasets = data.items;
+            self.isLoading = false;
+          });
+        });
+      },
+    });
+  </script>
 </polymer-element>

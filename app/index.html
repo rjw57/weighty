@@ -1,65 +1,49 @@
 <!doctype html>
 <html class="no-js">
-    <head>
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <title>Weighty</title>
+    <title>Weighty</title>
 
-        <meta name="description" content="">
+    <meta name="description" content="">
 
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <!-- build:css styles/main.css -->
-        <link rel="stylesheet" href="styles/main.css">
-        <!-- endbuild-->
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild-->
 
-        <!-- Place your HTML imports here -->
-        <script src="bower_components/platform/platform.js"></script>
+    <!-- Place your HTML imports here -->
+    <script src="bower_components/platform/platform.js"></script>
 
-        <link rel="import" href="bower_components/core-elements/core-elements.html">
-        <link rel="import" href="bower_components/font-roboto/roboto.html">
-        <link rel="import" href="bower_components/paper-elements/paper-elements.html">
+    <link rel="import" href="bower_components/core-elements/core-elements.html">
+    <link rel="import" href="bower_components/font-roboto/roboto.html">
+    <link rel="import" href="bower_components/google-signin/google-signin.html">
 
-        <link rel="import" href="elements/dataset-card.html">
-        <link rel="import" href="elements/dataset-list.html">
-    </head>
-    <body unresolved fullbleed>
-        <core-scaffold>
-          <core-header-panel navigation flex mode="seamed">
-            <core-toolbar>Weighty</core-toolbar>
-            <core-menu theme="core-light-theme">
-              <core-item icon="drive-fusiontable" label="My Datasets"></core-item>
-            </core-menu>
-          </core-header-panel>
+    <link rel="import" href="elements/dataset-list.html">
+  </head>
+  <body unresolved fullbleed>
+    <core-scaffold>
+      <core-header-panel navigation flex mode="seamed">
+        <core-toolbar>Weighty</core-toolbar>
+        <core-menu theme="core-light-theme">
+          <core-item icon="drive-fusiontable" label="My Datasets"></core-item>
+        </core-menu>
+      </core-header-panel>
 
-          <div tool>My Datasets</div>
+      <div tool>
+        My Datasets
+        <paper-button onclick="datasetList.refresh()">Foo</paper-button>
+      </div>
 
-          <dataset-list>
-            <dataset-card title="foo" subtitle="bar"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
-          </dataset-list>
-        </core-scaffold>
-    </body>
+      <google-signin
+        clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
+      ></google-signin>
+
+      <dataset-list id="datasetList"></dataset-list>
+    </core-scaffold>
+</body>
 </html>

@@ -1,7 +1,19 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 
-<polymer-element name="dataset-card" attributes="title subtitle" noscript>
+<polymer-element name="card-list" noscript>
+  <template>
+    <style>
+      :host { display: block; }
+      #list-container { padding: 8px; }
+    </style>
+    <div id="list-container" horizontal layout wrap>
+      <content></content>
+    </div>
+  </template>
+</polymer-element>
+
+<polymer-element name="card-sheet" noscript>
   <template>
     <style>
       :host {
@@ -11,26 +23,21 @@
       }
 
       @media screen and (min-width: 800px) {
-        :host {
-          width: 50%;
-        }
+        :host { width: 50%; }
       }
 
       @media screen and (min-width: 1120px) {
-        :host {
-          width: 33.3%;
-        }
+        :host { width: 33.3%; }
       }
 
       @media screen and (min-width: 1200px) {
-        :host {
-          width: 25%;
-        }
+        :host { width: 25%; }
       }
 
       .muted { color: #9e9e9e; }
 
       .card {
+        margin: 8px;
         padding: 16px;
         background-color: white;
       }
@@ -48,12 +55,16 @@
         padding: 8px;
       }
     </style>
-    <div class="dataset card" horizontal layout>
-        <paper-shadow z="1"></paper-shadow>
+    <div class="card" horizontal layout>
+      <paper-shadow z="1"></paper-shadow>
       <div class="container">
         <div class="content" flex self-stretch vertical layout>
-          <div class="title" flex>{{title}}</div>
-          <div class="subtitle" horizontal layout>{{subtitle}}</div>
+          <div class="title" flex>
+            <content select="[title]"></content>
+          </div>
+          <div class="subtitle" horizontal layout>
+            <content select="[subtitle]"></content>
+          </div>
         </div>
       </div>
     </div>
