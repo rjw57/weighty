@@ -14,7 +14,7 @@
       }
     </style>
 
-    <core-scaffold>
+    <core-scaffold mode="waterfall">
       <core-header-panel navigation flex mode="seamed">
         <core-toolbar>Weighty</core-toolbar>
         <core-menu theme="core-light-theme" selected="{{ selectedPage }}">
@@ -22,57 +22,101 @@
         </core-menu>
       </core-header-panel>
 
-      <div tool>
-        My Datasets
+      <template if="{{ selectedPage == 'dataset' }}">
+        <core-icon-button tool icon="arrow-back" on-tap="{{ back }}"></core-icon-button>
+      </template>
+      <div tool flex>
+        <template if="{{ selectedPage == 'datasets' }}">
+          My Datasets
+        </template>
+
+        <template if="{{ selectedPage == 'dataset' }}">
+          <div hero hero-id="{{ datasetId }}">{{ datasetId }}</div>
+        </template>
       </div>
 
       <google-signin
         clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
       ></google-signin>
 
-      <paper-button label="foo" on-click="{{ refreshDatasetList }}"></paper-button>
-
-      <core-animated-pages
-        transitions="cascade-transition hero-transition"
-        selected="{{ selectedPage }}"
+      <core-animated-pages selected="{{ selectedPage }}"
+        transitions="cascade-transition hero-transition cross-fade slide-up"
       >
-        <section name="splash">
-          <loading-throbber cross-fade></loading-throbber>
-        </section>
-
         <section name="datasets">
-          <dataset-list id="datasetList" selected="{{ datasetId }}"
+          <paper-button label="foo" cross-fade on-tap="{{ refreshDatasetList }}"></paper-button>
+          <dataset-list id="datasetList" on-dataset-list-activated="{{ datasetActivated }}"
             on-dataset-list-changed="{{ datasetsLoaded }}"
           ></dataset-list>
         </section>
 
-        <section name="dataset">
+        <section name="dataset" slide-up>
           <div hero hero-id="{{datasetId}}">DATASET {{ datasetId }}</div>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
+          <p>gllgg</p>
         </section>
       </core-animated-pages>
+
     </core-scaffold>
   </template>
   <script>
     Polymer({
-      selectedPage: 'splash',
+      selectedPage: 'datasets',
       datasetId: null,
 
       refreshDatasetList: function() {
-        this.selectedPage = 'splash';
         this.$.datasetList.refresh();
       },
 
-      datasetsLoaded: function() {
-        this.selectedPage = 'datasets';
+      datasetActivated: function(event, detail) {
+        this.datasetId = detail;
+        this.selectedPage = 'dataset';
       },
 
-      datasetIdChanged: function() {
-        if(this.datasetId === null) {
-          return;
-        }
-
-        this.selectedPage = 'dataset';
-      }
+      back: function() {
+        this.selectedPage = 'datasets';
+      },
     });
   </script>
 </polymer-element>

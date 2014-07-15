@@ -1,3 +1,4 @@
+<link rel="import" href="../bower_components/core-animated-pages/transitions/cascade-transition.html">
 <link rel="import" href="../bower_components/google-apis/google-apis.html">
 <link rel="import" href="../bower_components/google-signin/google-signin.html">
 <link rel="import" href="../bower_components/polymer-filters/polymer-filters.html">
@@ -5,8 +6,9 @@
 
 <link rel="import" href="grid-layout.html">
 <link rel="import" href="dataset-sheet.html">
+<link rel="import" href="loading-throbber.html">
 
-<polymer-element name="dataset-list"
+<polymer-element name="dataset-list" attributes="selectedItem"
     on-google-signin-aware-success="{{ signedIn }}"
     on-google-signin-aware-signed-out="{{ signedOut }}">
   <template>
@@ -15,30 +17,42 @@
         display: block;
       }
     </style>
+
     <google-signin-aware
       id="signin" scopes="https://www.googleapis.com/auth/drive"
     ></google-signin-aware>
 
-    <grid-layout cascade fade>
-      <template repeat="{{ dataset in datasets }}">
-        <div name="{{ dataset.id }}" hero hero-id="{{ dataset.id }}">
-          <dataset-sheet>
-            <div title>{{ dataset.title }}</div>
-            <div subtitle>{{ dataset.modifiedDate | parseDate | date('yyyy-MM-dd') }}</div>
-            <paper-ripple fit></paper-ripple>
-          </dataset-sheet>
-        </div>
-      </template>
-    </grid-layout>
+    <core-animated-pages selected="{{ page }}"
+        transitions="cross-fade cascade-transition hero-transition"
+        selectedItem="{{ selectedItem }}"
+    >
+
+      <section name="throbber">
+        <loading-throbber cross-fade></loading-throbber>
+      </section>
+
+      <section name="list">
+        <grid-layout cascade fade>
+          <template repeat="{{ dataset in datasets }}">
+            <div name="{{ dataset.id }}">
+              <dataset-sheet on-tap="{{ datasetActivated }}" name="{{ dataset.id }}">
+                <div title hero hero-id="{{ dataset.id }}">{{ dataset.title }}</div>
+                <div subtitle>{{ dataset.modifiedDate | date('yyyy-MM-dd') }}</div>
+                <paper-ripple fit></paper-ripple>
+              </dataset-sheet>
+            </div>
+          </template>
+        </grid-layout>
+      </section>
+
+    </core-animated-pages>
   </template>
   <script>
     Polymer({
-      // Attributes
-      selected: null,
-
       // Properties
       authData: null,
       datasets: [],
+      page: 'list',
 
       // Observers
       observe: {
@@ -51,6 +65,11 @@
       },
 
       // Event handlers
+      datasetActivated: function(event, detail, src) {
+        var datasetId = src.attributes.name.value;
+        this.fire('dataset-list-activated', datasetId);
+      },
+
       signedIn: function(event, authData) {
         this.authData = authData;
       },
@@ -65,9 +84,6 @@
         // If auth data is null, just clear dataset list
         if(this.authData === null) {
           self.datasets = [];
-          self.selected = null;
-
-          self.fire('dataset-list-changed');
           return;
         }
 
@@ -78,9 +94,12 @@
           '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
 
         // kick off query
+        self.page = 'throbber';
         gapi.client.load('drive', 'v2', function() {
           var drive = gapi.client.drive;
           drive.files.list({ q: searchQuery }).execute(function(data) {
+            self.page = 'list';
+
             console.log('datasets query returned', data);
 
             if(data.kind !== 'drive#fileList') {
@@ -88,10 +107,14 @@
               return;
             }
 
-            self.datasets = data.items;
-            self.selected = null;
-
-            self.fire('dataset-list-changed');
+            self.datasets = [];
+            data.items.forEach(function(item) {
+              self.datasets.push({
+                id: item.id,
+                title: item.title,
+                modifiedDate: new Date(item.modifiedDate),
+              });
+            });
           });
         });
       },
