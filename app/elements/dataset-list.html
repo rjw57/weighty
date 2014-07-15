@@ -1,0 +1,18 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="dataset-list" noscript>
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #list-container {
+        padding: 8px;
+      }
+    </style>
+    <div id="list-container" horizontal layout wrap touch-action="scroll">
+      <content></content>
+    </div>
+  </template>
+</polymer-element>

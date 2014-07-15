@@ -1,11 +1,15 @@
 <!doctype html>
 <html class="no-js">
     <head>
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Polymer WebApp</title>
+
+        <title>Weighty</title>
+
         <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
         <!-- build:css styles/main.css -->
@@ -14,21 +18,48 @@
 
         <!-- Place your HTML imports here -->
         <script src="bower_components/platform/platform.js"></script>
-        <link rel="import" href="elements/yo-list.html">
-        <link rel="import" href="elements/yo-greeting.html">
+
+        <link rel="import" href="bower_components/core-elements/core-elements.html">
+        <link rel="import" href="bower_components/font-roboto/roboto.html">
+        <link rel="import" href="bower_components/paper-elements/paper-elements.html">
+
+        <link rel="import" href="elements/dataset-card.html">
+        <link rel="import" href="elements/dataset-list.html">
     </head>
-    <body unresolved>
+    <body unresolved fullbleed>
+        <core-scaffold>
+          <core-header-panel navigation flex mode="seamed">
+            <core-toolbar>Weighty</core-toolbar>
+            <core-menu theme="core-light-theme">
+              <core-item icon="drive-fusiontable" label="My Datasets"></core-item>
+            </core-menu>
+          </core-header-panel>
 
-        <div class="hero-unit">
-          <yo-greeting></yo-greeting>
-          <p>You now have</p>
-          <yo-list></yo-list>
-        </div>
+          <div tool>My Datasets</div>
 
-      <script>
-        document.addEventListener('polymer-ready', function() {
-            // Perform some behaviour
-        });
-      </script>
+          <dataset-list>
+            <dataset-card title="foo" subtitle="bar"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+            <dataset-card title="Lorem ipsum dolor sit amet" subtitle="25 Jun 2014"></dataset-card>
+          </dataset-list>
+        </core-scaffold>
     </body>
 </html>
