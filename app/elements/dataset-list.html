@@ -1,12 +1,12 @@
 <link rel="import" href="../bower_components/google-apis/google-apis.html">
 <link rel="import" href="../bower_components/google-signin/google-signin.html">
-<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/polymer-filters/polymer-filters.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
 
 <link rel="import" href="card-list.html">
 <link rel="import" href="loading-throbber.html">
 
-<polymer-element name="dataset-list" attributes=""
+<polymer-element name="dataset-list" attributes="selected"
     on-google-signin-aware-success="{{ signedIn }}"
     on-google-signin-aware-signed-out="{{ signedOut }}">
   <template>
@@ -21,17 +21,21 @@
     <template if="{{ isLoading }}">
       <loading-throbber fill></loading-throbber>
     </template>
-    <card-list>
+    <card-list selected="{{ selected }}">
       <template repeat="{{ dataset in datasets }}">
-        <card-sheet>
+        <card-sheet name="{{ dataset.id }}">
           <div title>{{ dataset.title }}</div>
           <div subtitle>{{ dataset.modifiedDate | parseDate | date('yyyy-MM-dd') }}</div>
+          <paper-ripple fit></paper-ripple>
         </card-sheet>
       </template>
     </card-list>
   </template>
   <script>
     Polymer({
+      // Attributes
+      selected: null,
+
       // Properties
       authData: null,
       datasets: [],
