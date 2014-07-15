@@ -6,6 +6,9 @@
 <link rel="import" href="../bower_components/google-signin/google-signin.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
+<!-- fix for paper-elements#11 -->
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
 <link rel="import" href="dataset-list.html">
 
 <polymer-element name="weighty-app" attributes="">
@@ -28,6 +31,10 @@
       #drawerPanel:not([narrow]) #menuButton {
         display: none;
       }
+
+      paper-item {
+        color: black;
+      }
     </style>
 
     <div fit>
@@ -37,6 +44,10 @@
             <div flex>My Datasets</div>
             <paper-icon-button icon="refresh"
               on-tap="{{ refreshDatasetList }}"></paper-icon-button>
+            <paper-menu-button icon="more-vert" halign="right">
+              <paper-item label="Create dataset"></paper-item>
+              <paper-item label="Sign out"></paper-item>
+            </paper-menu-button>
           </core-toolbar>
 
           <div content vertical layout>
