@@ -1,38 +1,12 @@
-<link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="card-list" noscript extends="core-selector">
-  <template>
-    <style>
-      :host { display: block; }
-      #list-container { padding: 8px; }
-    </style>
-    <div id="list-container" horizontal layout wrap>
-      <shadow></shadow>
-    </div>
-  </template>
-</polymer-element>
-
-<polymer-element name="card-sheet" attributes="clickable" noscript>
+<polymer-element name="dataset-sheet" attributes="">
   <template>
     <style>
       :host {
         display: block;
-        width: 100%;
         box-sizing: border-box;
-      }
-
-      @media screen and (min-width: 800px) {
-        :host { width: 50%; }
-      }
-
-      @media screen and (min-width: 1120px) {
-        :host { width: 33.3%; }
-      }
-
-      @media screen and (min-width: 1200px) {
-        :host { width: 25%; }
       }
 
       .muted { color: #9e9e9e; }
@@ -41,10 +15,6 @@
         margin: 8px;
         padding: 16px;
         background-color: white;
-      }
-
-      :host(.core-selected) .card {
-        background-color: #eeeeee;
       }
 
       .card .subtitle {
@@ -75,4 +45,9 @@
       </div>
     </div>
   </template>
+  <script>
+    Polymer({
+
+    });
+  </script>
 </polymer-element>

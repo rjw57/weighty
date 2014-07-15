@@ -3,10 +3,10 @@
 <link rel="import" href="../bower_components/polymer-filters/polymer-filters.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<link rel="import" href="card-list.html">
-<link rel="import" href="loading-throbber.html">
+<link rel="import" href="grid-layout.html">
+<link rel="import" href="dataset-sheet.html">
 
-<polymer-element name="dataset-list" attributes="selected"
+<polymer-element name="dataset-list"
     on-google-signin-aware-success="{{ signedIn }}"
     on-google-signin-aware-signed-out="{{ signedOut }}">
   <template>
@@ -18,18 +18,18 @@
     <google-signin-aware
       id="signin" scopes="https://www.googleapis.com/auth/drive"
     ></google-signin-aware>
-    <template if="{{ isLoading }}">
-      <loading-throbber fill></loading-throbber>
-    </template>
-    <card-list selected="{{ selected }}">
+
+    <grid-layout cascade fade>
       <template repeat="{{ dataset in datasets }}">
-        <card-sheet name="{{ dataset.id }}">
-          <div title>{{ dataset.title }}</div>
-          <div subtitle>{{ dataset.modifiedDate | parseDate | date('yyyy-MM-dd') }}</div>
-          <paper-ripple fit></paper-ripple>
-        </card-sheet>
+        <div name="{{ dataset.id }}" hero hero-id="{{ dataset.id }}">
+          <dataset-sheet>
+            <div title>{{ dataset.title }}</div>
+            <div subtitle>{{ dataset.modifiedDate | parseDate | date('yyyy-MM-dd') }}</div>
+            <paper-ripple fit></paper-ripple>
+          </dataset-sheet>
+        </div>
       </template>
-    </card-list>
+    </grid-layout>
   </template>
   <script>
     Polymer({
@@ -39,7 +39,6 @@
       // Properties
       authData: null,
       datasets: [],
-      isLoading: false,
 
       // Observers
       observe: {
@@ -63,11 +62,12 @@
       refresh: function() {
         var self = this;
 
-        // Clear existing list
-        this.datasets = [];
-
-        // If auth data is null, clear dataset list
+        // If auth data is null, just clear dataset list
         if(this.authData === null) {
+          self.datasets = [];
+          self.selected = null;
+
+          self.fire('dataset-list-changed');
           return;
         }
 
@@ -78,7 +78,6 @@
           '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
 
         // kick off query
-        self.isLoading = true;
         gapi.client.load('drive', 'v2', function() {
           var drive = gapi.client.drive;
           drive.files.list({ q: searchQuery }).execute(function(data) {
@@ -90,7 +89,9 @@
             }
 
             self.datasets = data.items;
-            self.isLoading = false;
+            self.selected = null;
+
+            self.fire('dataset-list-changed');
           });
         });
       },

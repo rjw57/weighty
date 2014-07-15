@@ -19,31 +19,10 @@
     <!-- Place your HTML imports here -->
     <script src="bower_components/platform/platform.js"></script>
 
-    <link rel="import" href="bower_components/core-elements/core-elements.html">
     <link rel="import" href="bower_components/font-roboto/roboto.html">
-    <link rel="import" href="bower_components/google-signin/google-signin.html">
-
-    <link rel="import" href="elements/dataset-list.html">
+    <link rel="import" href="elements/weighty-app.html">
   </head>
   <body unresolved fullbleed>
-    <core-scaffold>
-      <core-header-panel navigation flex mode="seamed">
-        <core-toolbar>Weighty</core-toolbar>
-        <core-menu theme="core-light-theme">
-          <core-item icon="drive-fusiontable" label="My Datasets"></core-item>
-        </core-menu>
-      </core-header-panel>
-
-      <div tool>
-        My Datasets
-        <paper-button onclick="datasetList.refresh()">Foo</paper-button>
-      </div>
-
-      <google-signin
-        clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
-      ></google-signin>
-
-      <dataset-list id="datasetList"></dataset-list>
-    </core-scaffold>
-</body>
+    <weighty-app></weighty-app>
+  </body>
 </html>

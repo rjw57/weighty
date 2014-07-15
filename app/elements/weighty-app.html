@@ -1,0 +1,78 @@
+<link rel="import" href="../bower_components/core-animated-pages/transitions/cascade-transition.html">
+<link rel="import" href="../bower_components/core-animated-pages/transitions/hero-transition.html">
+<link rel="import" href="../bower_components/core-elements/core-elements.html">
+<link rel="import" href="../bower_components/google-signin/google-signin.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="dataset-list.html">
+
+<polymer-element name="weighty-app" attributes="">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <core-scaffold>
+      <core-header-panel navigation flex mode="seamed">
+        <core-toolbar>Weighty</core-toolbar>
+        <core-menu theme="core-light-theme" selected="{{ selectedPage }}">
+          <core-item name="datasets" icon="drive-fusiontable" label="My Datasets"></core-item>
+        </core-menu>
+      </core-header-panel>
+
+      <div tool>
+        My Datasets
+      </div>
+
+      <google-signin
+        clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
+      ></google-signin>
+
+      <paper-button label="foo" on-click="{{ refreshDatasetList }}"></paper-button>
+
+      <core-animated-pages
+        transitions="cascade-transition hero-transition"
+        selected="{{ selectedPage }}"
+      >
+        <section name="splash">
+          <loading-throbber cross-fade></loading-throbber>
+        </section>
+
+        <section name="datasets">
+          <dataset-list id="datasetList" selected="{{ datasetId }}"
+            on-dataset-list-changed="{{ datasetsLoaded }}"
+          ></dataset-list>
+        </section>
+
+        <section name="dataset">
+          <div hero hero-id="{{datasetId}}">DATASET {{ datasetId }}</div>
+        </section>
+      </core-animated-pages>
+    </core-scaffold>
+  </template>
+  <script>
+    Polymer({
+      selectedPage: 'splash',
+      datasetId: null,
+
+      refreshDatasetList: function() {
+        this.selectedPage = 'splash';
+        this.$.datasetList.refresh();
+      },
+
+      datasetsLoaded: function() {
+        this.selectedPage = 'datasets';
+      },
+
+      datasetIdChanged: function() {
+        if(this.datasetId === null) {
+          return;
+        }
+
+        this.selectedPage = 'dataset';
+      }
+    });
+  </script>
+</polymer-element>
