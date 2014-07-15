@@ -23,7 +23,7 @@
     ></google-signin-aware>
 
     <core-animated-pages selected="{{ page }}"
-        transitions="cross-fade cascade-transition hero-transition"
+        transitions="cascade-transition cross-fade"
         selectedItem="{{ selectedItem }}"
     >
 
@@ -36,7 +36,7 @@
           <template repeat="{{ dataset in datasets }}">
             <div name="{{ dataset.id }}">
               <dataset-sheet on-tap="{{ datasetActivated }}" name="{{ dataset.id }}">
-                <div title hero hero-id="{{ dataset.id }}">{{ dataset.title }}</div>
+                <div title>{{ dataset.title }}</div>
                 <div subtitle>{{ dataset.modifiedDate | date('yyyy-MM-dd') }}</div>
                 <paper-ripple fit></paper-ripple>
               </dataset-sheet>

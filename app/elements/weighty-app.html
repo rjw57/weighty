@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/core-animated-pages/transitions/cascade-transition.html">
+<link rel="import" href="../bower_components/core-animated-pages/transitions/slide-from-right.html">
 <link rel="import" href="../bower_components/core-animated-pages/transitions/hero-transition.html">
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
+<link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/google-signin/google-signin.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
@@ -12,93 +14,65 @@
       :host {
         display: block;
       }
+
+      [main] {
+        height: 100%;
+        background-color: #eee;
+      }
+
+      core-toolbar {
+        background-color: #526E9C;
+        color: #fff;
+      }
+
+      #drawerPanel:not([narrow]) #menuButton {
+        display: none;
+      }
     </style>
 
-    <core-scaffold mode="waterfall">
-      <core-header-panel navigation flex mode="seamed">
-        <core-toolbar>Weighty</core-toolbar>
-        <core-menu theme="core-light-theme" selected="{{ selectedPage }}">
-          <core-item name="datasets" icon="drive-fusiontable" label="My Datasets"></core-item>
-        </core-menu>
-      </core-header-panel>
+    <div fit>
+      <core-animated-pages selected="{{ selectedPage }}" fit transitions="slide-from-right">
+        <core-scroll-header-panel name="datasets">
+          <core-toolbar>
+            <div flex>My Datasets</div>
+            <paper-icon-button icon="refresh"
+              on-tap="{{ refreshDatasetList }}"></paper-icon-button>
+          </core-toolbar>
 
-      <template if="{{ selectedPage == 'dataset' }}">
-        <core-icon-button tool icon="arrow-back" on-tap="{{ back }}"></core-icon-button>
-      </template>
-      <div tool flex>
-        <template if="{{ selectedPage == 'datasets' }}">
-          My Datasets
-        </template>
+          <div content vertical layout>
+            <paper-button label="foo" on-tap="{{ refreshDatasetList }}"></paper-button>
+            <dataset-list id="datasetList"
+              on-dataset-list-activated="{{ datasetActivated }}"
+            ></dataset-list>
+          </div>
+        </core-scroll-header-panel>
 
-        <template if="{{ selectedPage == 'dataset' }}">
-          <div hero hero-id="{{ datasetId }}">{{ datasetId }}</div>
-        </template>
-      </div>
+        <core-scroll-header-panel name="dataset">
+          <core-toolbar>
+            <paper-icon-button icon="arrow-back" on-tap="{{ exitDataset }}"></paper-icon-button>
+            <div>DATASET</div>
+          </core-toolbar>
 
-      <google-signin
-        clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
-      ></google-signin>
-
-      <core-animated-pages selected="{{ selectedPage }}"
-        transitions="cascade-transition hero-transition cross-fade slide-up"
-      >
-        <section name="datasets">
-          <paper-button label="foo" cross-fade on-tap="{{ refreshDatasetList }}"></paper-button>
-          <dataset-list id="datasetList" on-dataset-list-activated="{{ datasetActivated }}"
-            on-dataset-list-changed="{{ datasetsLoaded }}"
-          ></dataset-list>
-        </section>
-
-        <section name="dataset" slide-up>
-          <div hero hero-id="{{datasetId}}">DATASET {{ datasetId }}</div>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-          <p>gllgg</p>
-        </section>
+          <div content vertical layout>
+            <paper-button label="bar"></paper-button>
+            <!--
+            <div>DATASET {{ datasetId }}</div>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+            -->
+          </div>
+        </core-scroll-header-panel>
       </core-animated-pages>
-
-    </core-scaffold>
+    </div>
   </template>
   <script>
     Polymer({
@@ -114,7 +88,7 @@
         this.selectedPage = 'dataset';
       },
 
-      back: function() {
+      exitDataset: function() {
         this.selectedPage = 'datasets';
       },
     });

@@ -1,0 +1,34 @@
+<link rel="import" href="../bower_components/paper-elements/paper-elements.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="google-signin-dialog" attributes="">
+  <template on-google-signin-required="{{ signinRequired }}">
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <paper-dialog heading="Title for dialog" opened="{{ open }}">
+      <google-signin id="signin"
+        clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
+      ></google-signin>
+
+      <p>Lorem ipsum ....</p>
+      <p>Id qui scripta ...</p>
+
+      <paper-button label="More Info..." dismissive></paper-button>
+      <paper-button label="Decline" affirmative></paper-button>
+      <paper-button label="Accept" affirmative autofocus></paper-button>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      open: false,
+
+      signinRequired: function() {
+        this.open = true;
+      },
+    });
+  </script>
+</polymer-element>
