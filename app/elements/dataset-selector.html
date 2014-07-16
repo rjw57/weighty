@@ -7,10 +7,15 @@
 <polymer-element name="dataset-selector" attributes="selected datasets" vertical layout>
   <template>
     <style>
-      :host { display: block; }
+      :host { display: block; background-color: #006064;  }
 
-      [content], ::content core-toolbar {
-        background-color: #26a69a;
+      ::content core-toolbar, ::content [header], ::content .core-header {
+        background-color: #26c6da;
+        color: black;
+      }
+
+      [content] {
+        background-color: #006064;
       }
     </style>
     <div>
