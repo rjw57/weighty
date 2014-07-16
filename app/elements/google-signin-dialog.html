@@ -1,25 +1,31 @@
+<link rel="import" href="../bower_components/core-elements/core-elements.html">
+<link rel="import" href="../bower_components/core-signals/core-signals.html">
 <link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <polymer-element name="google-signin-dialog" attributes="">
-  <template on-google-signin-required="{{ signinRequired }}">
+  <template>
     <style>
       :host {
         display: block;
       }
     </style>
 
-    <paper-dialog heading="Title for dialog" opened="{{ open }}">
-      <google-signin id="signin"
-        clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
-      ></google-signin>
+    <core-signals on-core-signal-google-signin-request-signout="{{ signoutRequested }}">
+    </core-signals>
 
-      <p>Lorem ipsum ....</p>
-      <p>Id qui scripta ...</p>
-
-      <paper-button label="More Info..." dismissive></paper-button>
-      <paper-button label="Decline" affirmative></paper-button>
-      <paper-button label="Accept" affirmative autofocus></paper-button>
+    <paper-dialog heading="Sign in to Google" opened="{{ open }}"
+      backdrop="true" layered="true" autoCloseDisabled="true"
+    >
+      <div vertical layout>
+        <p>You don't need a new account to use weighty, just a Google account.</p>
+        <google-signin id="signin" self-center
+          clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
+          on-google-signin-necessary="{{ signinRequired }}"
+          on-google-signin-success="{{ signinSucceeded }}"
+          on-google-signed-out="{{ signinRequired }}"
+        ></google-signin>
+      </div>
     </paper-dialog>
   </template>
   <script>
@@ -28,6 +34,14 @@
 
       signinRequired: function() {
         this.open = true;
+      },
+
+      signinSucceeded: function() {
+        this.open = false;
+      },
+
+      signoutRequested: function() {
+        this.$.signin.signOut();
       },
     });
   </script>

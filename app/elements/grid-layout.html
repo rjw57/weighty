@@ -1,6 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="grid-layout" attributes="">
+<polymer-element name="grid-layout" extends="core-selector">
   <template>
     <style>
       :host { display: block; }
@@ -24,7 +24,7 @@
     </style>
 
     <div horizontal layout wrap>
-      <content></content>
+      <shadow></shadow>
     </div>
   </template>
   <script>

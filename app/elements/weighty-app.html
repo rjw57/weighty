@@ -1,106 +1,86 @@
-<link rel="import" href="../bower_components/core-animated-pages/transitions/cascade-transition.html">
 <link rel="import" href="../bower_components/core-animated-pages/transitions/slide-from-right.html">
-<link rel="import" href="../bower_components/core-animated-pages/transitions/hero-transition.html">
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
-<link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/google-signin/google-signin.html">
+<link rel="import" href="../bower_components/paper-elements/paper-elements.html">
+<link rel="import" href="../bower_components/polymer-filters/polymer-filters.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <!-- fix for paper-elements#11 -->
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="dataset-list.html">
+<link rel="import" href="dataset-page.html">
+<link rel="import" href="dataset-selector.html">
+<link rel="import" href="dataset-sheet.html">
 
 <polymer-element name="weighty-app" attributes="">
   <template>
     <style>
-      :host {
-        display: block;
-      }
-
-      [main] {
-        height: 100%;
-        background-color: #eee;
-      }
-
-      core-toolbar {
-        background-color: #526E9C;
-        color: #fff;
-      }
-
-      #drawerPanel:not([narrow]) #menuButton {
-        display: none;
-      }
-
-      paper-item {
-        color: black;
-      }
+      :host { display: block; }
+      core-toolbar { background-color: #009688; color: #fff; }
+      paper-item { color: #000; }
     </style>
 
-    <div fit>
-      <core-animated-pages selected="{{ selectedPage }}" fit transitions="slide-from-right">
-        <core-scroll-header-panel name="datasets">
-          <core-toolbar>
-            <div flex>My Datasets</div>
-            <paper-icon-button icon="refresh"
-              on-tap="{{ refreshDatasetList }}"></paper-icon-button>
-            <paper-menu-button icon="more-vert" halign="right">
-              <paper-item label="Create dataset"></paper-item>
-              <paper-item label="Sign out"></paper-item>
-            </paper-menu-button>
-          </core-toolbar>
+    <dataset-list id="datasetList" datasets="{{ datasets }}"></dataset-list>
 
-          <div content vertical layout>
-            <paper-button label="foo" on-tap="{{ refreshDatasetList }}"></paper-button>
-            <dataset-list id="datasetList"
-              on-dataset-list-activated="{{ datasetActivated }}"
-            ></dataset-list>
-          </div>
-        </core-scroll-header-panel>
+    <core-toolbar>
+      <template if="{{page === 'myDatasets'}}">
+        <div flex>My Datasets</div>
+        <paper-icon-button icon="refresh" on-tap="{{refresh}}">
+        </paper-icon-button>
+      </template>
 
-        <core-scroll-header-panel name="dataset">
-          <core-toolbar>
-            <paper-icon-button icon="arrow-back" on-tap="{{ exitDataset }}"></paper-icon-button>
-            <div>DATASET</div>
-          </core-toolbar>
+      <template if="{{page !== 'myDatasets'}}"
+        bind="{{ datasets[selectedDatasetIdx] as dataset }}"
+      >
+        <paper-icon-button icon="arrow-back" on-tap="{{ back }}">
+        </paper-icon-button>
+        <div flex>{{ dataset.title }}</div>
+      </template>
 
-          <div content vertical layout>
-            <paper-button label="bar"></paper-button>
-            <!--
-            <div>DATASET {{ datasetId }}</div>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-            -->
-          </div>
-        </core-scroll-header-panel>
-      </core-animated-pages>
-    </div>
+      <paper-menu-button icon="more-vert" halign="right">
+        <paper-item label="Create dataset"></paper-item>
+        <paper-item label="Sign out" on-tap="{{ signout }}"></paper-item>
+      </paper-menu-button>
+    </core-toolbar>
+
+    <core-animated-pages id="pages"
+      selected="{{ page }}"
+      content transitions="slide-from-right"
+    >
+      <section name="myDatasets">
+        <dataset-selector selected="{{ selectedDatasetIdx }}" datasets="{{ datasets }}">
+        </dataset-selector>
+      </section>
+
+      <section name="dataset" vertical layout>
+        <dataset-page dataset="{{ datasets[selectedDatasetIdx] }}">
+        </datasets-page>
+      </section>
+    </core-animated-pages>
   </template>
   <script>
     Polymer({
-      selectedPage: 'datasets',
-      datasetId: null,
+      datasets: [],
+      selectedDatasetIdx: null,
+      page: 'myDatasets',
 
-      refreshDatasetList: function() {
-        this.$.datasetList.refresh();
+      selectedDatasetIdxChanged: function() {
+        if(this.selectedDatasetIdx === null) {
+          this.page = 'myDatasets';
+        } else {
+          this.page = 'dataset';
+        }
       },
 
-      datasetActivated: function(event, detail) {
-        this.datasetId = detail;
-        this.selectedPage = 'dataset';
-      },
-
-      exitDataset: function() {
-        this.selectedPage = 'datasets';
+      // Methods
+      back: function() { this.selectedDatasetIdx = null; },
+      refresh: function() { this.$.datasetList.refresh(); },
+      signout: function() {
+        this.fire('core-signal', {
+          name: 'google-signin-request-signout',
+          data: null,
+        });
       },
     });
   </script>

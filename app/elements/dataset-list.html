@@ -1,16 +1,6 @@
-<link rel="import" href="../bower_components/core-animated-pages/transitions/cascade-transition.html">
-<link rel="import" href="../bower_components/google-apis/google-apis.html">
-<link rel="import" href="../bower_components/google-signin/google-signin.html">
-<link rel="import" href="../bower_components/polymer-filters/polymer-filters.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<link rel="import" href="grid-layout.html">
-<link rel="import" href="dataset-sheet.html">
-<link rel="import" href="loading-throbber.html">
-
-<polymer-element name="dataset-list" attributes="selectedItem"
-    on-google-signin-aware-success="{{ signedIn }}"
-    on-google-signin-aware-signed-out="{{ signedOut }}">
+<polymer-element name="dataset-list" attributes="datasets">
   <template>
     <style>
       :host {
@@ -18,68 +8,26 @@
       }
     </style>
 
-    <google-signin-aware
-      id="signin" scopes="https://www.googleapis.com/auth/drive"
+    <google-signin-aware id="signin" scopes="https://www.googleapis.com/auth/drive"
+      on-google-signin-aware-success="{{ signedIn }}"
+      on-google-signin-aware-signed-out="{{ signedOut }}">
     ></google-signin-aware>
-
-    <core-animated-pages selected="{{ page }}"
-        transitions="cascade-transition cross-fade"
-        selectedItem="{{ selectedItem }}"
-    >
-
-      <section name="throbber">
-        <loading-throbber cross-fade></loading-throbber>
-      </section>
-
-      <section name="list">
-        <grid-layout cascade fade>
-          <template repeat="{{ dataset in datasets }}">
-            <div name="{{ dataset.id }}">
-              <dataset-sheet on-tap="{{ datasetActivated }}" name="{{ dataset.id }}">
-                <div title>{{ dataset.title }}</div>
-                <div subtitle>{{ dataset.modifiedDate | date('yyyy-MM-dd') }}</div>
-                <paper-ripple fit></paper-ripple>
-              </dataset-sheet>
-            </div>
-          </template>
-        </grid-layout>
-      </section>
-
-    </core-animated-pages>
   </template>
+
   <script>
     Polymer({
-      // Properties
       authData: null,
-      datasets: [],
-      page: 'list',
 
-      // Observers
       observe: {
         authData: 'refresh',
       },
 
-      // Filters
-      parseDate: function(value) {
-        return new Date(value);
-      },
-
-      // Event handlers
-      datasetActivated: function(event, detail, src) {
-        var datasetId = src.attributes.name.value;
-        this.fire('dataset-list-activated', datasetId);
-      },
-
-      signedIn: function(event, authData) {
-        this.authData = authData;
-      },
-
-      signedOut: function() {
-        this.authData = null;
-      },
+      signedIn: function(event, detail) { this.authData = detail; },
+      signedOut: function() { this.authData = null; },
 
       refresh: function() {
         var self = this;
+        console.log('Refreshing datasets...');
 
         // If auth data is null, just clear dataset list
         if(this.authData === null) {
@@ -94,11 +42,11 @@
           '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
 
         // kick off query
-        self.page = 'throbber';
+        self.fire('dataset-list-refresh-start');
         gapi.client.load('drive', 'v2', function() {
           var drive = gapi.client.drive;
           drive.files.list({ q: searchQuery }).execute(function(data) {
-            self.page = 'list';
+            self.fire('dataset-list-refresh-end');
 
             console.log('datasets query returned', data);
 
