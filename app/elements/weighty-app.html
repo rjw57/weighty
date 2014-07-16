@@ -1,3 +1,5 @@
+<link rel="import" href="../bower_components/core-animated-pages/transitions/hero-transition.html">
+<link rel="import" href="../bower_components/core-animated-pages/transitions/tile-cascade.html">
 <link rel="import" href="../bower_components/core-animated-pages/transitions/slide-from-right.html">
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/google-signin/google-signin.html">
@@ -13,49 +15,36 @@
 <link rel="import" href="dataset-selector.html">
 <link rel="import" href="dataset-sheet.html">
 
-<polymer-element name="weighty-app" attributes="">
+<polymer-element name="weighty-app" vertical layout>
   <template>
     <style>
       :host { display: block; }
-      core-toolbar { background-color: #009688; color: #fff; }
-      paper-item { color: #000; }
     </style>
 
     <dataset-list id="datasetList" datasets="{{ datasets }}"></dataset-list>
 
-    <core-toolbar>
-      <template if="{{page === 'myDatasets'}}">
-        <div flex>My Datasets</div>
-        <paper-icon-button icon="refresh" on-tap="{{refresh}}">
-        </paper-icon-button>
-      </template>
-
-      <template if="{{page !== 'myDatasets'}}"
-        bind="{{ datasets[selectedDatasetIdx] as dataset }}"
-      >
-        <paper-icon-button icon="arrow-back" on-tap="{{ back }}">
-        </paper-icon-button>
-        <div flex>{{ dataset.title }}</div>
-      </template>
-
-      <paper-menu-button icon="more-vert" halign="right">
-        <paper-item label="Create dataset"></paper-item>
-        <paper-item label="Sign out" on-tap="{{ signout }}"></paper-item>
-      </paper-menu-button>
-    </core-toolbar>
-
-    <core-animated-pages id="pages"
-      selected="{{ page }}"
-      content transitions="slide-from-right"
+    <core-animated-pages flex id="pages"
+      selected="{{ (selectedDatasetIdx === null) ? 'myDatasets' : 'dataset' }}"
+      transitions="hero-transition cross-fade tile-cascade"
     >
-      <section name="myDatasets">
-        <dataset-selector selected="{{ selectedDatasetIdx }}" datasets="{{ datasets }}">
-        </dataset-selector>
-      </section>
+      <dataset-selector name="myDatasets"
+        selected="{{ selectedDatasetIdx }}" datasets="{{ datasets }}"
+      >
+        <core-toolbar>
+          <div flex>My Datasets</div>
+          <paper-icon-button icon="refresh" on-tap="{{ refresh }}"></paper-icon-button>
+        </core-toolbar>
+      </dataset-selector>
 
-      <section name="dataset" vertical layout>
-        <dataset-page dataset="{{ datasets[selectedDatasetIdx] }}">
-        </datasets-page>
+      <section name="dataset" fit>
+        <template bind="{{ datasets[selectedDatasetIdx] }}">
+          <dataset-page fit datasetId="{{ id }}" cross-fade>
+            <core-toolbar>
+              <paper-icon-button icon="arrow-back" on-tap="{{ back }}"></paper-icon-button>
+              <div flex>{{ title }}</div>
+            </core-toolbar>
+          </datasets-page>
+        </template>
       </section>
     </core-animated-pages>
   </template>
@@ -63,15 +52,6 @@
     Polymer({
       datasets: [],
       selectedDatasetIdx: null,
-      page: 'myDatasets',
-
-      selectedDatasetIdxChanged: function() {
-        if(this.selectedDatasetIdx === null) {
-          this.page = 'myDatasets';
-        } else {
-          this.page = 'dataset';
-        }
-      },
 
       // Methods
       back: function() { this.selectedDatasetIdx = null; },

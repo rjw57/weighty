@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-sheet" attributes="">
+<polymer-element name="dataset-sheet" attributes="z">
   <template>
     <style>
       :host {
@@ -14,7 +14,8 @@
       .card {
         margin: 8px;
         padding: 16px;
-        background-color: white;
+        background-color: #004d40;
+        color: white;
       }
 
       .card .subtitle {
@@ -31,7 +32,7 @@
       }
     </style>
     <div class="card" horizontal layout>
-      <paper-shadow z="1"></paper-shadow>
+      <paper-shadow z="{{ z }}"></paper-shadow>
       <div class="container">
         <div class="content" flex self-stretch vertical layout>
           <div class="title" flex>
@@ -47,7 +48,7 @@
   </template>
   <script>
     Polymer({
-
+      z: 0,
     });
   </script>
 </polymer-element>

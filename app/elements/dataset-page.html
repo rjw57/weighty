@@ -1,13 +1,22 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-page" attributes="dataset">
+<polymer-element name="dataset-page" attributes="datasetId title">
   <template>
     <style>
-      :host {
-        display: block;
+      :host { display: block; }
+      [content] {
+        overflow-x: hidden; overflow-y: scroll;
+      }
+
+      [content], ::content core-toolbar {
+        background-color: #004d40;
+        color: white;
       }
     </style>
-    <div vertical layout>
+
+    <div content fit hero hero-id="{{ datasetId }}">
+      <content select="[header], .core-header, core-toolbar"></content>
+
       <paper-button label="bar"></paper-button>
       <div>DATASET {{ dataset.title }}</div>
       <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>

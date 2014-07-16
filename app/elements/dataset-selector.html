@@ -4,24 +4,30 @@
 <link rel="import" href="grid-layout.html">
 <link rel="import" href="dataset-sheet.html">
 
-<polymer-element name="dataset-selector" attributes="selected datasets">
+<polymer-element name="dataset-selector" attributes="selected datasets" vertical layout>
   <template>
     <style>
-      :host {
-        display: block;
+      :host { display: block; }
+
+      [content], ::content core-toolbar {
+        background-color: #26a69a;
       }
     </style>
-    <grid-layout selected="{{ selected }}" cascade fade>
-      <template repeat="{{ ds in datasets }}">
-        <div hero hero-id="{{ ds.id }}">
-          <dataset-sheet>
-            <div title>{{ ds.title }}</div>
-            <div subtitle>{{ ds.modifiedDate | date('yyyy-MM-dd') }}</div>
-            <paper-ripple fit></paper-ripple>
-          </dataset-sheet>
-        </div>
-      </template>
-    </grid-layout>
+    <div>
+      <content select=".core-header, [header], core-toolbar"></content>
+    </div>
+    <div content flex>
+      <grid-layout selected="{{ selected }}" tile-cascade fade>
+        <template repeat="{{ ds in datasets }}">
+          <div hero hero-id="{{ ds.id }}">
+            <dataset-sheet>
+              <div title>{{ ds.title }}</div>
+              <div subtitle>{{ ds.modifiedDate | date('yyyy-MM-dd') }}</div>
+            </dataset-sheet>
+          </div>
+        </template>
+      </grid-layout>
+    </div>
   </template>
   <script>
     Polymer({
