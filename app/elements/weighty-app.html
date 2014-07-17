@@ -30,16 +30,10 @@
       transitions="cross-fade tile-cascade scale-up hero-transition"
       on-core-animated-pages-transition-end="{{ endTransition }}"
     >
-      <section name="loading" fit>
-        <div fit class="dark-bg">
-          <loading-throbber></loading-throbber>
-        </div>
-      </section>
-
       <dataset-selector name="myDatasets"
         selected="{{ selectedDatasetIdx }}" datasets="{{ datasets }}"
       >
-        <core-toolbar>
+        <core-toolbar hero hero-id="header" class="primary-a">
           <div flex>My Datasets</div>
           <paper-icon-button icon="refresh" on-tap="{{ refresh }}"></paper-icon-button>
         </core-toolbar>
@@ -57,7 +51,7 @@
   <script>
     Polymer({
       datasets: [],
-      page: 'loading',
+      page: 'myDatasets',
       selectedDatasetIdx: null,
 
       selectedDatasetIdxChanged: function() {
@@ -66,14 +60,11 @@
         }
       },
 
-      refreshEnd: function() {
-        if(this.page === 'loading') { this.page = 'myDatasets'; }
-      },
+      refreshEnd: function() { },
 
       // Methods
       back: function() { this.page = 'myDatasets'; },
       refresh: function() {
-        this.page = 'loading';
         this.$.datasetList.refresh();
       },
       signout: function() {
