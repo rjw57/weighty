@@ -27,16 +27,13 @@
 
     <core-animated-pages flex id="pages"
       selected="{{ page }}"
-      transitions="cross-fade tile-cascade scale-up hero-transition"
+      transitions="tile-cascade hero-transition cross-fade"
       on-core-animated-pages-transition-end="{{ endTransition }}"
     >
       <dataset-selector name="myDatasets"
         selected="{{ selectedDatasetIdx }}" datasets="{{ datasets }}"
       >
-        <core-toolbar hero hero-id="header" class="primary-a">
-          <div flex>My Datasets</div>
-          <paper-icon-button icon="refresh" on-tap="{{ refresh }}"></paper-icon-button>
-        </core-toolbar>
+        <paper-icon-button controls icon="refresh" on-tap="{{ refresh }}"></paper-icon-button>
       </dataset-selector>
 
       <section name="dataset" fit scale-up>

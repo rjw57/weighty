@@ -4,25 +4,29 @@
 <link rel="import" href="grid-layout.html">
 <link rel="import" href="dataset-sheet.html">
 
-<polymer-element name="dataset-selector" attributes="selected datasets" vertical layout>
+<polymer-element name="dataset-selector" attributes="selected datasets selectedItem"
+    vertical layout>
   <template>
     <link rel="stylesheet" href="theme.css">
     <style>
       :host { display: block; }
     </style>
-    <div class="primary-a">
-      <content select=".core-header, [header], core-toolbar"></content>
-    </div>
-    <div class="container dark-bg" content flex>
-      <grid-layout selected="{{ selected }}" tile-cascade fade>
-        <template repeat="{{ ds, dsIdx in datasets }}">
-          <div class="item" hero?="{{ selected == dsIdx }}" hero-id="dataset-punch">
-            <dataset-sheet label="{{ ds.title }}"
-              sublabel="{{ ds.modifiedDate | date('yyyy-MM-dd') }}">
-            </dataset-sheet>
-          </div>
-        </template>
-      </grid-layout>
+    <core-scroll-header-panel flex class="background dark-bg">
+      <core-toolbar class="primary-a">
+        <content select="[controls]"></content>
+        <div flex>My Datasets</div>
+      </core-toolbar>
+      <div content>
+        <grid-layout selected="{{ selected }}" tile-cascade fade>
+          <template repeat="{{ ds, dsIdx in datasets }}">
+            <div class="item" hero?="{{ selected == dsIdx }}" hero-id="dataset-punch">
+              <dataset-sheet label="{{ ds.title }}"
+                sublabel="{{ ds.modifiedDate | date('yyyy-MM-dd') }}">
+              </dataset-sheet>
+            </div>
+          </template>
+        </grid-layout>
+      </div>
     </div>
   </template>
   <script>
