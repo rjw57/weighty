@@ -12,10 +12,12 @@
 .accent-b         { background-color: #ff5177; color: white; }
 .accent-b.dark    { background-color: #ff2d6f; color: white; }
 
+.dark-bg          { background-color: #222222; }
+
 /* Text */
 .text             { background-color: rgba(0,0,0,0.87); color: white; }
-.text.divider     { background-color: rgba(0,0,0,0.12); color: #444; }
-.text.hint        { background-color: rgba(0,0,0,0.26); color: #444; }
+.text.divider     { background-color: rgba(0,0,0,0.12); color: black; }
+.text.hint        { background-color: rgba(0,0,0,0.26); color: black; }
 .text.secondary   { background-color: rgba(0,0,0,0.54); color: white; }
 
 .muted            { opacity: 0.54; }

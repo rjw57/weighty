@@ -10,13 +10,13 @@
     <style>
       :host { display: block; }
     </style>
-    <div>
+    <div class="primary-a">
       <content select=".core-header, [header], core-toolbar"></content>
     </div>
-    <div class="container text" content flex>
+    <div class="container dark-bg" content flex>
       <grid-layout selected="{{ selected }}" tile-cascade fade>
-        <template repeat="{{ ds in datasets }}">
-          <div class="item" hero hero-id="{{ ds.id }}">
+        <template repeat="{{ ds, dsIdx in datasets }}">
+          <div class="item" hero?="{{ selected == dsIdx }}" hero-id="dataset-punch">
             <dataset-sheet label="{{ ds.title }}"
               sublabel="{{ ds.modifiedDate | date('yyyy-MM-dd') }}">
             </dataset-sheet>

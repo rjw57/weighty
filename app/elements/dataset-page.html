@@ -1,29 +1,58 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-page" attributes="datasetId title">
+<polymer-element name="dataset-page" attributes="datasetId label">
   <template>
     <link rel="stylesheet" href="theme.css">
     <style>
       :host { display: block; }
+
       [content] { overflow-x: hidden; overflow-y: scroll; }
+      .card { width: 100%; }
+      .banner {}
+      .panel { background-color: white; color: black; }
+
+      @media screen and (min-width: 800px) {
+        .card { width: 660px; }
+      }
+
+      core-toolbar { background-color: transparent; }
+
+      /*
+      [content] { overflow-x: hidden; overflow-y: scroll; }
+      .card { }
+      */
     </style>
 
-    <div content fit hero hero-id="{{ datasetId }}" class="primary-b">
-      <content select="[header], .core-header, core-toolbar"></content>
+    <core-media-query query="min-width: 800px" queryMatches="{{ wide }}">
+    </core-media-query>
 
-      <paper-button label="bar"></paper-button>
-      <div>DATASET {{ dataset.title }}</div>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
-      <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>          <p>gllgg</p>
+    <div content fit hero hero-id="dataset-punch" class="primary-b light"
+        vertical layout>
+      <template if="{{ wide }}">
+        <core-toolbar>
+          <content select="[controls]"></content>
+        </core-toolbar>
+      </template>
+      <div class="card" vertical layout self-center>
+        <paper-shadow z="{{ wide ? 1 : 0 }}"></paper-shadow>
+        <core-toolbar class="primary-b">
+          <template if="{{ !wide }}">
+            <content select="[controls]"></content>
+          </template>
+          <div flex>{{ label }}</div>
+        </core-toolbar>
+        <div class="panel">
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+          <p>gsdmkgsdmksdgsgdln</p> <p>dasmkdasmka</p> <p>famkasmkafls</p>
+        </div>
+      </div>
     </div>
   </template>
   <script>
