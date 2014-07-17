@@ -10,16 +10,13 @@
 <!-- fix for paper-elements#11 -->
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
-<link rel="import" href="dataset-list.html">
-<link rel="import" href="dataset-page.html">
-<link rel="import" href="dataset-selector.html">
-<link rel="import" href="dataset-sheet.html">
-
 <polymer-element name="weighty-app" vertical layout>
   <template>
+    <link rel="stylesheet" href="theme.css">
     <style>
       :host { display: block; }
     </style>
+    <google-signin-dialog></google-signin-dialog>
 
     <dataset-list id="datasetList" datasets="{{ datasets }}"></dataset-list>
 
@@ -30,7 +27,7 @@
       <dataset-selector name="myDatasets"
         selected="{{ selectedDatasetIdx }}" datasets="{{ datasets }}"
       >
-        <core-toolbar>
+        <core-toolbar class="primary-a">
           <div flex>My Datasets</div>
           <paper-icon-button icon="refresh" on-tap="{{ refresh }}"></paper-icon-button>
         </core-toolbar>
@@ -39,7 +36,7 @@
       <section name="dataset" fit>
         <template bind="{{ datasets[selectedDatasetIdx] }}">
           <dataset-page fit datasetId="{{ id }}" cross-fade>
-            <core-toolbar>
+            <core-toolbar class="primary-b">
               <paper-icon-button icon="arrow-back" on-tap="{{ back }}"></paper-icon-button>
               <div flex>{{ title }}</div>
             </core-toolbar>

@@ -6,28 +6,19 @@
 
 <polymer-element name="dataset-selector" attributes="selected datasets" vertical layout>
   <template>
+    <link rel="stylesheet" href="theme.css">
     <style>
-      :host { display: block; background-color: #006064;  }
-
-      ::content core-toolbar, ::content [header], ::content .core-header {
-        background-color: #26c6da;
-        color: black;
-      }
-
-      [content] {
-        background-color: #006064;
-      }
+      :host { display: block; }
     </style>
     <div>
       <content select=".core-header, [header], core-toolbar"></content>
     </div>
-    <div content flex>
+    <div class="container text" content flex>
       <grid-layout selected="{{ selected }}" tile-cascade fade>
         <template repeat="{{ ds in datasets }}">
-          <div hero hero-id="{{ ds.id }}">
-            <dataset-sheet>
-              <div title>{{ ds.title }}</div>
-              <div subtitle>{{ ds.modifiedDate | date('yyyy-MM-dd') }}</div>
+          <div class="item" hero hero-id="{{ ds.id }}">
+            <dataset-sheet label="{{ ds.title }}"
+              sublabel="{{ ds.modifiedDate | date('yyyy-MM-dd') }}">
             </dataset-sheet>
           </div>
         </template>

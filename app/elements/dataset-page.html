@@ -2,19 +2,13 @@
 
 <polymer-element name="dataset-page" attributes="datasetId title">
   <template>
+    <link rel="stylesheet" href="theme.css">
     <style>
       :host { display: block; }
-      [content] {
-        overflow-x: hidden; overflow-y: scroll;
-      }
-
-      [content], ::content core-toolbar {
-        background-color: #004d40;
-        color: white;
-      }
+      [content] { overflow-x: hidden; overflow-y: scroll; }
     </style>
 
-    <div content fit hero hero-id="{{ datasetId }}">
+    <div content fit hero hero-id="{{ datasetId }}" class="primary-b">
       <content select="[header], .core-header, core-toolbar"></content>
 
       <paper-button label="bar"></paper-button>

@@ -1,36 +1,22 @@
 <link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-sheet" attributes="z">
+<polymer-element name="dataset-sheet" attributes="label sublabel z">
   <template>
+    <link rel="stylesheet" href="theme.css">
     <style>
-      :host {
-        display: block;
-        box-sizing: border-box;
-      }
-
-      .muted { color: #9e9e9e; }
-
-      .card {
-        margin: 8px; padding: 16px;
-        background-color: white;
-        color: black;
-      }
-
-      .card .subtitle {
-        font-size: 12px;
-      }
-
-      .card .title {
-        margin-bottom: 4px;
-      }
-
-      .card .content {
-        padding: 8px;
-      }
+      :host { display: block; }
+      .title { padding: 16px; }
+      .banner { height: 128px; }
     </style>
-    <div class="card" horizontal layout>
+    <div class="card primary-b" vertical layout>
       <paper-shadow z="{{ z }}"></paper-shadow>
+      <div class="primary-b banner">
+      </div>
+      <div class="dark primary-b title" flex horizontal layout>
+        <div flex>{{ label }}</div>
+      </div>
+      <!--
       <div class="container">
         <div class="content" flex self-stretch vertical layout>
           <div class="title" flex>
@@ -42,6 +28,7 @@
         </div>
         <content></content>
       </div>
+      -->
     </div>
   </template>
   <script>

@@ -1,0 +1,21 @@
+/* Indigo/pink */
+.primary-a        { background-color: #3F51B5; color: white; }
+.primary-a.dark   { background-color: #303F9F; color: white; }
+.primary-a.light  { background-color: #c5cae9; color: #444; }
+.accent-a         { background-color: #ff4081; color: white; }
+.accent-a.dark    { background-color: #f50057; color: white; }
+
+/* Green/red */
+.primary-b        { background-color: #259b24; color: white; }
+.primary-b.dark   { background-color: #0a7e07; color: white; }
+.primary-b.light  { background-color: #a3e9a4; color: black; }
+.accent-b         { background-color: #ff5177; color: white; }
+.accent-b.dark    { background-color: #ff2d6f; color: white; }
+
+/* Text */
+.text             { background-color: rgba(0,0,0,0.87); color: white; }
+.text.divider     { background-color: rgba(0,0,0,0.12); color: #444; }
+.text.hint        { background-color: rgba(0,0,0,0.26); color: #444; }
+.text.secondary   { background-color: rgba(0,0,0,0.54); color: white; }
+
+.muted            { opacity: 0.54; }
