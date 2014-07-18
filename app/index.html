@@ -24,6 +24,16 @@
     <link rel="import" href="elements/elements.html">
   </head>
   <body unresolved fullbleed>
-    <weighty-app fit></weighty-app>
+    <google-signin-dialog></google-signin-dialog>
+
+    <template is="auto-binding">
+      <!-- Data sources -->
+      <dataset-list id="datasetList" datasets="{{ datasets }}"
+        on-dataset-list-refresh-start="{{ refreshStart }}"
+        on-dataset-list-refresh-end="{{ refreshEnd }}"
+      ></dataset-list>
+
+      <weighty-app datasets="{{ datasets }}" fit></weighty-app>
+    </template>
   </body>
 </html>

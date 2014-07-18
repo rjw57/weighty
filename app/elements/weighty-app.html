@@ -1,33 +1,23 @@
-<link rel="import" href="../bower_components/core-animated-pages/transitions/hero-transition.html">
-<link rel="import" href="../bower_components/core-animated-pages/transitions/tile-cascade.html">
-<link rel="import" href="../bower_components/core-animated-pages/transitions/slide-from-right.html">
-<link rel="import" href="../bower_components/core-animated-pages/transitions/scale-up.html">
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
-<link rel="import" href="../bower_components/google-signin/google-signin.html">
 <link rel="import" href="../bower_components/paper-elements/paper-elements.html">
-<link rel="import" href="../bower_components/polymer-filters/polymer-filters.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <!-- fix for paper-elements#11 -->
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
-<polymer-element name="weighty-app" vertical layout>
+<link rel="import" href="elements.html">
+
+<polymer-element name="weighty-app" attributes="datasets" vertical layout>
   <template>
     <link rel="stylesheet" href="theme.css">
     <style>
       :host { display: block; }
       core-toolbar { background-color: transparent; }
     </style>
-    <google-signin-dialog></google-signin-dialog>
-
-    <dataset-list id="datasetList" datasets="{{ datasets }}"
-      on-dataset-list-refresh-start="{{ refreshStart }}"
-      on-dataset-list-refresh-end="{{ refreshEnd }}"
-    ></dataset-list>
 
     <core-animated-pages flex id="pages"
       selected="{{ page }}"
-      transitions="tile-cascade hero-transition cross-fade"
+      transitions="hero-transition cross-fade"
       on-core-animated-pages-transition-end="{{ endTransition }}"
     >
       <dataset-selector name="myDatasets"
@@ -36,7 +26,7 @@
         <paper-icon-button controls icon="refresh" on-tap="{{ refresh }}"></paper-icon-button>
       </dataset-selector>
 
-      <section name="dataset" fit scale-up>
+      <section name="dataset">
         <template bind="{{ datasets[selectedDatasetIdx] }}">
           <dataset-page fit datasetId="{{ id }}" label="{{ title }}" cross-fade>
             <paper-icon-button controls icon="arrow-back" on-tap="{{ back }}"></paper-icon-button>
@@ -47,7 +37,6 @@
   </template>
   <script>
     Polymer({
-      datasets: [],
       page: 'myDatasets',
       selectedDatasetIdx: null,
 
@@ -57,13 +46,8 @@
         }
       },
 
-      refreshEnd: function() { },
-
       // Methods
       back: function() { this.page = 'myDatasets'; },
-      refresh: function() {
-        this.$.datasetList.refresh();
-      },
       signout: function() {
         this.fire('core-signal', {
           name: 'google-signin-request-signout',

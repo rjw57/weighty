@@ -1,6 +1,7 @@
+<link rel="import" href="../bower_components/google-signin/google-signin.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-list" attributes="datasets">
+<polymer-element name="dataset-list">
   <template>
     <style>
       :host {
@@ -16,6 +17,10 @@
 
   <script>
     Polymer({
+      publish: {
+        datasets: [],
+      },
+
       authData: null,
 
       observe: {
