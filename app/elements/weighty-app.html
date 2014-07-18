@@ -5,6 +5,8 @@
 <!-- fix for paper-elements#11 -->
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
+<link rel="import" href="../bower_components/core-animated-pages/transitions/tile-cascade.html">
+
 <link rel="import" href="dataset-page.html">
 <link rel="import" href="dataset-selector.html">
 
@@ -17,8 +19,8 @@
     </style>
 
     <core-animated-pages flex id="pages"
-      selected="{{ (datasetId === null) ? 'myDatasets' : 'dataset' }}"
-      transitions="hero-transition"
+      selected="{{ page }}"
+      transitions="hero-transition cross-fade tile-cascade"
       on-core-animated-pages-transition-end="{{ endTransition }}"
     >
       <dataset-selector fit name="myDatasets"
@@ -35,8 +37,24 @@
   </template>
   <script>
     Polymer({
+      datasets: null,
       datasetId: null,
-      back: function() { this.datasetId = null; }
+      page: 'myDatasets',
+
+      observe: {
+        datasets: 'setPage',
+        datasetId: 'setPage',
+      },
+
+      back: function() { this.datasetId = null; },
+
+      setPage: function() {
+        if(this.datasetId !== null) {
+          this.page = 'dataset';
+        } else {
+          this.page = 'myDatasets';
+        }
+      },
     });
   </script>
 </polymer-element>
