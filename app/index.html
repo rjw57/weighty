@@ -24,9 +24,9 @@
     <link rel="import" href="elements/elements.html">
   </head>
   <body unresolved fullbleed>
-    <google-signin-dialog></google-signin-dialog>
-
     <template is="auto-binding">
+      <google-signin-dialog></google-signin-dialog>
+
       <!-- Data sources -->
       <dataset-list id="datasetList" datasets="{{ datasets }}"
         on-dataset-list-refresh-start="{{ refreshStart }}"

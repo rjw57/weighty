@@ -5,7 +5,8 @@
 <!-- fix for paper-elements#11 -->
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
-<link rel="import" href="elements.html">
+<link rel="import" href="dataset-page.html">
+<link rel="import" href="dataset-selector.html">
 
 <polymer-element name="weighty-app" attributes="datasets" vertical layout>
   <template>
@@ -16,49 +17,26 @@
     </style>
 
     <core-animated-pages flex id="pages"
-      selected="{{ page }}"
-      transitions="hero-transition cross-fade"
+      selected="{{ (datasetId === null) ? 'myDatasets' : 'dataset' }}"
+      transitions="hero-transition"
       on-core-animated-pages-transition-end="{{ endTransition }}"
     >
-      <dataset-selector name="myDatasets"
-        selected="{{ selectedDatasetIdx }}" datasets="{{ datasets }}"
-      >
-        <paper-icon-button controls icon="refresh" on-tap="{{ refresh }}"></paper-icon-button>
-      </dataset-selector>
+      <dataset-selector fit name="myDatasets"
+        datasetId="{{ datasetId }}" datasets="{{ datasets }}"
+      ></dataset-selector>
 
       <section name="dataset">
-        <template bind="{{ datasets[selectedDatasetIdx] }}">
-          <dataset-page fit datasetId="{{ id }}" label="{{ title }}" cross-fade>
-            <paper-icon-button controls icon="arrow-back" on-tap="{{ back }}"></paper-icon-button>
-          </datasets-page>
-        </template>
+        <dataset-page fit datasetId="foo" hero hero-id="punch">
+          <paper-icon-button controls icon="arrow-back" on-tap="{{ back }}">
+          </paper-icon-button>
+        </datasets-page>
       </section>
     </core-animated-pages>
   </template>
   <script>
     Polymer({
-      page: 'myDatasets',
-      selectedDatasetIdx: null,
-
-      selectedDatasetIdxChanged: function() {
-        if(this.selectedDatasetIdx !== null) {
-          this.page = 'dataset';
-        }
-      },
-
-      // Methods
-      back: function() { this.page = 'myDatasets'; },
-      signout: function() {
-        this.fire('core-signal', {
-          name: 'google-signin-request-signout',
-          data: null,
-        });
-      },
-      endTransition: function() {
-        if(this.page == 'myDatasets') {
-          this.selectedDatasetIdx = null;
-        }
-      },
+      datasetId: null,
+      back: function() { this.datasetId = null; }
     });
   </script>
 </polymer-element>

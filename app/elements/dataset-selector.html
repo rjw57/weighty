@@ -1,38 +1,49 @@
+<link rel="import" href="../bower_components/core-elements/core-elements.html">
+<link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/polymer-filters/polymer-filters.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <link rel="import" href="grid-layout.html">
 <link rel="import" href="dataset-sheet.html">
 
-<polymer-element name="dataset-selector" attributes="selected datasets selectedItem"
-    vertical layout>
+<polymer-element name="dataset-selector" attributes="datasetId datasets">
   <template>
     <link rel="stylesheet" href="theme.css">
     <style>
       :host { display: block; }
+      .container { overflow-x: hidden; overflow-y: auto; }
     </style>
-    <core-scroll-header-panel flex class="background dark-bg">
-      <core-toolbar class="primary-a">
-        <content select="[controls]"></content>
-        <div flex>My Datasets</div>
-      </core-toolbar>
-      <div content>
-        <grid-layout selected="{{ selected }}" tile-cascade fade>
-          <template repeat="{{ ds, dsIdx in datasets }}">
-            <div class="item" hero?="{{ selected == dsIdx }}" hero-id="dataset-punch">
-              <dataset-sheet label="{{ ds.title }}"
-                sublabel="{{ ds.modifiedDate | date('yyyy-MM-dd') }}">
-              </dataset-sheet>
-            </div>
-          </template>
-        </grid-layout>
-      </div>
+    <div fit class="container" vertical layout>
+      <core-scroll-header-panel flex class="background dark-bg">
+        <core-toolbar class="primary-a">
+          <content select="[controls]"></content>
+          <div flex>My Datasets</div>
+        </core-toolbar>
+        <div content>
+          <grid-layout selected="{{ datasetId }}" tile-cascade fade>
+            <template repeat="{{ ds in datasets }}">
+              <div name="{{ ds.id }}" class="item"
+                  hero?="{{ lastSelected === ds.id }}"
+                  hero-id="{{ (lastSelected === ds.id) ? 'punch' : '' }}">
+                <dataset-sheet label="{{ ds.title }}"
+                  sublabel="{{ ds.modifiedDate | date('yyyy-MM-dd') }}">
+                </dataset-sheet>
+              </div>
+            </template>
+          </grid-layout>
+        </div>
+      </core-scroll-header-panel>
     </div>
   </template>
   <script>
     Polymer({
-      selected: null,
       datasets: [],
+      datasetId: null,
+      lastSelected: null,
+
+      datasetIdChanged: function() {
+        if(this.datasetId !== null) { this.lastSelected = this.datasetId; }
+      },
     });
   </script>
 </polymer-element>

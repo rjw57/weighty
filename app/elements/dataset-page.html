@@ -1,15 +1,19 @@
+<link rel="import" href="../bower_components/core-elements/core-elements.html">
+<link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-page" attributes="datasetId label" vertical layout>
+<polymer-element name="dataset-page" attributes="datasetId label">
   <template>
     <link rel="stylesheet" href="theme.css">
     <style>
       :host { display: block; }
+      .container { overflow-x: hidden; overflow-y: auto; }
       .sheet { width: 100%; }
 
-      [chart] { height: 400px; background-color: lightgray; }
-      [stats] { height: 500px; background-color: darkgray; }
+      [chart] { height: 400px; background-color: lightgray; padding: 16px; }
+      [stats] { height: 500px; background-color: darkgray; padding: 16px; }
 
+      core-toolbar { background-color: transparent; color: black; }
       paper-fab { position: fixed; right: 16px; bottom: 16px; }
 
       @media (min-width: 800px) {
@@ -17,33 +21,47 @@
           width: 600px;
           margin: 32px 16px;
         }
+
+        .banner {
+          padding: 16px;
+        }
+
+        [chart], [stats] { padding: 32px; }
       }
     </style>
 
     <core-media-query query="min-width: 800px" queryMatches="{{ wide }}">
     </core-media-query>
 
-    <core-scroll-header-panel page flex>
-      <core-toolbar class="primary-b">
-        <content select="[controls]"></content>
-        <div flex>{{ label }}</div>
-      </core-toolbar>
-
-      <div content horizontal layout center-justified wrap
-          class="primary-b light" hero hero-id="dataset-punch">
+    <div fit class="container primary-b light" vertical layout hero hero-id="punch">
+      <template if="{{ wide }}">
+        <core-toolbar>
+          <content select="[controls]"></content>
+        </core-toolbar>
+      </template>
+      <div horizontal layout center-justified wrap>
         <div class="sheet" self-start>
           <paper-shadow z="{{ wide ? 1 : 0 }}"></paper-shadow>
-          <div chart>Chart</div>
+            <div class="primary-b banner core-header">
+              <core-toolbar class="primary-b">
+                <template if="{{ !wide }}">
+                  <content select="[controls]"></content>
+                </template>
+                <div flex>My Dataset title</div>
+              </core-toolbar>
+            </div>
+            <div chart>
+              Chart {{ datasetId }}
+            </div>
           <!-- <paper-fab class="secondary-b" icon="add"></paper-fab> -->
         </div>
 
-        <div class="sheet" self-starod="dataset-punch" class="primary-b light">
+        <div class="sheet" self-start>
           <paper-shadow z="{{ wide ? 1 : 0 }}"></paper-shadow>
           <div stats>Stats</div>
         </div>
       </div>
-    </core-scroll-header-panel>
-
+    </div>
   </template>
   <script>
     Polymer({
