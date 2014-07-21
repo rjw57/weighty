@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="weighty-datasource" hidden attributes="datasets datasetId weightyDataset">
+<polymer-element name="weighty-datasource" hidden attributes="datasets datasetId weightyDataset"
+    on-weighty-dataset-request="{{ datasetRequest }}">
   <template>
     <style>
       :host {
@@ -40,6 +41,8 @@
         },
 
         datasetIdChanged: function() {
+            var self = this;
+
             // handle early outs
             if(!this.datasetId && this.weightyDataset) {
                 this.weightyDataset = null;
@@ -48,15 +51,22 @@
                 return;
             }
 
-            // otherwise, populate dataset after a bit of a delay to simulate
-            // network.
+            // otherwise, populate dataset
             this.weightyDataset = null;
-            this.async(function() {
-                this.weightyDataset = {
-                    id: this.datasetId,
-                    title: 'funky test dataset (' + this.datasetId + ')',
-                };
-            }, null, 1500);
+            this.newValidateDatasetIdPromise(this.datasetId).then(function(objs) {
+                console.log('id validates:', objs.file.id);
+                return self.newGetDataPromise(objs.file.id).then(function(data) {
+                    self.weightyDataset = {
+                        id: objs.file.id,
+                        file: objs.file,
+                        table: objs.table,
+                        data: data,
+                    };
+                });
+            }).catch(function(err) {
+                console.log('Error validating data');
+                console.log(err);
+            });
         },
 
         weightyDatasetChanged: function() {
@@ -66,6 +76,104 @@
                 return;
             }
             this.datasetId = this.weightyDataset.id;
+        },
+
+        newGetDataPromise: function(trustedId) {
+            return this.apis.then(function(client) {
+                console.log('Fetching data for', trustedId);
+                var req = client.fusiontables.query.sqlGet({
+                    sql: 'SELECT Timestamp, Weight FROM ' + trustedId + ' ORDER BY Timestamp',
+                });
+                return new Promise(function(resolve, reject) { req.execute(function(data) {
+                    console.log('Fetch returned', data);
+                    if(data.kind !== 'fusiontables#sqlresponse') {
+                        reject(new Error('Unexpected response from fusiontables API'));
+                        return;
+                    }
+
+                    var weights = [];
+                    data.rows.forEach(function(row) {
+                        weights.push({
+                            timestamp: +row[0],         // Number
+                            weight: +row[1],            // Number
+                            date: new Date(+row[0]),
+                        });
+                    });
+                    resolve(weights);
+                }); });
+            });
+        },
+
+        // Convenience method to construct a verification promise which verifies id
+        // via drive and fusion table API.
+        newValidateDatasetIdPromise: function(untrustedId) {
+            return Promise.all([
+                this.newDatasetFetchViaDrivePromise(untrustedId),
+                this.newDatasetFetchViaFusionTablesPromise(untrustedId),
+            ]).then(function(data) {
+                return { file: data[0], table: data[1] };
+            });
+        },
+
+        // Return a promise which uses the drive API to return details on a dataset. This
+        // can safely be passed an untrusted id for verification.
+        newDatasetFetchViaDrivePromise: function (untrustedId) {
+            return this.apis.then(function(client) {
+                var req = client.drive.files.get({ fileId: untrustedId });
+                return new Promise(function(resolve, reject) { req.execute(function(data) {
+                    console.log('fetch dataset via drive returns', data);
+
+                    if(!data || !data.properties) {
+                        reject(new Error('Unexpected response from drive API'));
+                        return;
+                    }
+
+                    var isValid = false;
+
+                    data.properties.forEach(function(property) {
+                        if(property.key !== 'weightyVersion' || property.value !== '2') { return; }
+                        isValid = true;
+                    });
+
+                    if(!isValid) {
+                        reject(new Error('Invalid id'));
+                        return;
+                    }
+
+                    resolve(data);
+                }); });
+            });
+        },
+
+        // Return a promise which uses the fusiontables API to return details on a dataset. This
+        // can safely be passed an untrusted id for verification.
+        newDatasetFetchViaFusionTablesPromise: function (untrustedId) {
+            return this.apis.then(function(client) {
+                var req = client.fusiontables.table.get({ tableId: untrustedId });
+                return new Promise(function(resolve, reject) { req.execute(function(data) {
+                    if(!data || !data.columns) {
+                        reject(new Error('Unexpected response from tables API'));
+                        return;
+                    }
+
+                    var hasWeight = false, hasTimestamp = false;
+
+                    data.columns.forEach(function(column) {
+                        if(column.name === 'Weight' && column.type === 'NUMBER') {
+                            hasWeight = true;
+                        } else if(column.name === 'Timestamp' && column.type === 'NUMBER') {
+                            hasTimestamp = true;
+                        }
+                    });
+
+                    if(!hasWeight || !hasTimestamp) {
+                        reject(new Error('Invalid id'));
+                        return;
+                    }
+
+                    resolve(data);
+                }); });
+            });
         },
 
         // Return a promise which starts a query for all user datasets and is resolved with
