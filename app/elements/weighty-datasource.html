@@ -11,7 +11,8 @@
     <google-api-promise id="drive" name="drive" version="v2"></google-api-promise>
     <google-api-promise id="fusiontables" name="fusiontables" version="v1"></google-api-promise>
     <google-auth-promise id="auth"
-        scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/fusiontables">
+        scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/fusiontables"
+    ></google-auth-promise>
   </template>
   <script>
     Polymer({
@@ -27,29 +28,14 @@
                     return { drive: apis[0], fusiontables: apis[1], auth: apis[2] };
                 });
 
-            // populate datasets after a delay to simulate network
-            this.async(function() {
-                this.datasets = [
-                    {
-                        id: 'xxxx', title: 'fooobar',
-                        modifiedDate: new Date(Date.now()),
-                        createdDate: new Date(Date.now() - 30*24*60*60*1000),
-                    },
-                    {
-                        id: 'xggg', title: 'Another dataset',
-                        modifiedDate: new Date(Date.now() - 40*24*60*60*1000),
-                        createdDate: new Date(Date.now() - 80*24*60*60*1000),
-                    },
-                    {
-                        id: 'kdlmgls', title: 'Some more',
-                        modifiedDate: new Date(Date.now() - 20*24*60*60*1000),
-                        createdDate: new Date(Date.now() - 30*24*60*60*1000),
-                    },
-                ];
-            }, null, 1000);
+            this.refresh();
+        },
 
-            this.apis.then(function(apis) {
-                console.log(apis);
+        // kick of request to drive API for datasets
+        refresh: function() {
+            var self = this;
+            this.newDatasetListPromise().then(function(items) {
+                self.datasets = items;
             });
         },
 
@@ -80,6 +66,40 @@
                 return;
             }
             this.datasetId = this.weightyDataset.id;
+        },
+
+        // Return a promise which starts a query for all user datasets and is resolved with
+        // a list of dataset entries.
+        newDatasetListPromise: function() {
+            // how to find weighty files
+            var searchQuery =
+                'not trashed and properties has ' +
+                '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
+
+            return this.apis.then(function(client) {
+                var req = client.drive.files.list({ q: searchQuery });
+                return new Promise(function(resolve, reject) {
+                    req.execute(function(data) {
+                        console.log('drive.files.list reply', data);
+
+                        if(data.kind !== 'drive#fileList') {
+                            reject(new Error('Got unexpected reply from Drive API'));
+                            return;
+                        }
+
+                        var items = [];
+                        data.items.forEach(function(file) {
+                            items.push({
+                                id: file.id, title: file.title,
+                                modifiedDate: new Date(file.modifiedDate),
+                                createdDate: new Date(file.createdDate),
+                            });
+                        });
+
+                        resolve(items);
+                    });
+                });
+            });
         },
     });
   </script>
