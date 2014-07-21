@@ -10,6 +10,9 @@
       }
       #container { overflow: auto; }
     </style>
+
+    <dataset-stats id="stats" weightyDataset="{{ weightyDataset }}"></dataset-stats>
+
     <div fit id="container" vertical layout>
         <template if="{{ isLoading }}">
             <div fit vertical layout center-justified>
@@ -18,25 +21,30 @@
                 </div>
             </div>
         </template>
-        <template bind="{{ weightyDataset }}" if="{{ !isLoading &amp;&amp; weightyDataset }}">
+        <template if="{{ !isLoading &amp;&amp; weightyDataset }}">
             <core-header-panel flex>
                 <core-toolbar>
                     <paper-icon-button icon="arrow-back" on-tap="{{back}}"></paper-icon-button>
-                    <div flex>{{ file.title }}</div>
+                    <div flex>{{ weightyDataset.file.title }}</div>
                 </core-toolbar>
                 <div content vertical layout>
-                    <highcharts-chart chartOptions="{{ chartOptions }}">
-                        <!-- <highcharts-axis xaxis></highcharts-axis>
-                        <highcharts-axis yaxis></highcharts-axis>
-                        -->
-
-                        <highcharts-series name="foo">
-                            <template repeat="{{ data }}">
-                                <highcharts-datum x="{{ timestamp }}" y="{{ weight }}"
-                                ></highcharts-datum>
-                            </template>
-                        </highcharts-series>
-                    </highcharts-chart>
+                    <template bind="{{ $.stats }}">
+                        <div id="headlineStats">
+                            {{ latestDatum.weight }} kg
+                            {{ earliestDatum.weight - latestDatum.weight }} /
+                                {{ earliestDatum.weight - idealWeight }} kg
+                        </div>
+                    </template>
+                    <div id="chart">
+                        <highcharts-chart>
+                        <highcharts-series>
+                                <template repeat="{{ weightyDataset.data }}">
+                                    <highcharts-datum x="{{ timestamp }}" y="{{ weight }}"
+                                    ></highcharts-datum>
+                                </template>
+                            </highcharts-series>
+                        </highcharts-chart>
+                    </div>
                 </div>
             </core-header-panel>
         </template>
@@ -45,33 +53,55 @@
   <script>
     Polymer({
         isLoading: false,
-        chartOptions: {
-            chart: {
-              zoomType: 'x',
-              spacing: [10, 0, 10, 0],
-            },
-            title: {
-              text: null,
-            },
-            exporting: {
-              buttons: {
-                contextButton: { enabled: false },
-              },
-            },
-            xAxis: {
-              type: 'datetime',
-              endOnTick: false,
-              minPadding: 0,
-              maxPadding: 0,
-              minRange: 14 * 24 * 3600000, // fortnight
-            },
-            tooltip: {
-              valueDecimals: 1,
-              valueSuffix: 'kg',
-            },
-        },
-
         back: function() { this.fire('back'); },
     });
   </script>
+</polymer-element>
+
+<polymer-element name="dataset-stats" attributes="weightyDataset" hidden>
+  <script>(function(){
+    var IDEAL_BMI = 22;
+
+    var bmi2weight = function(bmi, height) { return bmi * height * height; };
+    var weight2bmi = function(weight, height) { return weight / (height * height); }
+
+    Polymer({
+        ready: function() {
+            this.weightyDatasetChanged();
+        },
+
+        weightyDatasetChanged: function() {
+            this.reset_();
+            if(!this.weightyDataset) { return; }
+
+            var data = this.weightyDataset.data,
+                file = this.weightyDataset.file,
+                metadata = null;
+
+            if(file && file.properties) {
+                file.properties.forEach(function(prop) {
+                    if(prop.key === 'weightyMetadata') {
+                        metadata = JSON.parse(prop.value);
+                    }
+                });
+            }
+
+            if(metadata && (+metadata.height === metadata.height)) {
+                this.idealWeight = bmi2weight(IDEAL_BMI, metadata.height);
+            }
+
+            if(data && (data.length !== 0)) {
+                this.latestDatum = data[data.length-1];
+                this.earliestDatum = data[0];
+                console.log(file);
+            }
+        },
+
+        reset_: function() {
+            this.latestDatum = null;
+            this.earliestDatum = null;
+            this.idealWeight = null;
+        },
+    });
+  })();</script>
 </polymer-element>

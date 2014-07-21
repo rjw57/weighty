@@ -10,6 +10,7 @@ let g:syntastic_html_tidy_blocklevel_tags = [
     \ 'paper-icon-button', 'paper-dialog',
     \ 'google-api-loader', 'google-signin',
     \ 'weighty-app', 'weighty-datasource', 'dataset-selector-page',
-    \ 'dataset-page', 'loading-throbber', 'signin-dialog', 'highcharts-chart',
+    \ 'dataset-page', 'loading-throbber', 'signin-dialog', 'dataset-stats',
     \ 'google-api-promise', 'google-auth-promise',
+    \ 'highcharts-series', 'highcharts-chart', 'highcharts-datum', 'highcharts-series',
     \ ]
