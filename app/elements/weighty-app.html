@@ -24,7 +24,16 @@
     Polymer({
         page: 'loading',
 
-        back: function() { this.datasetId = null; },
+        back: function() {
+            this.datasetId = null;
+            history.pushState(null, null, '#');
+        },
+
+        ready: function() {
+            var self = this;
+            this.parseLocation();
+            window.addEventListener('popstate', function() { self.parseLocation(); });
+        },
 
         datasetsChanged: function() {
             // are we currently loading?
@@ -41,8 +50,34 @@
                 // do nothing
             } else if(this.datasetId) {
                 this.page = 'dataset';
+                history.pushState(null, null, '#/dataset/' + this.datasetId);
             } else {
                 this.page = 'selector';
+            }
+        },
+
+        parseLocation: function() {
+            console.log('parse location', window.location.hash);
+
+            var datasetHashRe = /^#\/dataset\/([^\/]+)\/?$/;
+            var rootHashRe = /^#\/?$/;
+
+            if((window.location.hash === '') || (rootHashRe.test(window.location.hash))) {
+                console.log('matches root');
+                if(this.page !== 'loading') {
+                    this.datasetId = null;
+                }
+                return;
+            }
+
+            // work out if the hash fragment indicates we should show a
+            // dataset or not
+            var datasetMatch = datasetHashRe.exec(window.location.hash);
+            if(datasetMatch) {
+                console.log('matches dataset', datasetMatch[1]);
+                this.datasetId = datasetMatch[1];
+                this.page = 'dataset';
+                return;
             }
         },
     });
