@@ -8,16 +8,43 @@
         display: block;
       }
     </style>
-    <core-animated-pages fit selected="{{ datasetId ? 1 : 0 }}">
-        <dataset-selector-page fit
+    <core-animated-pages fit selected="{{ page }}">
+        <section fit name="loading" vertical layout center-justified>
+            <div self-center>
+                <loading-throbber></loading-throbber>
+            </div>
+        </section>
+        <dataset-selector-page fit name="selector"
             datasets="{{ datasets }}" datasetId="{{ datasetId }}"></dataset-selector-page>
-        <dataset-page fit
+        <dataset-page fit name="dataset"
             weightyDataset="{{ weightyDataset }}" on-back="{{ back }}"></dataset-page>
     </core-animated-pages>
   </template>
   <script>
     Polymer({
+        page: 'loading',
+
         back: function() { this.datasetId = null; },
+
+        datasetsChanged: function() {
+            // are we currently loading?
+            if(this.page === 'loading') {
+                // switch to dataset selector view
+                this.page = 'selector';
+            }
+        },
+
+        datasetIdChanged: function() {
+            // don't do anything if sill loading otherwise, switch to
+            // selector or dataset page as appropriate
+            if(this.page === 'loading') {
+                // do nothing
+            } else if(this.datasetId) {
+                this.page = 'dataset';
+            } else {
+                this.page = 'selector';
+            }
+        },
     });
   </script>
 </polymer-element>
