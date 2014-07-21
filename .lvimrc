@@ -9,5 +9,5 @@ let g:syntastic_html_tidy_blocklevel_tags = [
     \ 'core-header-panel', 'core-toolbar', 'core-animated-pages', 'core-selector',
     \ 'paper-icon-button',
     \ 'weighty-app', 'weighty-datasource', 'dataset-selector-page',
-    \ 'dataset-page',
+    \ 'dataset-page', 'loading-throbber',
     \ ]

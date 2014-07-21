@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="weighty-app" attributes="datasets datasetId">
+<polymer-element name="weighty-app" attributes="datasets datasetId weightyDataset">
   <template>
     <style>
       :host {
@@ -11,7 +11,8 @@
     <core-animated-pages fit selected="{{ datasetId ? 1 : 0 }}">
         <dataset-selector-page fit
             datasets="{{ datasets }}" datasetId="{{ datasetId }}"></dataset-selector-page>
-        <dataset-page fit on-back="{{ back }}"></dataset-page>
+        <dataset-page fit
+            weightyDataset="{{ weightyDataset }}" on-back="{{ back }}"></dataset-page>
     </core-animated-pages>
   </template>
   <script>

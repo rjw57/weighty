@@ -1,6 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="weighty-datasource" hidden attributes="datasets datasetId">
+<polymer-element name="weighty-datasource" hidden attributes="datasets datasetId weightyDataset">
   <template>
     <style>
       :host {
@@ -33,35 +33,34 @@
             }, null, 500);
         },
 
-        /*
         datasetIdChanged: function() {
             // handle early outs
-            if(!this.datasetId && this.weightData) {
-                this.weightData = null;
+            if(!this.datasetId && this.weightyDataset) {
+                this.weightyDataset = null;
                 return;
-            } else if(this.weightData && this.dataset.id === this.datasetId) {
+            } else if(this.weightyDataset && this.dataset.id === this.datasetId) {
                 return;
             }
 
             // otherwise, populate dataset after a bit of a delay to simulate
             // network.
-            this.weightData = null;
+            this.weightyDataset = null;
             this.async(function() {
-                this.weightData = {
+                this.weightyDataset = {
                     id: this.datasetId,
                     title: 'funky test dataset (' + this.datasetId + ')',
                 };
             }, null, 1000);
         },
 
-        weightDataChanged: function() {
-            if(!this.weightData) {
+        weightyDatasetChanged: function() {
+            console.log('dataset', this.weightyDataset);
+            if(!this.weightyDataset) {
                 this.datasetId = null;
                 return;
             }
-            this.datasetId = this.weightData.id;
+            this.datasetId = this.weightyDataset.id;
         },
-        */
     });
   </script>
 </polymer-element>
