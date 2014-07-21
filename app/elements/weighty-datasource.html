@@ -56,9 +56,8 @@
                 var req = client.drive.files.list({ q: searchQuery });
                 return new Promise(function(resolve, reject) {
                     req.execute(function(data) {
-                        console.log('drive.files.list reply', data);
-
                         if(data.kind !== 'drive#fileList') {
+                            console.error('drive.files.list reply', data);
                             reject(new Error('Got unexpected reply from Drive API'));
                             return;
                         }
@@ -80,13 +79,12 @@
 
         createGetDataPromise: function(trustedId) {
             return this.apis.then(function(client) {
-                console.log('Fetching data for', trustedId);
                 var req = client.fusiontables.query.sqlGet({
                     sql: 'SELECT Timestamp, Weight FROM ' + trustedId + ' ORDER BY Timestamp',
                 });
                 return new Promise(function(resolve, reject) { req.execute(function(data) {
-                    console.log('Fetch returned', data);
                     if(data.kind !== 'fusiontables#sqlresponse') {
+                        console.error('Fetch returned', data);
                         reject(new Error('Unexpected response from fusiontables API'));
                         return;
                     }
@@ -121,9 +119,8 @@
             return this.apis.then(function(client) {
                 var req = client.drive.files.get({ fileId: untrustedId });
                 return new Promise(function(resolve, reject) { req.execute(function(data) {
-                    console.log('fetch dataset via drive returns', data);
-
                     if(!data || !data.properties) {
+                        console.error('fetch dataset via drive returns', data);
                         reject(new Error('Unexpected response from drive API'));
                         return;
                     }

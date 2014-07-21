@@ -51,8 +51,7 @@
                 .then(function(dataset) {
                     self.loadingDataset = false;
                     if(!dataset || (dataset.id !== self.datasetId)) { return; }
-                    console.log('Successfully retrieved dataset', self.datasetId);
-                    console.log(dataset);
+                    console.log('Retrieved dataset', dataset);
                     self.weightyDataset = dataset;
                 });
         },
@@ -67,8 +66,7 @@
                 .then(function(datasetList) {
                     self.loadingDatasetList = false;
                     if(!datasetList) { return; }
-                    console.log('Successfully retrieved dataset list');
-                    console.log(datasetList);
+                    console.log('Retrieved list', datasetList);
                     self.datasetList = datasetList;
                 });
         },
