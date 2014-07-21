@@ -1,7 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="weighty-datasource" hidden attributes="datasets datasetId weightyDataset"
-    on-weighty-dataset-request="{{ datasetRequest }}">
+<polymer-element name="weighty-datasource" hidden attributes="datasets datasetId weightyDataset">
   <template>
     <style>
       :host {
@@ -28,57 +27,58 @@
                 .then(function(apis) {
                     return { drive: apis[0], fusiontables: apis[1], auth: apis[2] };
                 });
-
-            this.refresh();
         },
 
-        // kick of request to drive API for datasets
-        refresh: function() {
+        // Create a promise which is resolved with the data for dataset "id". The promise is
+        // rejected if the id does not validate against both the drive and fusiontables API.
+        createDatasetPromise: function(untrustedId) {
             var self = this;
-            this.newDatasetListPromise().then(function(items) {
-                self.datasets = items;
-            });
-        },
-
-        datasetIdChanged: function() {
-            var self = this;
-
-            // handle early outs
-            if(!this.datasetId && this.weightyDataset) {
-                this.weightyDataset = null;
-                return;
-            } else if(this.weightyDataset && this.dataset.id === this.datasetId) {
-                return;
-            }
-
-            // otherwise, populate dataset
-            this.weightyDataset = null;
-            this.newValidateDatasetIdPromise(this.datasetId).then(function(objs) {
-                console.log('id validates:', objs.file.id);
-                return self.newGetDataPromise(objs.file.id).then(function(data) {
-                    self.weightyDataset = {
+            return this.createValidateDatasetIdPromise(untrustedId).then(function(objs) {
+                return self.createGetDataPromise(objs.file.id).then(function(data) {
+                    return {
                         id: objs.file.id,
                         file: objs.file,
                         table: objs.table,
                         data: data,
                     };
                 });
-            }).catch(function(err) {
-                console.log('Error validating data');
-                console.log(err);
             });
         },
 
-        weightyDatasetChanged: function() {
-            console.log('dataset', this.weightyDataset);
-            if(!this.weightyDataset) {
-                this.datasetId = null;
-                return;
-            }
-            this.datasetId = this.weightyDataset.id;
+        // Create a promise which is resolved with a list of datasets belonging to the user.
+        createDatasetListPromise: function() {
+            // how to find weighty files
+            var searchQuery =
+                'not trashed and properties has ' +
+                '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
+
+            return this.apis.then(function(client) {
+                var req = client.drive.files.list({ q: searchQuery });
+                return new Promise(function(resolve, reject) {
+                    req.execute(function(data) {
+                        console.log('drive.files.list reply', data);
+
+                        if(data.kind !== 'drive#fileList') {
+                            reject(new Error('Got unexpected reply from Drive API'));
+                            return;
+                        }
+
+                        var items = [];
+                        data.items.forEach(function(file) {
+                            items.push({
+                                id: file.id, title: file.title,
+                                modifiedDate: new Date(file.modifiedDate),
+                                createdDate: new Date(file.createdDate),
+                            });
+                        });
+
+                        resolve(items);
+                    });
+                });
+            });
         },
 
-        newGetDataPromise: function(trustedId) {
+        createGetDataPromise: function(trustedId) {
             return this.apis.then(function(client) {
                 console.log('Fetching data for', trustedId);
                 var req = client.fusiontables.query.sqlGet({
@@ -106,10 +106,10 @@
 
         // Convenience method to construct a verification promise which verifies id
         // via drive and fusion table API.
-        newValidateDatasetIdPromise: function(untrustedId) {
+        createValidateDatasetIdPromise: function(untrustedId) {
             return Promise.all([
-                this.newDatasetFetchViaDrivePromise(untrustedId),
-                this.newDatasetFetchViaFusionTablesPromise(untrustedId),
+                this.createDatasetFetchViaDrivePromise(untrustedId),
+                this.createDatasetFetchViaFusionTablesPromise(untrustedId),
             ]).then(function(data) {
                 return { file: data[0], table: data[1] };
             });
@@ -117,7 +117,7 @@
 
         // Return a promise which uses the drive API to return details on a dataset. This
         // can safely be passed an untrusted id for verification.
-        newDatasetFetchViaDrivePromise: function (untrustedId) {
+        createDatasetFetchViaDrivePromise: function (untrustedId) {
             return this.apis.then(function(client) {
                 var req = client.drive.files.get({ fileId: untrustedId });
                 return new Promise(function(resolve, reject) { req.execute(function(data) {
@@ -147,7 +147,7 @@
 
         // Return a promise which uses the fusiontables API to return details on a dataset. This
         // can safely be passed an untrusted id for verification.
-        newDatasetFetchViaFusionTablesPromise: function (untrustedId) {
+        createDatasetFetchViaFusionTablesPromise: function (untrustedId) {
             return this.apis.then(function(client) {
                 var req = client.fusiontables.table.get({ tableId: untrustedId });
                 return new Promise(function(resolve, reject) { req.execute(function(data) {
@@ -173,40 +173,6 @@
 
                     resolve(data);
                 }); });
-            });
-        },
-
-        // Return a promise which starts a query for all user datasets and is resolved with
-        // a list of dataset entries.
-        newDatasetListPromise: function() {
-            // how to find weighty files
-            var searchQuery =
-                'not trashed and properties has ' +
-                '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
-
-            return this.apis.then(function(client) {
-                var req = client.drive.files.list({ q: searchQuery });
-                return new Promise(function(resolve, reject) {
-                    req.execute(function(data) {
-                        console.log('drive.files.list reply', data);
-
-                        if(data.kind !== 'drive#fileList') {
-                            reject(new Error('Got unexpected reply from Drive API'));
-                            return;
-                        }
-
-                        var items = [];
-                        data.items.forEach(function(file) {
-                            items.push({
-                                id: file.id, title: file.title,
-                                modifiedDate: new Date(file.modifiedDate),
-                                createdDate: new Date(file.createdDate),
-                            });
-                        });
-
-                        resolve(items);
-                    });
-                });
             });
         },
     });

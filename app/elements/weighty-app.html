@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="weighty-app" attributes="datasets datasetId weightyDataset">
+<polymer-element name="weighty-app" attributes="dataSource">
   <template>
     <style>
       :host {
@@ -9,24 +9,24 @@
       }
     </style>
     <core-animated-pages fit selected="{{ page }}">
-        <section fit name="loading" vertical layout center-justified>
-            <div self-center>
-                <loading-throbber></loading-throbber>
-            </div>
-        </section>
         <dataset-selector-page fit name="selector"
-            datasets="{{ datasets }}" datasetId="{{ datasetId }}"></dataset-selector-page>
+            datasets="{{ datasetList }}" datasetId="{{ datasetId }}"
+            isLoading="{{ loadingDatasetList }}"
+        ></dataset-selector-page>
         <dataset-page fit name="dataset"
-            weightyDataset="{{ weightyDataset }}" on-back="{{ back }}"></dataset-page>
+            weightyDataset="{{ weightyDataset }}" isLoading="{{ loadingDataset }}"
+            on-back="{{ back }}"></dataset-page>
     </core-animated-pages>
   </template>
   <script>
     Polymer({
-        page: 'loading',
+        page: 'selector',
+
+        loadingDataset: false,
+        loadingDatasetList: false,
 
         back: function() {
             this.datasetId = null;
-            history.pushState(null, null, '#');
         },
 
         ready: function() {
@@ -35,24 +35,53 @@
             window.addEventListener('popstate', function() { self.parseLocation(); });
         },
 
-        datasetsChanged: function() {
-            // are we currently loading?
-            if(this.page === 'loading') {
-                // switch to dataset selector view
-                this.page = 'selector';
-            }
+        dataSourceChanged: function() {
+            if(!this.dataSource) { return; }
+            this.refreshDataset();
+            this.refreshDatasetList();
+        },
+
+        refreshDataset: function() {
+            var self = this;
+            this.dataset = null;
+            if(!this.dataSource || !this.datasetId) { return; }
+
+            this.loadingDataset = true;
+            this.dataSource.createDatasetPromise(this.datasetId)
+                .then(function(dataset) {
+                    self.loadingDataset = false;
+                    if(!dataset || (dataset.id !== self.datasetId)) { return; }
+                    console.log('Successfully retrieved dataset', self.datasetId);
+                    console.log(dataset);
+                    self.weightyDataset = dataset;
+                });
+        },
+
+        refreshDatasetList: function() {
+            var self = this;
+            this.datasetList = null;
+            if(!this.dataSource) { return; }
+
+            this.loadingDatasetList = true;
+            this.dataSource.createDatasetListPromise()
+                .then(function(datasetList) {
+                    self.loadingDatasetList = false;
+                    if(!datasetList) { return; }
+                    console.log('Successfully retrieved dataset list');
+                    console.log(datasetList);
+                    self.datasetList = datasetList;
+                });
         },
 
         datasetIdChanged: function() {
-            // don't do anything if sill loading otherwise, switch to
-            // selector or dataset page as appropriate
-            if(this.page === 'loading') {
-                // do nothing
-            } else if(this.datasetId) {
+            this.refreshDataset();
+
+            if(this.datasetId && (this.page !== 'dataset')) {
                 this.page = 'dataset';
                 history.pushState(null, null, '#/dataset/' + this.datasetId);
-            } else {
+            } else if(!this.datasetId && (this.page !== 'selector')) {
                 this.page = 'selector';
+                history.pushState(null, null, '#');
             }
         },
 
@@ -64,9 +93,7 @@
 
             if((window.location.hash === '') || (rootHashRe.test(window.location.hash))) {
                 console.log('matches root');
-                if(this.page !== 'loading') {
-                    this.datasetId = null;
-                }
+                this.datasetId = null;
                 return;
             }
 

@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-selector-page" attributes="datasets datasetId">
+<polymer-element name="dataset-selector-page" attributes="datasets datasetId isLoading">
   <template>
     <style>
       :host {
@@ -16,13 +16,23 @@
                 <div flex>My Datasets</div>
             </core-toolbar>
             <div content>
-                <core-selector selected="{{ datasetId }}">
-                    <template repeat="{{ datasets }}">
-                        <div name="{{id}}">
-                            {{ title }}, {{ modifiedDate }}&ndash;{{ createdDate }}
+                <template if="{{ isLoading }}">
+                    <div fit vertical layout center-justified>
+                        <div self-center>
+                            <loading-throbber></loading-throbber>
                         </div>
-                    </template>
-                </core-selector>
+                    </div>
+                </template>
+                <template if="{{ !isLoading &amp;&amp; datasets }}">
+                    <core-selector selected="{{ datasetId }}">
+                        <template repeat="{{ datasets }}">
+                            <div name="{{id}}" vertical layout>
+                                <div>{{ title }}</div>
+                                <div>{{ createdDate }}&ndash;{{ modifiedDate }}</div>
+                            </div>
+                        </template>
+                    </core-selector>
+                </template>
             </div>
         </core-header-panel>
     </div>

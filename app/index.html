@@ -28,11 +28,10 @@
 
         <!-- Bind weighty data source to weighty app -->
         <template is="auto-binding">
-            <weighty-datasource datasets="{{datasets}}" datasetId="{{datasetId}}"
+            <weighty-datasource id="dataSource" datasets="{{datasets}}" datasetId="{{datasetId}}"
                 weightyDataset="{{weightyDataset}}"
             ></weighty-datasource>
-            <weighty-app fit datasets="{{datasets}}" datasetId="{{datasetId}}"
-                weightyDataset="{{weightyDataset}}"
+            <weighty-app id="app" fit dataSource="{{ $.dataSource }}"
             ></weighty-app>
         </template>
     </body>

@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-page" attributes="weightyDataset">
+<polymer-element name="dataset-page" attributes="weightyDataset isLoading">
   <template>
     <style>
       :host {
@@ -11,21 +11,21 @@
       #container { overflow: auto; }
     </style>
     <div fit id="container" vertical layout>
-        <template if="{{ !weightyDataset }}">
+        <template if="{{ isLoading }}">
             <div fit vertical layout center-justified>
                 <div self-center>
                     <loading-throbber></loading-throbber>
                 </div>
             </div>
         </template>
-        <template bind="{{ weightyDataset }}" if="{{ weightyDataset }}">
+        <template bind="{{ weightyDataset }}" if="{{ !isLoading &amp;&amp; weightyDataset }}">
             <core-header-panel flex>
                 <core-toolbar>
                 <paper-icon-button icon="arrow-back" on-tap="{{back}}"></paper-icon-button>
                 <div flex>{{ file.title }}</div>
                 </core-toolbar>
                 <div content>
-                    Foo
+                    {{ data.length }}
                 </div>
             </core-header-panel>
         </template>
@@ -33,7 +33,8 @@
   </template>
   <script>
     Polymer({
-        back: function() { this.fire('back'); }
+        isLoading: false,
+        back: function() { this.fire('back'); },
     });
   </script>
 </polymer-element>
