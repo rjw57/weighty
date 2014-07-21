@@ -1,0 +1,73 @@
+<link rel="import" href="../bower_components/google-signin/google-signin.html">
+<link rel="import" href="../bower_components/google-apis/google-client-api.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<!--
+Element for loading a Google API exposing a promise which is resolved with the
+api object on success or rejected with an error if the API could not be loaded.
+
+The promise is exposed as the 'api' property'
+-->
+
+<polymer-element name="google-api-promise" attributes="name version">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <google-api-loader id="apiLoader" name="{{name}}" version="{{version}}"
+        on-google-api-load="{{ onApiLoad }}"
+        on-google-api-load-error="{{ onApiLoadError }}"
+    ></google-api-loader>
+  </template>
+  <script>
+    Polymer({
+        created: function() {
+            var self = this;
+            this.api = new Promise(function(resolve, reject) {
+                self.resolve_ = resolve;
+                self.reject_ = reject;
+            });
+        },
+
+        onApiLoad: function(event, detail) {
+            this.resolve_(this.$.apiLoader.api);
+        },
+
+        onApiLoadError: function(event, detail) {
+            this.reject_(detail);
+        },
+    });
+  </script>
+</polymer-element>
+
+<!--
+Element for requiring a set of scopes like <google-signin-aware>. Exposes an api
+resolved with the auth data on success.
+
+The promise is exposed via the 'auth' property.
+-->
+<polymer-element name="google-auth-promise" extends="google-signin-aware"
+    on-google-signin-aware-success="{{ onSigninSuccess }}">
+  <template>
+  </template>
+  <script>
+    Polymer({
+        created: function() {
+            var self = this;
+            this.auth = new Promise(function(resolve, reject) {
+                self.resolve_ = resolve;
+                self.reject_ = reject;
+            });
+        },
+
+        onSigninSuccess: function(event, detail) {
+            this.resolve_(detail);
+        },
+
+        // TODO: some way to reject the promise?
+    });
+  </script>
+</polymer-element>

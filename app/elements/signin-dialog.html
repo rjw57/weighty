@@ -1,0 +1,44 @@
+<link rel="import" href="../bower_components/google-signin/google-signin.html">
+<link rel="import" href="../bower_components/paper-elements/paper-elements.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="signin-dialog" attributes="clientId">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-dialog heading="Sign in" backdrop="true" layered="true"
+        autoCloseDisabled="true" transition="paper-dialog-transition-center"
+        opened="{{ open }}"
+    >
+        <div style="width: 300px;" vertical layout>
+            <p>Weighty stores its data inside your Google Drive. You must sign
+            in with Google to proceed.</p>
+            <google-signin id="signin" self-center clientId="{{ clientId }}"
+                on-google-signin-necessary="{{ onSigninNecessary }}"
+                on-google-signin-success="{{ onSigninSuccess }}"
+                on-google-signed-out="{{ onSignedOut }}"
+            ></google-signin>
+        </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+        open: true,
+
+        onSigninNecessary: function() {
+            this.open = true;
+        },
+
+        onSigninSuccess: function() {
+            this.open = false;
+        },
+
+        onSignedOut: function() {
+            this.open = true;
+        },
+    });
+  </script>
+</polymer-element>

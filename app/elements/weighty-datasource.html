@@ -7,10 +7,26 @@
         display: block;
       }
     </style>
+
+    <google-api-promise id="drive" name="drive" version="v2"></google-api-promise>
+    <google-api-promise id="fusiontables" name="fusiontables" version="v1"></google-api-promise>
+    <google-auth-promise id="auth"
+        scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/fusiontables">
   </template>
   <script>
     Polymer({
         ready: function() {
+            // set the various API promises
+            this.drive = this.$.drive.api;
+            this.fusiontables = this.$.fusiontables.api;
+            this.auth = this.$.auth.auth;
+
+            // Convenience promise to return an object with apis and auth data
+            this.apis = Promise.all([this.drive, this.fusiontables, this.auth])
+                .then(function(apis) {
+                    return { drive: apis[0], fusiontables: apis[1], auth: apis[2] };
+                });
+
             // populate datasets after a delay to simulate network
             this.async(function() {
                 this.datasets = [
@@ -31,6 +47,10 @@
                     },
                 ];
             }, null, 1000);
+
+            this.apis.then(function(apis) {
+                console.log(apis);
+            });
         },
 
         datasetIdChanged: function() {

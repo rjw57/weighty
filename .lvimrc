@@ -7,7 +7,9 @@ let g:syntastic_html_tidy_ignore_errors = [
 let g:syntastic_html_tidy_blocklevel_tags = [
     \ 'template', 'polymer-element',
     \ 'core-header-panel', 'core-toolbar', 'core-animated-pages', 'core-selector',
-    \ 'paper-icon-button',
+    \ 'paper-icon-button', 'paper-dialog',
+    \ 'google-api-loader', 'google-signin',
     \ 'weighty-app', 'weighty-datasource', 'dataset-selector-page',
-    \ 'dataset-page', 'loading-throbber',
+    \ 'dataset-page', 'loading-throbber', 'signin-dialog',
+    \ 'google-api-promise', 'google-auth-promise',
     \ ]
