@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/app-chart/app-chart.html">
+<link rel="import" href="../bower_components/google-chart/google-chart.html">
 <link rel="import" href="../bower_components/paper-elements/paper-elements.html">
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
@@ -26,17 +26,7 @@
                     <div flex>{{ file.title }}</div>
                 </core-toolbar>
                 <div content vertical layout>
-                    <app-chart type="line" responsive>
-                        <app-chart-axis type="y"></app-chart-axis>
-                        <app-chart-axis type="time"></app-chart-axis>
-
-                        <app-chart-series name="Weight" color="#3498db">
-                            <template repeat="{{ data }}">
-                                <app-chart-data x="{{ timestamp }}" y="{{ weight }}">
-                                </app-chart-data>
-                            </template>
-                        </app-chart-series>
-                    </app-chart>
+                    FIXME: CHART
                 </div>
             </core-header-panel>
         </template>
