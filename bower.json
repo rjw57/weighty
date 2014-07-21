@@ -5,7 +5,11 @@
     "core-elements": "Polymer/core-elements#~0.3.3",
     "paper-elements": "Polymer/paper-elements#~0.3.3",
     "polymer": "Polymer/polymer#~0.3.3",
-    "es6-promise": "~1.0.0"
+    "es6-promise": "~1.0.0",
+    "google-apis": "PolymerLabs/google-apis#~0.3.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "resolutions": {
+    "google-apis": "master"
+  }
 }
