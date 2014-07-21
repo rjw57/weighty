@@ -14,13 +14,16 @@
 
         <!-- Place your HTML imports here -->
         <script src="bower_components/platform/platform.js"></script>
+        <link rel="import" href="bower_components/font-roboto/roboto.html">
         <link rel="import" href="elements/elements.html">
     </head>
     <body unresolved fullbleed>
-      <script>
-        document.addEventListener('polymer-ready', function() {
-            // Perform some behaviour
-        });
-      </script>
+        <!-- Bind weighty data source to weighty app -->
+        <template is="auto-binding">
+            <weighty-datasource datasets="{{datasets}}" datasetId="{{datasetId}}"
+            ></weighty-datasource>
+            <weighty-app fit datasets="{{datasets}}" datasetId="{{datasetId}}"
+            ></weighty-app>
+        </template>
     </body>
 </html>

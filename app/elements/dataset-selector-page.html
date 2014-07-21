@@ -1,0 +1,34 @@
+<link rel="import" href="../bower_components/core-elements/core-elements.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="dataset-selector-page" attributes="datasets datasetId">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #container { overflow: auto; }
+    </style>
+    <div fit id="container" vertical layout>
+        <core-header-panel flex>
+            <core-toolbar>
+                <div flex>My Datasets</div>
+            </core-toolbar>
+            <div content>
+                <core-selector selected="{{ datasetId }}">
+                    <template repeat="{{ datasets }}">
+                        <div name="{{id}}">
+                            {{ title }}, {{ modifiedDate }}&ndash;{{ createdDate }}
+                        </div>
+                    </template>
+                </core-selector>
+            </div>
+        </core-header-panel>
+    </div>
+  </template>
+  <script>
+    Polymer({
+    });
+  </script>
+</polymer-element>

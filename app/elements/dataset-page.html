@@ -1,0 +1,28 @@
+<link rel="import" href="../bower_components/paper-elements/paper-elements.html">
+<link rel="import" href="../bower_components/core-elements/core-elements.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="dataset-page" attributes="">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      #container { overflow: auto; }
+    </style>
+    <div fit id="container" vertical layout>
+        <core-header-panel flex>
+            <core-toolbar>
+            <paper-icon-button icon="arrow-back" on-tap="{{back}}"></paper-icon-button>
+            <div flex>{{ title }}</div>
+            </core-toolbar>
+            <div content>Foo</div>
+        </core-header-panel>
+    </div>
+  </template>
+  <script>
+    Polymer({
+        back: function() { this.fire('back'); }
+    });
+  </script>
+</polymer-element>

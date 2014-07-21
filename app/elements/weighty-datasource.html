@@ -1,0 +1,67 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="weighty-datasource" hidden attributes="datasets datasetId">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  </template>
+  <script>
+    Polymer({
+        ready: function() {
+            // populate datasets after a delay to simulate network
+            this.async(function() {
+                this.datasets = [
+                    {
+                        id: 'xxxx', title: 'fooobar',
+                        modifiedDate: new Date(Date.now()),
+                        createdDate: new Date(Date.now() - 30*24*60*60*1000),
+                    },
+                    {
+                        id: 'xggg', title: 'Another dataset',
+                        modifiedDate: new Date(Date.now() - 40*24*60*60*1000),
+                        createdDate: new Date(Date.now() - 80*24*60*60*1000),
+                    },
+                    {
+                        id: 'kdlmgls', title: 'Some more',
+                        modifiedDate: new Date(Date.now() - 20*24*60*60*1000),
+                        createdDate: new Date(Date.now() - 30*24*60*60*1000),
+                    },
+                ];
+            }, null, 500);
+        },
+
+        /*
+        datasetIdChanged: function() {
+            // handle early outs
+            if(!this.datasetId && this.weightData) {
+                this.weightData = null;
+                return;
+            } else if(this.weightData && this.dataset.id === this.datasetId) {
+                return;
+            }
+
+            // otherwise, populate dataset after a bit of a delay to simulate
+            // network.
+            this.weightData = null;
+            this.async(function() {
+                this.weightData = {
+                    id: this.datasetId,
+                    title: 'funky test dataset (' + this.datasetId + ')',
+                };
+            }, null, 1000);
+        },
+
+        weightDataChanged: function() {
+            if(!this.weightData) {
+                this.datasetId = null;
+                return;
+            }
+            this.datasetId = this.weightData.id;
+        },
+        */
+    });
+  </script>
+</polymer-element>
