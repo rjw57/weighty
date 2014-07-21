@@ -25,7 +25,18 @@
                     <div flex>{{ file.title }}</div>
                 </core-toolbar>
                 <div content vertical layout>
-                    <highcharts-chart></highcharts-chart>
+                    <highcharts-chart chartOptions="{{ chartOptions }}">
+                        <!-- <highcharts-axis xaxis></highcharts-axis>
+                        <highcharts-axis yaxis></highcharts-axis>
+                        -->
+
+                        <highcharts-series name="foo">
+                            <template repeat="{{ data }}">
+                                <highcharts-datum x="{{ timestamp }}" y="{{ weight }}"
+                                ></highcharts-datum>
+                            </template>
+                        </highcharts-series>
+                    </highcharts-chart>
                 </div>
             </core-header-panel>
         </template>
@@ -34,6 +45,32 @@
   <script>
     Polymer({
         isLoading: false,
+        chartOptions: {
+            chart: {
+              zoomType: 'x',
+              spacing: [10, 0, 10, 0],
+            },
+            title: {
+              text: null,
+            },
+            exporting: {
+              buttons: {
+                contextButton: { enabled: false },
+              },
+            },
+            xAxis: {
+              type: 'datetime',
+              endOnTick: false,
+              minPadding: 0,
+              maxPadding: 0,
+              minRange: 14 * 24 * 3600000, // fortnight
+            },
+            tooltip: {
+              valueDecimals: 1,
+              valueSuffix: 'kg',
+            },
+        },
+
         back: function() { this.fire('back'); },
     });
   </script>

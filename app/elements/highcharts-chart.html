@@ -2,32 +2,125 @@
 <script src="../bower_components/highcharts-release/adapters/standalone-framework.js"></script>
 <script src="../bower_components/highcharts-release/highcharts.js"></script>
 
-<polymer-element name="highcharts-chart" attributes="">
+<polymer-element name="highcharts-chart">
   <template>
     <style>
-      :host {
-        display: block;
-      }
+      :host { display: block; }
     </style>
-    <div id="chart"></div>
+    <div id="chart">
+        <content select="highcharts-series" id="series"></content>
+        <content select="highcharts-axis[xaxis]" id="xaxes"></content>
+        <content select="highcharts-axis[yaxis]" id="yaxes"></content>
+    </div>
   </template>
   <script>
     Polymer({
+        options: null,
+
         domReady: function() {
-            this.chart = new Highcharts.Chart({
-                chart: {
-                    renderTo: this.$.chart,
-                },
+            this.async(this.updateChart);
+            //this.onMutation(this.$.xaxes, this.rescanXAxes_);
+            //this.onMutation(this.$.yaxes, this.rescanYAxes_);
+            //this.onMutation(this, this.rescanSeries_);
+        },
 
-                xAxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                },
+        updateChart: function() {
+            console.log('options', this.options);
+            this.onMutation(this, this.updateChart);
 
-                series: [{
-                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-                    }]
+            // Merge any specified options into some extended options.
+            var self = this, i, extendedOptions = { chart: { } },
+                xAxisNodes = this.$.xaxes.getDistributedNodes().array(),
+                yAxisNodes = this.$.yaxes.getDistributedNodes().array(),
+                seriesNodes = this.$.series.getDistributedNodes().array();
+
+            for(i in this.options) { extendedOptions[i] = this.options[i] };
+
+            // Set render target
+            extendedOptions.chart.renderTo = this.$.chart;
+
+            // Find x-axes
+            extendedOptions.xAxis = (xAxisNodes.length > 0) ? [] : null;
+            xAxisNodes.forEach(function(axis) {
+                extendedOptions.xAxis.push(axis.options);
             });
+
+            // Find y-axes
+            extendedOptions.yAxis = (yAxisNodes.length > 0) ? [] : null;
+            yAxisNodes.forEach(function(axis) {
+                extendedOptions.yAxis.push(axis);
+            });
+
+            // Find series
+            extendedOptions.series = (seriesNodes.length > 0) ? [] : null;
+            seriesNodes.forEach(function(s, idx) {
+                s.addEventListener('highcharts-data-changed', function(event) {
+                    self.chart.series[idx].setData(event.detail);
+                });
+                extendedOptions.series.push(s.options);
+            });
+
+            console.log('Creating chart', extendedOptions);
+            this.chart = new Highcharts.Chart(extendedOptions);
+        },
+
+        optionsChanged: function() {
+            console.log('new options', this.options);
+            this.updateChart();
+        },
+    });
+  </script>
+</polymer-element>
+
+<polymer-element name="highcharts-axis" attributes="options">
+  <template>
+  </template>
+  <script>
+    Polymer({
+        options: {},
+    });
+  </script>
+</polymer-element>
+
+<polymer-element name="highcharts-datum" attributes="x y">
+  <template>
+  </template>
+  <script>
+    Polymer({
+        options: {},
+    });
+  </script>
+</polymer-element>
+
+<polymer-element name="highcharts-series" attributes="options">
+  <template>
+    <content select="highcharts-datum" id="data"></content>
+  </template>
+  <script>
+    Polymer({
+        options: { },
+
+        domReady: function() {
+            this.async(this.scanData_.bind(this));
+        },
+
+        scanData_: function() {
+            var i, datumNodes = this.$.data.getDistributedNodes(),
+                data=[], datumNode;
+
+            this.onMutation(this, this.scanData_);
+
+            for(i=0; i<datumNodes.length; i++) {
+                datumNode = datumNodes.item(i);
+                if(datumNode.x !== null) {
+                    data.push([datumNode.x, datumNode.y]);
+                } else {
+                    data.push(datumNode.y);
+                }
+            }
+
+            this.options.data = data;
+            this.fire('highcharts-data-changed', data);
         },
     });
   </script>
