@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-selector-page" attributes="datasets datasetId isLoading">
+<polymer-element name="dataset-selector-page" attributes="datasetList datasetId isLoading">
   <template>
     <style>
       :host {
@@ -23,9 +23,9 @@
                         </div>
                     </div>
                 </template>
-                <template if="{{ !isLoading &amp;&amp; datasets }}">
+                <template if="{{ !isLoading &amp;&amp; datasetList }}">
                     <core-selector selected="{{ datasetId }}">
-                        <template repeat="{{ datasets }}">
+                        <template repeat="{{ datasetList }}">
                             <div name="{{id}}" vertical layout>
                                 <div>{{ title }}</div>
                                 <div>{{ createdDate }}&ndash;{{ modifiedDate }}</div>
@@ -39,6 +39,7 @@
   </template>
   <script>
     Polymer({
+        datasetsChanged: function() { console.log('dsl', this.datasets); },
     });
   </script>
 </polymer-element>

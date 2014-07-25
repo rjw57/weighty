@@ -1,0 +1,72 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="dataset-list-datasource" hidden attributes="datasetList isSyncing">
+  <template>
+    <google-api-promise id="drive" name="drive" version="v2"></google-api-promise>
+    <google-auth-promise id="auth"
+        scopes="https://www.googleapis.com/auth/drive"
+    ></google-auth-promise>
+  </template>
+  <script>
+    Polymer({
+        isSyncing: false,
+        datasetList: [],
+
+        ready: function() {
+            // set the various API promises
+            this.drive = this.$.drive.api;
+            this.auth = this.$.auth.auth;
+
+            // Convenience promise to return an object with apis and auth data
+            this.apis = Promise.all([this.drive, this.auth])
+                .then(function(apis) {
+                    return { drive: apis[0], auth: apis[2] };
+                });
+
+            this.sync();
+        },
+
+        sync: function() {
+            var self = this;
+            this.isSyncing = true;
+            this.createDatasetListPromise().then(function(datasets, err) {
+                self.isSyncing = false;
+                if(err) { self.fire('sync-error', err); return; }
+                self.datasetList = datasets;
+            });
+        },
+
+        // Create a promise which is resolved with a list of datasets belonging to the user.
+        createDatasetListPromise: function() {
+            // how to find weighty files
+            var searchQuery =
+                'not trashed and properties has ' +
+                '{ key = \'weightyVersion\' and value = \'2\' and visibility=\'PUBLIC\'}';
+
+            return this.apis.then(function(client) {
+                var req = client.drive.files.list({ q: searchQuery });
+                return new Promise(function(resolve, reject) {
+                    req.execute(function(data) {
+                        if(data.kind !== 'drive#fileList') {
+                            console.error('drive.files.list reply', data);
+                            reject(new Error('Got unexpected reply from Drive API'));
+                            return;
+                        }
+
+                        var items = [];
+                        data.items.forEach(function(file) {
+                            items.push({
+                                id: file.id, title: file.title,
+                                modifiedDate: new Date(file.modifiedDate),
+                                createdDate: new Date(file.createdDate),
+                            });
+                        });
+
+                        resolve(items);
+                    });
+                });
+            });
+        },
+    });
+  </script>
+</polymer-element>

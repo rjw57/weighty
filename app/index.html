@@ -28,8 +28,10 @@
 
         <!-- Bind weighty data source to weighty app -->
         <template is="auto-binding">
-            <weighty-datasource id="dataSource"></weighty-datasource>
-            <weighty-app id="app" fit dataSource="{{ $.dataSource }}"></weighty-app>
+            <dataset-list-datasource datasetList="{{ datasetList }}"
+                isSyncing="{{ isDatasetListSyncing }}"></dataset-list-datasource>
+            <weighty-app id="app" fit datasetList="{{ datasetList }}"
+                isDatasetListSyncing="{{ isDatasetListSyncing }}"></weighty-app>
         </template>
     </body>
 </html>

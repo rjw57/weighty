@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="weighty-app" attributes="dataSource">
+<polymer-element name="weighty-app" attributes="datasetList isDatasetListSyncing">
   <template>
     <style>
       :host {
@@ -10,8 +10,8 @@
     </style>
     <core-animated-pages fit selected="{{ page }}">
         <dataset-selector-page fit name="selector"
-            datasets="{{ datasetList }}" datasetId="{{ datasetId }}"
-            isLoading="{{ loadingDatasetList }}"
+            datasetList="{{ datasetList }}" datasetId="{{ datasetId }}"
+            isLoading="{{ isDatasetListSyncing }}"
         ></dataset-selector-page>
         <dataset-page fit name="dataset"
             weightyDataset="{{ weightyDataset }}" isLoading="{{ loadingDataset }}"
@@ -21,9 +21,6 @@
   <script>
     Polymer({
         page: 'selector',
-
-        loadingDataset: false,
-        loadingDatasetList: false,
 
         back: function() {
             this.datasetId = null;
