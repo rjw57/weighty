@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-page" attributes="weightyDataset isLoading">
+<polymer-element name="dataset-page" attributes="datasetId">
   <template>
     <style>
       :host {
@@ -11,21 +11,29 @@
       #container { overflow: auto; }
     </style>
 
-    <dataset-stats id="stats" weightyDataset="{{ weightyDataset }}"></dataset-stats>
+    <dataset-datasource datasetId="{{ datasetId }}"
+        weightData="{{ weightData }}" datasetMetadata="{{ metadata }}"
+        isSyncing="{{ isSyncing }}"
+    ></dataset-datasource>
+
+    <dataset-stats id="stats"
+        weightData="{{ weightData }}" datasetMetadata="{{ metadata }}">
+    </dataset-stats>
 
     <div fit id="container" vertical layout>
-        <template if="{{ isLoading }}">
+        <template if="{{ isSyncing }}">
             <div fit vertical layout center-justified>
                 <div self-center>
                     <loading-throbber></loading-throbber>
                 </div>
             </div>
         </template>
-        <template if="{{ !isLoading &amp;&amp; weightyDataset }}">
+        <template if="{{ !isSyncing &amp;&amp; weightData }}">
             <core-header-panel flex>
                 <core-toolbar>
-                    <paper-icon-button icon="arrow-back" on-tap="{{back}}"></paper-icon-button>
-                    <div flex>{{ weightyDataset.file.title }}</div>
+                    <paper-icon-button icon="arrow-back"
+                        on-tap="{{back}}"></paper-icon-button>
+                    <div flex>{{ metadata.title }}</div>
                 </core-toolbar>
                 <div content vertical layout>
                     <template bind="{{ $.stats }}">
@@ -38,7 +46,7 @@
                     <div id="chart">
                         <highcharts-chart>
                         <highcharts-series>
-                                <template repeat="{{ weightyDataset.data }}">
+                                <template repeat="{{ weightData }}">
                                     <highcharts-datum x="{{ timestamp }}" y="{{ weight }}"
                                     ></highcharts-datum>
                                 </template>
@@ -52,8 +60,10 @@
   </template>
   <script>
     Polymer({
-        isLoading: false,
+        isSyncing: false,
         back: function() { this.fire('back'); },
+        metadataChanged: function() { console.log('md', this.metadata); },
+        weightDataChanged: function() { console.log('wd', this.weightData); },
     });
   </script>
 </polymer-element>

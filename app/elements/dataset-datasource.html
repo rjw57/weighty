@@ -1,0 +1,163 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="dataset-datasource" hidden
+    attributes="datasetId weightData isSyncing datasetMetadata">
+  <template>
+    <google-api-promise id="drive" name="drive" version="v2">
+    </google-api-promise>
+    <google-api-promise id="fusiontables" name="fusiontables" version="v1">
+    </google-api-promise>
+    <google-auth-promise id="auth"
+        scopes="https://www.googleapis.com/auth/drive"
+    ></google-auth-promise>
+  </template>
+  <script>
+    Polymer({
+        isSyncing: false,
+        weightData: null,
+        datasetMetadata: null,
+
+        ready: function() {
+            // set the various API promises
+            this.drive = this.$.drive.api;
+            this.fusiontables = this.$.fusiontables.api;
+            this.auth = this.$.auth.auth;
+
+            // Convenience promise to return an object with apis and auth data
+            this.apis = Promise.all([this.drive, this.fusiontables, this.auth])
+                .then(function(apis) {
+                    return { drive: apis[0], fusiontables: apis[1], auth: apis[2] };
+                });
+
+            this.sync();
+        },
+
+        observe: {
+            datasetId: 'sync',
+        },
+
+        sync: function() {
+            var self = this;
+
+            console.log('dataset changed', this.datasetId);
+
+            if(!this.datasetId) {
+                this.weightData = [];
+                return;
+            }
+
+            this.isSyncing = true;
+            this.createValidateDatasetIdPromise(this.datasetId)
+                .then(function(res) {
+                    self.datasetMetadata = {
+                        title: res.file.title,
+                    };
+                    return self.createGetDataPromise(res.file.id);
+                }).then(function(data) {
+                    self.isSyncing = false;
+                    self.weightData = data;
+                }).catch(function(err) {
+                    console.log(err);
+                    self.isSyncing = false;
+                    self.fire('sync-error', err);
+                });
+        },
+
+        createGetDataPromise: function(trustedId) {
+            return this.apis.then(function(client) {
+                var req = client.fusiontables.query.sqlGet({
+                    sql: 'SELECT Timestamp, Weight FROM ' + trustedId + ' ORDER BY Timestamp',
+                });
+                return new Promise(function(resolve, reject) { req.execute(function(data) {
+                    if(data.kind !== 'fusiontables#sqlresponse') {
+                        console.error('Fetch returned', data);
+                        reject(new Error('Unexpected response from fusiontables API'));
+                        return;
+                    }
+
+                    var weights = [];
+                    data.rows.forEach(function(row) {
+                        weights.push({
+                            timestamp: +row[0],         // Number
+                            weight: +row[1],            // Number
+                            date: new Date(+row[0]),
+                        });
+                    });
+                    resolve(weights);
+                }); });
+            });
+        },
+
+        // Convenience method to construct a verification promise which verifies id
+        // via drive and fusion table API.
+        createValidateDatasetIdPromise: function(untrustedId) {
+            return Promise.all([
+                this.createDatasetFetchViaDrivePromise(untrustedId),
+                this.createDatasetFetchViaFusionTablesPromise(untrustedId),
+            ]).then(function(data) {
+                return { file: data[0], table: data[1] };
+            });
+        },
+
+        // Return a promise which uses the drive API to return details on a dataset. This
+        // can safely be passed an untrusted id for verification.
+        createDatasetFetchViaDrivePromise: function (untrustedId) {
+            return this.apis.then(function(client) {
+                var req = client.drive.files.get({ fileId: untrustedId });
+                return new Promise(function(resolve, reject) { req.execute(function(data) {
+                    if(!data || !data.properties) {
+                        console.error('fetch dataset via drive returns', data);
+                        reject(new Error('Unexpected response from drive API'));
+                        return;
+                    }
+
+                    var isValid = false;
+
+                    data.properties.forEach(function(property) {
+                        if(property.key !== 'weightyVersion' || property.value !== '2') { return; }
+                        isValid = true;
+                    });
+
+                    if(!isValid) {
+                        reject(new Error('Invalid id'));
+                        return;
+                    }
+
+                    resolve(data);
+                }); });
+            });
+        },
+
+        // Return a promise which uses the fusiontables API to return details on a dataset. This
+        // can safely be passed an untrusted id for verification.
+        createDatasetFetchViaFusionTablesPromise: function (untrustedId) {
+            return this.apis.then(function(client) {
+                var req = client.fusiontables.table.get({ tableId: untrustedId });
+                return new Promise(function(resolve, reject) { req.execute(function(data) {
+                    if(!data || !data.columns) {
+                        reject(new Error('Unexpected response from tables API'));
+                        return;
+                    }
+
+                    var hasWeight = false, hasTimestamp = false;
+
+                    data.columns.forEach(function(column) {
+                        if(column.name === 'Weight' && column.type === 'NUMBER') {
+                            hasWeight = true;
+                        } else if(column.name === 'Timestamp' && column.type === 'NUMBER') {
+                            hasTimestamp = true;
+                        }
+                    });
+
+                    if(!hasWeight || !hasTimestamp) {
+                        reject(new Error('Invalid id'));
+                        return;
+                    }
+
+                    resolve(data);
+                }); });
+            });
+        },
+    });
+  </script>
+</polymer-element>

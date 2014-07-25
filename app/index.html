@@ -26,12 +26,6 @@
             clientId="266506267940-nk8rt8rdrpb8l5j098ugl2v04m6evujn.apps.googleusercontent.com"
         ></signin-dialog>
 
-        <!-- Bind weighty data source to weighty app -->
-        <template is="auto-binding">
-            <dataset-list-datasource datasetList="{{ datasetList }}"
-                isSyncing="{{ isDatasetListSyncing }}"></dataset-list-datasource>
-            <weighty-app id="app" fit datasetList="{{ datasetList }}"
-                isDatasetListSyncing="{{ isDatasetListSyncing }}"></weighty-app>
-        </template>
+        <weighty-app></weighty-app>
     </body>
 </html>

@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="dataset-selector-page" attributes="datasetList datasetId isLoading">
+<polymer-element name="dataset-selector-page" attributes="datasetId">
   <template>
     <style>
       :host {
@@ -10,6 +10,10 @@
 
       #container { overflow: auto; }
     </style>
+
+    <dataset-list-datasource datasetList="{{ datasetList }}"
+        isSyncing="{{ isLoading }}"></dataset-list-datasource>
+
     <div fit id="container" vertical layout>
         <core-header-panel flex>
             <core-toolbar>
